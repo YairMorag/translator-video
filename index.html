@@ -175,7 +175,7 @@
             color: #6aabdb;
         }
 
-        /* Timeline connector */
+        /* ניווט ציר זמן */
         .timeline-nav {
             padding: 16px 28px 24px;
             border-top: 1px solid rgba(201, 168, 76, 0.2);
@@ -205,7 +205,7 @@
             cursor: default;
         }
 
-        /* Timeline bar at bottom */
+        /* סרגל ציר זמן תחתון */
         #timeline {
             position: fixed;
             bottom: 0;
@@ -265,7 +265,7 @@
             background: rgba(201, 168, 76, 0.3);
         }
 
-        /* Custom marker styles */
+        /* סגנון סמנים */
         .custom-marker {
             position: relative;
         }
@@ -306,7 +306,7 @@
             pointer-events: none;
         }
 
-        /* Intro overlay */
+        /* מסך פתיחה */
         #intro-overlay {
             position: fixed;
             top: 0;
@@ -377,7 +377,7 @@
             margin-bottom: 20px;
         }
 
-        /* Route line animation */
+        /* אנימציית קו מסלול */
         .route-path {
             stroke-dasharray: 10, 5;
             animation: dash 30s linear infinite;
@@ -387,7 +387,7 @@
             to { stroke-dashoffset: -1000; }
         }
 
-        /* Responsive */
+        /* התאמה למסכים קטנים */
         @media (max-width: 768px) {
             #story-panel {
                 width: 100%;
@@ -407,7 +407,7 @@
             }
         }
 
-        /* Leaflet popup override */
+        /* עיצוב חלונית מידע */
         .leaflet-popup-content-wrapper {
             background: #1a1a2e;
             color: #e0e0e0;
@@ -455,7 +455,7 @@
 </head>
 <body>
 
-<!-- Intro Overlay -->
+<!-- מסך פתיחה -->
 <div id="intro-overlay">
     <div class="intro-content">
         <div class="candle">🕯️</div>
@@ -473,7 +473,7 @@
     </div>
 </div>
 
-<!-- Header -->
+<!-- כותרת -->
 <div id="header">
     <div>
         <h1>🕯️ עדות אניטה מדי – מסע משפחתי</h1>
@@ -487,18 +487,18 @@
     </div>
 </div>
 
-<!-- Map -->
+<!-- מפה -->
 <div id="map"></div>
 
-<!-- Story Panel -->
+<!-- פאנל סיפור -->
 <div id="story-panel">
-    <button class="close-btn" onclick="closePanel()">✕ <span style="font-size:0.9rem;">סגור</span></button>
+    <button class="close-btn" onclick="closePanel()">✕ <span style="font-size:0.9rem;">סגירה</span></button>
     <div class="story-header" id="story-header"></div>
     <div class="story-content" id="story-content"></div>
     <div class="timeline-nav" id="timeline-nav"></div>
 </div>
 
-<!-- Timeline Bar -->
+<!-- סרגל ציר זמן -->
 <div id="timeline" id="timeline-bar"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -506,7 +506,7 @@
 const locations = [
     {
         id: 0,
-        name: "צ'רנוביץ (Czernowitz)",
+        name: "צ'רנוביץ",
         nameShort: "צ'רנוביץ",
         lat: 48.2917,
         lng: 25.9353,
@@ -545,7 +545,7 @@ const locations = [
     },
     {
         id: 1,
-        name: "לוקוויץ (Lukovyts)",
+        name: "לוקוויץ",
         nameShort: "לוקוויץ",
         lat: 48.25,
         lng: 25.85,
@@ -566,7 +566,7 @@ const locations = [
     },
     {
         id: 2,
-        name: "קמפולונג (Câmpulung)",
+        name: "קמפולונג",
         nameShort: "קמפולונג",
         lat: 47.5267,
         lng: 25.5464,
@@ -587,7 +587,7 @@ const locations = [
     },
     {
         id: 3,
-        name: "ואטרה דורניי (Vatra Dornei)",
+        name: "ואטרה דורניי",
         nameShort: "ואטרה דורניי",
         lat: 47.3500,
         lng: 25.3667,
@@ -604,7 +604,7 @@ const locations = [
     },
     {
         id: 4,
-        name: "מרקולשט (Marculești)",
+        name: "מרקולשט",
         nameShort: "מרקולשט",
         lat: 47.8636,
         lng: 28.9511,
@@ -627,7 +627,7 @@ const locations = [
     },
     {
         id: 5,
-        name: "יער קוסאוץ (Cosăuți)",
+        name: "יער קוסאוץ",
         nameShort: "יער קוסאוץ",
         lat: 48.2500,
         lng: 28.6000,
@@ -650,7 +650,7 @@ const locations = [
     },
     {
         id: 6,
-        name: "יאמפול (Yampil)",
+        name: "יאמפול",
         nameShort: "יאמפול",
         lat: 48.2378,
         lng: 28.2769,
@@ -671,7 +671,7 @@ const locations = [
     },
     {
         id: 7,
-        name: "קריז'ופול (Kryzhopil)",
+        name: "קריז'ופול",
         nameShort: "קריז'ופול",
         lat: 48.3767,
         lng: 28.8636,
@@ -692,7 +692,7 @@ const locations = [
     },
     {
         id: 8,
-        name: "עובדובקה (Obodivka)",
+        name: "עובדובקה",
         nameShort: "עובדובקה",
         lat: 48.5647,
         lng: 29.2169,
@@ -715,7 +715,7 @@ const locations = [
     },
     {
         id: 9,
-        name: "ברשד (Bershad)",
+        name: "ברשד",
         nameShort: "ברשד",
         lat: 48.3667,
         lng: 29.5167,
@@ -758,7 +758,7 @@ const locations = [
     },
     {
         id: 10,
-        name: "בוק (Buh)",
+        name: "בוק",
         nameShort: "בוק",
         lat: 48.55,
         lng: 29.85,
@@ -781,7 +781,7 @@ const locations = [
     },
     {
         id: 11,
-        name: "ניקולאייב (Mykolaiv)",
+        name: "ניקולאייב",
         nameShort: "ניקולאייב",
         lat: 46.975,
         lng: 31.9946,
@@ -834,13 +834,13 @@ const locations = [
 ];
 
 const routeCoords = [
-    [48.2917, 25.9353],  // Czernowitz
-    [47.8636, 28.9511],  // Marculesti
-    [48.2500, 28.6000],  // Cosăuți
-    [48.2378, 28.2769],  // Yampil
-    [48.3767, 28.8636],  // Kryzhopil
-    [48.5647, 29.2169],  // Obodivka
-    [48.3667, 29.5167],  // Bershad
+    [48.2917, 25.9353],
+    [47.8636, 28.9511],
+    [48.2500, 28.6000],
+    [48.2378, 28.2769],
+    [48.3767, 28.8636],
+    [48.5647, 29.2169],
+    [48.3667, 29.5167]
 ];
 
 let map;
@@ -862,7 +862,7 @@ function initMap() {
         maxZoom: 19
     }).addTo(map);
 
-    // Draw route line
+    // שרטוט קו מסלול
     const routeLine = L.polyline(routeCoords, {
         color: '#e74c3c',
         weight: 2,
@@ -871,7 +871,7 @@ function initMap() {
         className: 'route-path'
     }).addTo(map);
 
-    // Add markers
+    // הוספת סמנים
     locations.forEach((loc, index) => {
         const markerIcon = L.divIcon({
             className: 'custom-marker',
@@ -891,7 +891,7 @@ function initMap() {
             <div class="popup-desc">${loc.period}</div>
             <div>${loc.summary}</div>
             <br>
-            <span class="popup-link" onclick="openStory(${loc.id})">קראו את הסיפור המלא ←</span>
+            <span class="popup-link" onclick="openStory(${loc.id})">לחצו לקריאת הסיפור המלא</span>
         `, { maxWidth: 300 });
 
         marker.on('click', function() {
@@ -901,7 +901,7 @@ function initMap() {
         markers.push(marker);
     });
 
-    // Build timeline bar
+    // בניית סרגל ציר זמן
     buildTimeline();
 }
 
@@ -931,7 +931,7 @@ function openStory(id) {
 
     currentLocationId = id;
 
-    // Update header
+    // עדכון כותרת
     const typeColors = {
         childhood: '#4a90d9',
         deportation: '#e74c3c',
@@ -947,22 +947,22 @@ function openStory(id) {
 
     document.getElementById('story-content').innerHTML = loc.story;
 
-    // Nav buttons
+    // כפתורי ניווט
     const prevLoc = locations.find(l => l.id === id - 1);
     const nextLoc = locations.find(l => l.id === id + 1);
 
     document.getElementById('timeline-nav').innerHTML = `
-        <button ${prevLoc ? `onclick="openStory(${prevLoc.id})"` : 'disabled'}>${prevLoc ? `← ${prevLoc.nameShort}` : '← התחלה'}</button>
-        <button ${nextLoc ? `onclick="openStory(${nextLoc.id})"` : 'disabled'}>${nextLoc ? `${nextLoc.nameShort} →` : 'סוף →'}</button>
+        <button ${nextLoc ? `onclick="openStory(${nextLoc.id})"` : 'disabled'}>${nextLoc ? `התחנה הבאה: ${nextLoc.nameShort} →` : 'סוף המסע'}</button>
+        <button ${prevLoc ? `onclick="openStory(${prevLoc.id})"` : 'disabled'}>${prevLoc ? `← התחנה הקודמת: ${prevLoc.nameShort}` : 'תחילת המסע'}</button>
     `;
 
-    // Open panel
+    // פתיחת פאנל
     document.getElementById('story-panel').classList.add('open');
 
-    // Pan map
+    // מיקוד מפה
     map.flyTo([loc.lat, loc.lng], loc.id === 9 ? 11 : 9, { duration: 1.2 });
 
-    // Highlight timeline
+    // הדגשת ציר זמן
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     const timelineEl = document.getElementById(`timeline-${id}`);
     if (timelineEl) {
@@ -970,7 +970,7 @@ function openStory(id) {
         timelineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
-    // Open popup
+    // פתיחת חלונית
     if (markers[id]) {
         markers[id].openPopup();
     }
@@ -991,7 +991,7 @@ function enterMap() {
     initMap();
 }
 
-// Keyboard navigation
+// ניווט מקלדת
 document.addEventListener('keydown', function(e) {
     if (currentLocationId === null) return;
     if (e.key === 'Escape') closePanel();
