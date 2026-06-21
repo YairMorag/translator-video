@@ -6,7 +6,7 @@
     <title>עדות אניטה מדי – מסע משפחתי על מפת אירופה</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Frank+Ruhl+Libre:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap');
 
         * {
             margin: 0;
@@ -15,78 +15,263 @@
         }
 
         body {
-            font-family: 'Frank Ruhl Libre', 'David Libre', serif;
-            background: #1a1a2e;
-            color: #e0e0e0;
+            font-family: 'Heebo', 'Frank Ruhl Libre', sans-serif;
+            background: #0a0a14;
+            color: #e8e8f0;
             overflow: hidden;
             height: 100vh;
         }
 
-        #header {
+        /* ===== מסך פתיחה ===== */
+        #intro-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-bottom: 2px solid #c9a84c;
-            padding: 12px 24px;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2000;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 70%);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            justify-content: center;
+            transition: opacity 1s ease-out;
         }
 
-        #header h1 {
-            font-size: 1.4rem;
-            color: #c9a84c;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        #intro-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        #header .subtitle {
-            font-size: 0.85rem;
-            color: #8a8a9a;
-            margin-top: 2px;
+        #intro-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(201, 168, 76, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(201, 168, 76, 0.03) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        #header .nav-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.8rem;
-            color: #8a8a9a;
-        }
-
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        #map {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 0;
+        .intro-content {
+            text-align: center;
+            max-width: 680px;
+            padding: 40px;
+            position: relative;
             z-index: 1;
         }
 
+        .candle-container {
+            margin-bottom: 32px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .candle-flame {
+            width: 14px;
+            height: 30px;
+            background: radial-gradient(ellipse at center bottom, #ffd700, #ff8c00, #ff4500, transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin: 0 auto 4px;
+            animation: flicker 2s ease-in-out infinite alternate;
+            filter: blur(0.5px);
+            box-shadow: 0 0 20px rgba(255, 200, 0, 0.4), 0 0 60px rgba(255, 150, 0, 0.2);
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scaleY(1) scaleX(1) rotate(-1deg); opacity: 1; }
+            25% { transform: scaleY(1.1) scaleX(0.9) rotate(1deg); opacity: 0.95; }
+            50% { transform: scaleY(0.95) scaleX(1.05) rotate(-0.5deg); opacity: 1; }
+            75% { transform: scaleY(1.05) scaleX(0.95) rotate(1.5deg); opacity: 0.9; }
+        }
+
+        .candle-body {
+            width: 8px;
+            height: 40px;
+            background: linear-gradient(180deg, #f5f0e0, #d4c89a);
+            margin: 0 auto;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .candle-glow {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 200, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .intro-divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+            margin: 0 auto 28px;
+        }
+
+        .intro-content h1 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 2.6rem;
+            color: #f0e6c8;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .intro-content h2 {
+            font-size: 1.15rem;
+            color: #c9a84c;
+            font-weight: 300;
+            margin-bottom: 36px;
+            letter-spacing: 2px;
+        }
+
+        .intro-content p {
+            font-size: 1.05rem;
+            color: #9a9ab0;
+            line-height: 2;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .intro-content .enter-btn {
+            background: transparent;
+            border: 1.5px solid #c9a84c;
+            color: #c9a84c;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 14px 48px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.4s;
+            letter-spacing: 1px;
+            margin-top: 16px;
+        }
+
+        .intro-content .enter-btn:hover {
+            background: #c9a84c;
+            color: #0a0a14;
+            box-shadow: 0 0 40px rgba(201, 168, 76, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== כותרת עליונה ===== */
+        #header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 20, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            padding: 0 28px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #header .title-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        #header .title-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #header .mini-flame {
+            width: 6px;
+            height: 14px;
+            background: radial-gradient(ellipse at center bottom, #ffd700, #ff8c00, transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 2s ease-in-out infinite alternate;
+        }
+
+        #header .mini-candle {
+            width: 3px;
+            height: 12px;
+            background: linear-gradient(180deg, #f5f0e0, #d4c89a);
+            margin: 0 auto;
+            border-radius: 0 0 2px 2px;
+        }
+
+        #header h1 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 1.15rem;
+            color: #f0e6c8;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        #header .subtitle {
+            font-size: 0.75rem;
+            color: #6a6a80;
+            margin-top: 1px;
+            font-weight: 300;
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            color: #7a7a90;
+            font-weight: 300;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        /* ===== מפה ===== */
+        #map {
+            position: fixed;
+            top: 60px; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+        }
+
+        /* ===== פאנל סיפור ===== */
         #story-panel {
             position: fixed;
-            top: 56px;
-            right: -480px;
-            width: 480px;
+            top: 60px;
+            right: -520px;
+            width: 520px;
             bottom: 0;
             z-index: 1001;
-            background: linear-gradient(180deg, #1a1a2e 0%, #0f0f23 100%);
-            border-left: 2px solid #c9a84c;
+            background: rgba(12, 12, 22, 0.97);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-left: 1px solid rgba(201, 168, 76, 0.12);
             overflow-y: auto;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -8px 0 30px rgba(0,0,0,0.5);
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201, 168, 76, 0.3) transparent;
         }
+
+        #story-panel::-webkit-scrollbar { width: 5px; }
+        #story-panel::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.3); border-radius: 3px; }
 
         #story-panel.open {
             right: 0;
@@ -96,360 +281,336 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: rgba(12, 12, 22, 0.95);
+            backdrop-filter: blur(20px);
             border: none;
-            color: #c9a84c;
-            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+            color: #7a7a90;
+            font-size: 0.85rem;
             cursor: pointer;
-            padding: 12px 20px;
+            padding: 14px 24px;
             width: 100%;
             text-align: left;
-            border-bottom: 1px solid rgba(201, 168, 76, 0.3);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            font-family: inherit;
+            transition: color 0.2s;
         }
 
         #story-panel .close-btn:hover {
-            background: linear-gradient(135deg, #16213e, #1a1a2e);
+            color: #c9a84c;
         }
 
         .story-header {
-            padding: 24px 28px 16px;
-            border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+            padding: 32px 32px 24px;
+        }
+
+        .story-header .location-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .story-header .location-name {
-            font-size: 1.6rem;
-            color: #c9a84c;
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 2rem;
+            color: #f0e6c8;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            line-height: 1.3;
         }
 
         .story-header .location-period {
-            font-size: 0.9rem;
-            color: #7a7a9a;
-            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #6a6a80;
+            margin-bottom: 12px;
+            font-weight: 300;
         }
 
         .story-header .location-type {
             display: inline-block;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
         .story-content {
-            padding: 20px 28px 40px;
-            line-height: 1.9;
-            font-size: 1.05rem;
-            color: #d0d0e0;
+            padding: 8px 32px 48px;
+            line-height: 2;
+            font-size: 1.02rem;
+            color: #b8b8cc;
+            font-weight: 300;
         }
 
         .story-content p {
-            margin-bottom: 16px;
-            text-align: justify;
+            margin-bottom: 18px;
         }
 
         .story-content .quote {
-            border-right: 3px solid #c9a84c;
-            padding: 12px 20px;
-            margin: 20px 0;
-            background: rgba(201, 168, 76, 0.05);
-            border-radius: 0 8px 8px 0;
-            font-style: italic;
+            position: relative;
+            border: none;
+            padding: 20px 28px 20px 20px;
+            margin: 24px 0;
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.06) 0%, rgba(201, 168, 76, 0.02) 100%);
+            border-radius: 12px;
+            font-family: 'Frank Ruhl Libre', serif;
+            font-style: normal;
             color: #e8d5a0;
+            font-size: 1.05rem;
+            line-height: 2;
+            font-weight: 400;
+        }
+
+        .story-content .quote::before {
+            content: '״';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 2.5rem;
+            color: rgba(201, 168, 76, 0.2);
+            font-family: 'Frank Ruhl Libre', serif;
+            line-height: 1;
         }
 
         .story-content .family-detail {
-            background: rgba(70, 130, 180, 0.1);
-            border: 1px solid rgba(70, 130, 180, 0.2);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 16px 0;
-            font-size: 0.95rem;
+            background: rgba(100, 160, 220, 0.06);
+            border: 1px solid rgba(100, 160, 220, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-size: 0.92rem;
+            line-height: 1.8;
         }
 
         .story-content .family-detail strong {
-            color: #6aabdb;
+            color: #7ab5e0;
+            font-weight: 500;
         }
 
-        /* ניווט ציר זמן */
+        /* ניווט בין תחנות */
         .timeline-nav {
-            padding: 16px 28px 24px;
-            border-top: 1px solid rgba(201, 168, 76, 0.2);
+            padding: 20px 32px 28px;
+            border-top: 1px solid rgba(201, 168, 76, 0.08);
             display: flex;
             justify-content: space-between;
             gap: 12px;
         }
 
         .timeline-nav button {
-            background: rgba(201, 168, 76, 0.15);
-            border: 1px solid rgba(201, 168, 76, 0.3);
+            flex: 1;
+            background: rgba(201, 168, 76, 0.06);
+            border: 1px solid rgba(201, 168, 76, 0.12);
             color: #c9a84c;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 10px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 0.82rem;
+            font-weight: 400;
+            transition: all 0.25s;
         }
 
-        .timeline-nav button:hover {
-            background: rgba(201, 168, 76, 0.25);
+        .timeline-nav button:hover:not(:disabled) {
+            background: rgba(201, 168, 76, 0.12);
+            border-color: rgba(201, 168, 76, 0.25);
         }
 
         .timeline-nav button:disabled {
-            opacity: 0.3;
+            opacity: 0.2;
             cursor: default;
         }
 
-        /* סרגל ציר זמן תחתון */
+        /* ===== סרגל ציר זמן תחתון ===== */
         #timeline {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             z-index: 1002;
-            background: linear-gradient(0deg, #1a1a2e 0%, rgba(26, 26, 46, 0.95) 100%);
-            border-top: 1px solid rgba(201, 168, 76, 0.3);
-            padding: 10px 20px;
+            background: rgba(10, 10, 20, 0.93);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(201, 168, 76, 0.1);
+            padding: 12px 24px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
             overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #c9a84c transparent;
+            scrollbar-width: none;
         }
 
-        #timeline::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        #timeline::-webkit-scrollbar-thumb {
-            background: #c9a84c;
-            border-radius: 2px;
-        }
+        #timeline::-webkit-scrollbar { display: none; }
 
         .timeline-item {
             flex-shrink: 0;
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 8px 18px;
+            border-radius: 50px;
             font-size: 0.78rem;
             cursor: pointer;
-            border: 1px solid rgba(201, 168, 76, 0.3);
-            background: rgba(201, 168, 76, 0.08);
-            color: #c9a84c;
-            transition: all 0.2s;
+            border: 1px solid transparent;
+            background: transparent;
+            color: #6a6a80;
+            transition: all 0.25s;
             white-space: nowrap;
             font-family: inherit;
+            font-weight: 400;
         }
 
         .timeline-item:hover {
-            background: rgba(201, 168, 76, 0.2);
-            transform: translateY(-2px);
+            color: #c9a84c;
+            background: rgba(201, 168, 76, 0.06);
         }
 
         .timeline-item.active {
-            background: #c9a84c;
-            color: #1a1a2e;
-            font-weight: 700;
-            box-shadow: 0 2px 10px rgba(201, 168, 76, 0.4);
+            background: rgba(201, 168, 76, 0.12);
+            color: #c9a84c;
+            border-color: rgba(201, 168, 76, 0.25);
+            font-weight: 500;
         }
 
         .timeline-connector {
             flex-shrink: 0;
-            width: 20px;
-            height: 2px;
-            background: rgba(201, 168, 76, 0.3);
+            width: 16px;
+            height: 1px;
+            background: rgba(201, 168, 76, 0.15);
         }
 
-        /* סגנון סמנים */
-        .custom-marker {
-            position: relative;
-        }
+        /* ===== סמני מפה ===== */
+        .custom-marker { position: relative; }
 
         .marker-icon {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 0 20px rgba(201, 168, 76, 0.3);
+            border: 2.5px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 4px rgba(255,255,255,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 13px;
             color: #fff;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .marker-icon:hover {
-            transform: scale(1.3);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 30px rgba(201, 168, 76, 0.5);
+            transform: scale(1.35);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 6px rgba(255,255,255,0.12);
         }
 
         .marker-label {
             position: absolute;
-            top: -24px;
+            top: -28px;
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
-            font-size: 11px;
-            color: #fff;
-            background: rgba(26, 26, 46, 0.85);
-            padding: 2px 8px;
-            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #f0e6c8;
+            background: rgba(10, 10, 20, 0.88);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: 'Heebo', sans-serif;
+            pointer-events: none;
+            border: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        /* ===== חלונית מידע במפה ===== */
+        .leaflet-popup-content-wrapper {
+            background: rgba(12, 12, 22, 0.96);
+            backdrop-filter: blur(20px);
+            color: #e0e0e8;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 14px;
+            direction: rtl;
+            font-family: 'Heebo', sans-serif;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(12, 12, 22, 0.96);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+        }
+
+        .leaflet-popup-content {
+            margin: 16px 20px;
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .popup-title {
             font-family: 'Frank Ruhl Libre', serif;
-            pointer-events: none;
-        }
-
-        /* מסך פתיחה */
-        #intro-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2000;
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f23 50%, #16213e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s;
-        }
-
-        #intro-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .intro-content {
-            text-align: center;
-            max-width: 600px;
-            padding: 40px;
-        }
-
-        .intro-content h1 {
-            font-size: 2.2rem;
-            color: #c9a84c;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .intro-content h2 {
-            font-size: 1.2rem;
-            color: #8a8a9a;
-            font-weight: 400;
-            margin-bottom: 32px;
-        }
-
-        .intro-content p {
-            font-size: 1rem;
-            color: #b0b0c0;
-            line-height: 1.8;
-            margin-bottom: 24px;
-        }
-
-        .intro-content .enter-btn {
-            background: linear-gradient(135deg, #c9a84c, #b8942e);
-            border: none;
-            color: #1a1a2e;
-            font-size: 1.1rem;
+            color: #f0e6c8;
+            font-size: 1.15rem;
             font-weight: 700;
-            padding: 14px 40px;
-            border-radius: 8px;
+            margin-bottom: 4px;
+        }
+
+        .popup-desc {
+            color: #6a6a80;
+            font-size: 0.78rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .popup-summary {
+            color: #9a9ab0;
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+
+        .popup-link {
+            display: inline-block;
+            color: #c9a84c;
             cursor: pointer;
-            font-family: inherit;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 16px;
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: 50px;
+            transition: all 0.2s;
+            text-decoration: none;
         }
 
-        .intro-content .enter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 30px rgba(201, 168, 76, 0.5);
-        }
-
-        .intro-content .candle {
-            font-size: 3rem;
-            margin-bottom: 20px;
+        .popup-link:hover {
+            background: rgba(201, 168, 76, 0.1);
         }
 
         /* אנימציית קו מסלול */
         .route-path {
-            stroke-dasharray: 10, 5;
-            animation: dash 30s linear infinite;
+            stroke-dasharray: 8, 6;
+            animation: dash 40s linear infinite;
         }
 
         @keyframes dash {
             to { stroke-dashoffset: -1000; }
         }
 
-        /* התאמה למסכים קטנים */
+        /* ===== התאמה למסכים קטנים ===== */
         @media (max-width: 768px) {
             #story-panel {
                 width: 100%;
                 right: -100%;
             }
 
-            #header h1 {
-                font-size: 1.1rem;
-            }
-
-            .intro-content h1 {
-                font-size: 1.6rem;
-            }
-
-            .story-content {
-                font-size: 0.95rem;
-            }
-        }
-
-        /* עיצוב חלונית מידע */
-        .leaflet-popup-content-wrapper {
-            background: #1a1a2e;
-            color: #e0e0e0;
-            border: 1px solid #c9a84c;
-            border-radius: 8px;
-            direction: rtl;
-            font-family: 'Frank Ruhl Libre', serif;
-        }
-
-        .leaflet-popup-tip {
-            background: #1a1a2e;
-            border: 1px solid #c9a84c;
-        }
-
-        .leaflet-popup-content {
-            margin: 12px 16px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .popup-title {
-            color: #c9a84c;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .popup-desc {
-            color: #a0a0b0;
-            font-size: 0.82rem;
-            margin-bottom: 8px;
-        }
-
-        .popup-link {
-            color: #c9a84c;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: 0.85rem;
-        }
-
-        .popup-link:hover {
-            color: #e8d5a0;
+            #header h1 { font-size: 0.95rem; }
+            .legend { display: none; }
+            .intro-content h1 { font-size: 1.8rem; }
+            .intro-content { padding: 24px; }
+            .story-header .location-name { font-size: 1.5rem; }
+            .story-content { padding: 8px 24px 40px; font-size: 0.95rem; }
+            .story-header { padding: 24px 24px 20px; }
+            .timeline-nav { padding: 16px 24px 20px; }
         }
     </style>
 </head>
@@ -458,16 +619,21 @@
 <!-- מסך פתיחה -->
 <div id="intro-overlay">
     <div class="intro-content">
-        <div class="candle">🕯️</div>
-        <h1>עדות אניטה מדי – פיינארו פיינר</h1>
-        <h2>מסע משפחתי על מפת אירופה</h2>
+        <div class="candle-container">
+            <div class="candle-glow"></div>
+            <div class="candle-flame"></div>
+            <div class="candle-body"></div>
+        </div>
+        <div class="intro-divider"></div>
+        <h1>עדות אניטה מדי</h1>
+        <h2>מ ס ע &nbsp; מ ש פ ח ת י &nbsp; ע ל &nbsp; מ פ ת &nbsp; א י ר ו פ ה</h2>
         <p>
             ורד פיינארו, ילידת צ'רנוביץ שברומניה, מספרת את סיפור חייה –
             מילדות אידילית בבית משפחתי חם, דרך הגירוש לטרנסניסטריה,
             חיי הגטו בברשד, ועד לשחרור ובניית חיים חדשים.
         </p>
-        <p>
-            לחצו על הנקודות במפה כדי לגלות את הסיפור המשפחתי שמאחורי כל מקום.
+        <p style="font-size:0.9rem; color:#6a6a80;">
+            לחצו על הנקודות במפה כדי לגלות את הסיפור שמאחורי כל מקום
         </p>
         <button class="enter-btn" onclick="enterMap()">כניסה למפה</button>
     </div>
@@ -475,15 +641,23 @@
 
 <!-- כותרת -->
 <div id="header">
-    <div>
-        <h1>🕯️ עדות אניטה מדי – מסע משפחתי</h1>
-        <div class="subtitle">ראיון מלא – 1 בדצמבר 2009, חיפה</div>
+    <div class="title-area">
+        <div class="title-icon">
+            <div>
+                <div class="mini-flame"></div>
+                <div class="mini-candle"></div>
+            </div>
+        </div>
+        <div>
+            <h1>עדות אניטה מדי – מסע משפחתי</h1>
+            <div class="subtitle">ראיון מלא · 1 בדצמבר 2009 · חיפה</div>
+        </div>
     </div>
-    <div class="nav-info">
-        <span><span class="legend-dot" style="background:#4a90d9"></span> חיי הילדות</span>
-        <span><span class="legend-dot" style="background:#e74c3c"></span> דרך הגירוש</span>
-        <span><span class="legend-dot" style="background:#8b0000"></span> גטו ומחנות</span>
-        <span><span class="legend-dot" style="background:#27ae60"></span> לאחר המלחמה</span>
+    <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#4a90d9; color:#4a90d9;"></span> ילדות</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#e74c3c; color:#e74c3c;"></span> גירוש</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#8b0000; color:#8b0000;"></span> גטו ומחנות</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#27ae60; color:#27ae60;"></span> לאחר המלחמה</span>
     </div>
 </div>
 
@@ -492,14 +666,14 @@
 
 <!-- פאנל סיפור -->
 <div id="story-panel">
-    <button class="close-btn" onclick="closePanel()">✕ <span style="font-size:0.9rem;">סגירה</span></button>
+    <button class="close-btn" onclick="closePanel()">✕ סגירה</button>
     <div class="story-header" id="story-header"></div>
     <div class="story-content" id="story-content"></div>
     <div class="timeline-nav" id="timeline-nav"></div>
 </div>
 
 <!-- סרגל ציר זמן -->
-<div id="timeline" id="timeline-bar"></div>
+<div id="timeline"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -524,9 +698,7 @@ const locations = [
 
             <p>הבית היה בית פרטי עם שלושה חדרים יפים, מטבח גדול, וורנדה עם זכוכיות צבעוניות שאבא עשה. מאחורי הבית היה שטח ענק עם מחסן עץ ועץ ענק – "האימפריה" של הילדות.</p>
 
-            <div class="quote">
-                "אבא שלי לא היה יוצא מהבית בלי נשיקה קודם לאמא ואחר כך לילדים. באותו הדבר שהוא חזר."
-            </div>
+            <div class="quote">אבא שלי לא היה יוצא מהבית בלי נשיקה קודם לאמא ואחר כך לילדים. באותו הדבר שהוא חזר.</div>
 
             <p>למשפחה הייתה חנות בשר כשרה ברחוב נייוילדגאסה. אבא היה מתפלל כל בוקר עם תפילין, והבית היה מסורתי. בבית דיברו גרמנית – "גרמנית וינאית" – ואמא כתבה וקראה בכתב גותי.</p>
 
@@ -538,9 +710,7 @@ const locations = [
 
             <p>ב-1940 נכנסו הרוסים. המשפחה קיבלה "פספורט 39" – סימן מסוכן שאיפיין "קפיטליסטים" בעלי רכוש. אמא חלמה שסבתה עברה ליד הבית ולא לקחה אותם – ולמחרת אכן דילגו עליהם. ב-1941 חזרו הרומנים עם שלושה ימים של פרעות, ואז הוקם הגטו.</p>
 
-            <div class="quote">
-                "אבא אמר שאנחנו נוסעים ולא יכול להיות יותר גרוע. היה יותר גרוע."
-            </div>
+            <div class="quote">אבא אמר שאנחנו נוסעים ולא יכול להיות יותר גרוע. היה יותר גרוע.</div>
         `
     },
     {
@@ -578,9 +748,7 @@ const locations = [
         story: `
             <p>קמפולונג – עיר קייט (עיר נופש) שבה בילתה המשפחה את חופשות הקיץ. אמא הייתה נוסעת עם הילדות לשבועיים, שוכרת חדר אצל משפחה מקומית.</p>
 
-            <div class="quote">
-                "עשינו משחקים, היינו הולכות, היה גן יפה, אני זוכרת, היו כל מיני משחקים... נופש. זומר פרישה – התרעננות של קיץ."
-            </div>
+            <div class="quote">עשינו משחקים, היינו הולכות, היה גן יפה, אני זוכרת, היו כל מיני משחקים... נופש. זומר פרישה – התרעננות של קיץ.</div>
 
             <p>אבא היה נשאר בצ'רנוביץ לנהל את החנות. ימים של שלווה ושגרה משפחתית – לפני שהעולם התהפך.</p>
         `
@@ -616,9 +784,7 @@ const locations = [
         story: `
             <p>מרקולשט בבסרביה היה התחנה הראשונה אחרי הנסיעה בקרונות הבקר מצ'רנוביץ. המשפחה הגיעה בקרון צפוף – כל משפחת קורצברג, כל האחים והאחיות, ביחד.</p>
 
-            <div class="quote">
-                "אני ואחותי ועוד כמה ילדים, רצנו מבית לבית, לראות את המתים. על יד כל בית היו המשפחה הרוגה."
-            </div>
+            <div class="quote">אני ואחותי ועוד כמה ילדים, רצנו מבית לבית, לראות את המתים. על יד כל בית היו המשפחה הרוגה.</div>
 
             <p>במרקולשט הוקם "מסלול שוד" – שורה ארוכה שדרכה עברו כל המגורשים ונאלצו למסור את כל חפצי הערך שלהם. אמא הצליחה להסתיר כמה דברים בתוך שמיכת הפוך.</p>
 
@@ -639,9 +805,7 @@ const locations = [
         story: `
             <p>יער קוסאוץ היה אחד הרגעים המפחידים ביותר בדרך. שמועות סיפרו שבטרנספורט הקודם נרצחו שם כל הגברים, ושגשר על הנהר נפתח וכולם טבעו.</p>
 
-            <div class="quote">
-                "כל הפחד שלנו היה קוסאוץ. ששמענו. היו שמועות ששם... זה סוף הדרך."
-            </div>
+            <div class="quote">כל הפחד שלנו היה קוסאוץ. ששמענו. היו שמועות ששם... זה סוף הדרך.</div>
 
             <p>בהגעה ליער, פקדו "כל הגברים בצד אחד". אמא התחננה שאבא יסתתר בין החבילות – "אתה לא הולך!" – אבל אי אפשר היה. לפי השמועות, בזכות הקצין שהוביל את הטרנספורט, שהייתה לו חברה יהודיה, הגברים שלהם נשארו בחיים – שלא כמו בטרנספורט הקודם.</p>
 
@@ -662,9 +826,7 @@ const locations = [
         story: `
             <p>ביאמפול חצו המגורשים את נהר הנסטר על גשר – הכניסה לטרנסניסטריה, השטח שנכבש על ידי הרומנים מהברית המועצות. רגע מכונן של חרדה.</p>
 
-            <div class="quote">
-                "שמענו שהגשר נפתח וכולם נטבעו. ואם זה היה נכון או לא נכון, לא יודעים."
-            </div>
+            <div class="quote">שמענו שהגשר נפתח וכולם נטבעו. ואם זה היה נכון או לא נכון, לא יודעים.</div>
 
             <p>מעבר הגשר עבר "די חלק", אך הפחד היה עצום. מעבר לנהר המתינה מציאות חדשה – שטחי אוקראינה הכבושים, בוץ אינסופי של בסרביה, וצעידה של ימים נוספים.</p>
         `
@@ -685,9 +847,7 @@ const locations = [
 
             <p>הצעידה נמשכה כשלושה ימים ולילות. בלילות ישנו בשדה הפתוח. הייתה קרה, אך לבשו עדיין בגדים טובים. האווירה הייתה של אדישות ופחד.</p>
 
-            <div class="quote">
-                "הייתה שמועה שאנחנו נגיע למקום איפה ש... זה לא כל כך נורא. שם נתיישב. זה כאילו השליה הייתה."
-            </div>
+            <div class="quote">הייתה שמועה שאנחנו נגיע למקום איפה ש... זה לא כל כך נורא. שם נתיישב. זה כאילו השליה הייתה.</div>
         `
     },
     {
@@ -704,9 +864,7 @@ const locations = [
         story: `
             <p>עובדובקה נמצאה 23 ק"מ מברשד. שם היו שלושה קולחוזים, ולכל אחד מהם – קבר אחים. מתים נזרקו לבורות.</p>
 
-            <div class="quote">
-                "אמא שלי עשתה חשבון לפי שאבא שלה גורש, הוא צריך להיות כאן. ואבא חיפש ומצא... בין הגופות... את סבא שלי."
-            </div>
+            <div class="quote">אמא שלי עשתה חשבון לפי שאבא שלה גורש, הוא צריך להיות כאן. ואבא חיפש ומצא... בין הגופות... את סבא שלי.</div>
 
             <p>אבא מצא את סבא ידיליף קליין שנפטר שם – אולי שלוש או ארבע שעות קודם. הקש סביב הגופות היה זוחל מכינים שברחו מהמתים – כינים שהפיצו טיפוס.</p>
 
@@ -733,25 +891,19 @@ const locations = [
 
             <p>תוך 21 יום מההגעה, אבא מקס נפטר מטיפוס. לאניטה היו שלושת סוגי הטיפוס. כל המשפחה חלתה. שלושה חודשים שכבו חולים.</p>
 
-            <div class="quote">
-                "הוא השיט את היד ואמר לגברת קורצברג – היינו צריכים למכור את המכנסיים הישנים ולהישאר בצ'רנוביץ."
-            </div>
+            <div class="quote">הוא השיט את היד ואמר לגברת קורצברג – היינו צריכים למכור את המכנסיים הישנים ולהישאר בצ'רנוביץ.</div>
 
             <p>העגלה עם הסוס האדום ("רויטע פערדל") הייתה סמל המוות – אוספת גופות. אניטה עמדה בחלון וראתה איך זרקו את אבא לעגלה.</p>
 
             <p>אחרי ההחלמה, אמא סלי קמה על רגליה. היא לא דיברה שנה שלמה – רק בכתה בלילות. אבל ביום – נתנה לילדות תקווה.</p>
 
-            <div class="quote">
-                "אמא אמרה: כשניגיע לפלסטינה, קודם נאכל קליפות תפוחי אדמה כמה שנרצה, אחר כך מליגה, ובסוף לחם כמה שנרצה. ואנחנו צחקנו."
-            </div>
+            <div class="quote">אמא אמרה: כשניגיע לפלסטינה, קודם נאכל קליפות תפוחי אדמה כמה שנרצה, אחר כך מליגה, ובסוף לחם כמה שנרצה. ואנחנו צחקנו.</div>
 
             <p>אמא הרוויחה קצת ממכירת לחם בשוק (טולצ'וק) ומהגדת עתידות בקלפים. דוד אחד עבד בקומנדטורה הרומנית והביא אוכל. אניטה יצאה מהגטו מחופשת כגויה לקנות תפוחים בכפרים.</p>
 
             <p>הגטו נוהל על ידי "אובשינה" בראשות ד"ר קורן, שפעל להגן על היהודים. משטרה יהודית פיזרה אנשים כשגרמנים או רומנים הגיעו. החורף היה קשה – קרח, כינים, ומוות.</p>
 
-            <div class="quote">
-                "אמרו שנכנסנו כמעט מאה אלף איש, ואחרי שלושה חודשים נשארו עשרת אלפים."
-            </div>
+            <div class="quote">אמרו שנכנסנו כמעט מאה אלף איש, ואחרי שלושה חודשים נשארו עשרת אלפים.</div>
 
             <p>למרות הכל – ילדים שיחקו קלאס, אניטה סרגה גרביים לגויים, והחיים המשיכו מרגע לרגע.</p>
         `
@@ -770,9 +922,7 @@ const locations = [
         story: `
             <p>בוק – מקום שאליו גורשו חלק מיהודי צ'רנוביץ, כולל שכנים ממש מהבית. שם פעל בית חולים לחולי נפש שנרצחו.</p>
 
-            <div class="quote">
-                "הכניסו אותם לבוק, ובאו עם מכונת ירייה וירו בהם. הבוק היה אדום מהדם שלהם."
-            </div>
+            <div class="quote">הכניסו אותם לבוק, ובאו עם מכונת ירייה וירו בהם. הבוק היה אדום מהדם שלהם.</div>
 
             <p>אמא של אניטה נתנה את המעיל האחרון של אבא לגוי כדי שיבריח את משפחת דרוקמן מבוק לברשד – והוא הצליח להציל ארבע נפשות.</p>
 
@@ -795,9 +945,7 @@ const locations = [
 
             <p>דוד אחר, שעבד בקומנדטורה הרומנית ותמך בכל המשפחה, הוציא אותו מהשורה – והאח הצעיר נכנס במקומו, כי ספרו ראשים וצריך היה למלא את המספר.</p>
 
-            <div class="quote">
-                "לא ידענו מה הרגע מביא. אנחנו חיינו באי-וודאות. ממש."
-            </div>
+            <div class="quote">לא ידענו מה הרגע מביא. אנחנו חיינו באי-וודאות. ממש.</div>
 
             <p>מי ששרד את עבודת הכפייה – חזר. אך רבים לא שבו.</p>
         `
@@ -818,9 +966,7 @@ const locations = [
 
             <p>ב-1 בדצמבר 2009, בגיל 79, ישבה אניטה בביתה בחיפה ונתנה עדות מפורטת על חייה לשרה רוזן.</p>
 
-            <div class="quote">
-                "יש כוח בתוך אדם... מה שעברתי שם, עברתי."
-            </div>
+            <div class="quote">יש כוח בתוך אדם... מה שעברתי שם, עברתי.</div>
 
             <p>היא חזרה לבקר בצ'רנוביץ ובברשד – ראתה את הבית שאבא בנה (ללא העץ הענק שנעלם), את הגטו ההרוס, ואת המקומות שבהם עברה את הילדות ואת הגיהנום.</p>
 
@@ -857,21 +1003,19 @@ function initMap() {
     });
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: 'abcd',
         maxZoom: 19
     }).addTo(map);
 
-    // שרטוט קו מסלול
     const routeLine = L.polyline(routeCoords, {
-        color: '#e74c3c',
-        weight: 2,
-        opacity: 0.5,
-        dashArray: '10, 8',
+        color: '#c9a84c',
+        weight: 1.5,
+        opacity: 0.3,
+        dashArray: '8, 6',
         className: 'route-path'
     }).addTo(map);
 
-    // הוספת סמנים
     locations.forEach((loc, index) => {
         const markerIcon = L.divIcon({
             className: 'custom-marker',
@@ -879,9 +1023,9 @@ function initMap() {
                 <div class="marker-label">${loc.nameShort}</div>
                 <div class="marker-icon" style="background:${loc.color};">${index + 1}</div>
             `,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14],
-            popupAnchor: [0, -20]
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -22]
         });
 
         const marker = L.marker([loc.lat, loc.lng], { icon: markerIcon }).addTo(map);
@@ -889,10 +1033,9 @@ function initMap() {
         marker.bindPopup(`
             <div class="popup-title">${loc.name}</div>
             <div class="popup-desc">${loc.period}</div>
-            <div>${loc.summary}</div>
-            <br>
+            <div class="popup-summary">${loc.summary}</div>
             <span class="popup-link" onclick="openStory(${loc.id})">לחצו לקריאת הסיפור המלא</span>
-        `, { maxWidth: 300 });
+        `, { maxWidth: 280 });
 
         marker.on('click', function() {
             openStory(loc.id);
@@ -901,7 +1044,6 @@ function initMap() {
         markers.push(marker);
     });
 
-    // בניית סרגל ציר זמן
     buildTimeline();
 }
 
@@ -925,29 +1067,28 @@ function buildTimeline() {
     });
 }
 
+const typeColors = {
+    childhood: '#4a90d9',
+    deportation: '#e74c3c',
+    ghetto: '#8b0000',
+    after: '#27ae60'
+};
+
 function openStory(id) {
     const loc = locations.find(l => l.id === id);
     if (!loc) return;
 
     currentLocationId = id;
 
-    // עדכון כותרת
-    const typeColors = {
-        childhood: '#4a90d9',
-        deportation: '#e74c3c',
-        ghetto: '#8b0000',
-        after: '#27ae60'
-    };
-
     document.getElementById('story-header').innerHTML = `
+        <div class="location-number" style="background:${typeColors[loc.type]};">${id + 1}</div>
         <div class="location-name">${loc.name}</div>
         <div class="location-period">${loc.period}</div>
-        <span class="location-type" style="background:${typeColors[loc.type]}22; color:${typeColors[loc.type]}; border:1px solid ${typeColors[loc.type]}44;">${loc.typeLabel}</span>
+        <span class="location-type" style="background:${typeColors[loc.type]}15; color:${typeColors[loc.type]}; border:1px solid ${typeColors[loc.type]}30;">${loc.typeLabel}</span>
     `;
 
     document.getElementById('story-content').innerHTML = loc.story;
 
-    // כפתורי ניווט
     const prevLoc = locations.find(l => l.id === id - 1);
     const nextLoc = locations.find(l => l.id === id + 1);
 
@@ -956,13 +1097,10 @@ function openStory(id) {
         <button ${prevLoc ? `onclick="openStory(${prevLoc.id})"` : 'disabled'}>${prevLoc ? `← התחנה הקודמת: ${prevLoc.nameShort}` : 'תחילת המסע'}</button>
     `;
 
-    // פתיחת פאנל
     document.getElementById('story-panel').classList.add('open');
 
-    // מיקוד מפה
     map.flyTo([loc.lat, loc.lng], loc.id === 9 ? 11 : 9, { duration: 1.2 });
 
-    // הדגשת ציר זמן
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     const timelineEl = document.getElementById(`timeline-${id}`);
     if (timelineEl) {
@@ -970,7 +1108,6 @@ function openStory(id) {
         timelineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
-    // פתיחת חלונית
     if (markers[id]) {
         markers[id].openPopup();
     }
@@ -987,11 +1124,10 @@ function enterMap() {
     document.getElementById('intro-overlay').classList.add('hidden');
     setTimeout(() => {
         document.getElementById('intro-overlay').style.display = 'none';
-    }, 800);
+    }, 1000);
     initMap();
 }
 
-// ניווט מקלדת
 document.addEventListener('keydown', function(e) {
     if (currentLocationId === null) return;
     if (e.key === 'Escape') closePanel();
