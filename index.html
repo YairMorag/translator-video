@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עדות אניטה מדי – מסע משפחתי על מפת אירופה</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', 'Frank Ruhl Libre', sans-serif;
+            background: #0a0a14;
+            color: #e8e8f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ===== מסך פתיחה ===== */
+        #intro-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2000;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease-out;
+        }
+
+        #intro-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #intro-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(201, 168, 76, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(201, 168, 76, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .intro-content {
+            text-align: center;
+            max-width: 680px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .candle-container {
+            margin-bottom: 32px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .candle-flame {
+            width: 14px;
+            height: 30px;
+            background: radial-gradient(ellipse at center bottom, #ffd700, #ff8c00, #ff4500, transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin: 0 auto 4px;
+            animation: flicker 2s ease-in-out infinite alternate;
+            filter: blur(0.5px);
+            box-shadow: 0 0 20px rgba(255, 200, 0, 0.4), 0 0 60px rgba(255, 150, 0, 0.2);
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scaleY(1) scaleX(1) rotate(-1deg); opacity: 1; }
+            25% { transform: scaleY(1.1) scaleX(0.9) rotate(1deg); opacity: 0.95; }
+            50% { transform: scaleY(0.95) scaleX(1.05) rotate(-0.5deg); opacity: 1; }
+            75% { transform: scaleY(1.05) scaleX(0.95) rotate(1.5deg); opacity: 0.9; }
+        }
+
+        .candle-body {
+            width: 8px;
+            height: 40px;
+            background: linear-gradient(180deg, #f5f0e0, #d4c89a);
+            margin: 0 auto;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .candle-glow {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 200, 0, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .intro-divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+            margin: 0 auto 28px;
+        }
+
+        .intro-content h1 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 2.6rem;
+            color: #f0e6c8;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .intro-content h2 {
+            font-size: 1.15rem;
+            color: #c9a84c;
+            font-weight: 300;
+            margin-bottom: 36px;
+            letter-spacing: 2px;
+        }
+
+        .intro-content p {
+            font-size: 1.05rem;
+            color: #9a9ab0;
+            line-height: 2;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .intro-content .enter-btn {
+            background: transparent;
+            border: 1.5px solid #c9a84c;
+            color: #c9a84c;
+            font-size: 1.05rem;
+            font-weight: 500;
+            padding: 14px 48px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.4s;
+            letter-spacing: 1px;
+            margin-top: 16px;
+        }
+
+        .intro-content .enter-btn:hover {
+            background: #c9a84c;
+            color: #0a0a14;
+            box-shadow: 0 0 40px rgba(201, 168, 76, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== כותרת עליונה ===== */
+        #header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 20, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            padding: 0 28px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #header .title-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        #header .title-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #header .mini-flame {
+            width: 6px;
+            height: 14px;
+            background: radial-gradient(ellipse at center bottom, #ffd700, #ff8c00, transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 2s ease-in-out infinite alternate;
+        }
+
+        #header .mini-candle {
+            width: 3px;
+            height: 12px;
+            background: linear-gradient(180deg, #f5f0e0, #d4c89a);
+            margin: 0 auto;
+            border-radius: 0 0 2px 2px;
+        }
+
+        #header h1 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 1.15rem;
+            color: #f0e6c8;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        #header .subtitle {
+            font-size: 0.75rem;
+            color: #6a6a80;
+            margin-top: 1px;
+            font-weight: 300;
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            color: #7a7a90;
+            font-weight: 300;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        /* ===== מפה ===== */
+        #map {
+            position: fixed;
+            top: 60px; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+        }
+
+        /* ===== פאנל סיפור ===== */
+        #story-panel {
+            position: fixed;
+            top: 60px;
+            right: -520px;
+            width: 520px;
+            bottom: 0;
+            z-index: 1001;
+            background: rgba(12, 12, 22, 0.97);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-left: 1px solid rgba(201, 168, 76, 0.12);
+            overflow-y: auto;
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201, 168, 76, 0.3) transparent;
+        }
+
+        #story-panel::-webkit-scrollbar { width: 5px; }
+        #story-panel::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.3); border-radius: 3px; }
+
+        #story-panel.open {
+            right: 0;
+        }
+
+        #story-panel .close-btn {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(12, 12, 22, 0.95);
+            backdrop-filter: blur(20px);
+            border: none;
+            border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+            color: #7a7a90;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 14px 24px;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            transition: color 0.2s;
+        }
+
+        #story-panel .close-btn:hover {
+            color: #c9a84c;
+        }
+
+        .story-header {
+            padding: 32px 32px 24px;
+        }
+
+        .story-header .location-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .story-header .location-name {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 2rem;
+            color: #f0e6c8;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .story-header .location-period {
+            font-size: 0.85rem;
+            color: #6a6a80;
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+
+        .story-header .location-type {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .story-content {
+            padding: 8px 32px 48px;
+            line-height: 2;
+            font-size: 1.02rem;
+            color: #b8b8cc;
+            font-weight: 300;
+        }
+
+        .story-content p {
+            margin-bottom: 18px;
+        }
+
+        .story-content .quote {
+            position: relative;
+            border: none;
+            padding: 20px 28px 20px 20px;
+            margin: 24px 0;
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.06) 0%, rgba(201, 168, 76, 0.02) 100%);
+            border-radius: 12px;
+            font-family: 'Frank Ruhl Libre', serif;
+            font-style: normal;
+            color: #e8d5a0;
+            font-size: 1.05rem;
+            line-height: 2;
+            font-weight: 400;
+        }
+
+        .story-content .quote::before {
+            content: '״';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 2.5rem;
+            color: rgba(201, 168, 76, 0.2);
+            font-family: 'Frank Ruhl Libre', serif;
+            line-height: 1;
+        }
+
+        .story-content .family-detail {
+            background: rgba(100, 160, 220, 0.06);
+            border: 1px solid rgba(100, 160, 220, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+
+        .story-content .family-detail strong {
+            color: #7ab5e0;
+            font-weight: 500;
+        }
+
+        /* ניווט בין תחנות */
+        .timeline-nav {
+            padding: 20px 32px 28px;
+            border-top: 1px solid rgba(201, 168, 76, 0.08);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .timeline-nav button {
+            flex: 1;
+            background: rgba(201, 168, 76, 0.06);
+            border: 1px solid rgba(201, 168, 76, 0.12);
+            color: #c9a84c;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 400;
+            transition: all 0.25s;
+        }
+
+        .timeline-nav button:hover:not(:disabled) {
+            background: rgba(201, 168, 76, 0.12);
+            border-color: rgba(201, 168, 76, 0.25);
+        }
+
+        .timeline-nav button:disabled {
+            opacity: 0.2;
+            cursor: default;
+        }
+
+        /* ===== סרגל ציר זמן תחתון ===== */
+        #timeline {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            z-index: 1002;
+            background: rgba(10, 10, 20, 0.93);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(201, 168, 76, 0.1);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        #timeline::-webkit-scrollbar { display: none; }
+
+        .timeline-item {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            background: transparent;
+            color: #6a6a80;
+            transition: all 0.25s;
+            white-space: nowrap;
+            font-family: inherit;
+            font-weight: 400;
+        }
+
+        .timeline-item:hover {
+            color: #c9a84c;
+            background: rgba(201, 168, 76, 0.06);
+        }
+
+        .timeline-item.active {
+            background: rgba(201, 168, 76, 0.12);
+            color: #c9a84c;
+            border-color: rgba(201, 168, 76, 0.25);
+            font-weight: 500;
+        }
+
+        .timeline-connector {
+            flex-shrink: 0;
+            width: 16px;
+            height: 1px;
+            background: rgba(201, 168, 76, 0.15);
+        }
+
+        /* ===== סמני מפה ===== */
+        .custom-marker { position: relative; }
+
+        .marker-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2.5px solid rgba(255,255,255,0.9);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 4px rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .marker-icon:hover {
+            transform: scale(1.35);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 6px rgba(255,255,255,0.12);
+        }
+
+        .marker-label {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 500;
+            color: #f0e6c8;
+            background: rgba(10, 10, 20, 0.88);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-family: 'Heebo', sans-serif;
+            pointer-events: none;
+            border: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        /* ===== חלונית מידע במפה ===== */
+        .leaflet-popup-content-wrapper {
+            background: rgba(12, 12, 22, 0.96);
+            backdrop-filter: blur(20px);
+            color: #e0e0e8;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            border-radius: 14px;
+            direction: rtl;
+            font-family: 'Heebo', sans-serif;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(12, 12, 22, 0.96);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+        }
+
+        .leaflet-popup-content {
+            margin: 16px 20px;
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .popup-title {
+            font-family: 'Frank Ruhl Libre', serif;
+            color: #f0e6c8;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .popup-desc {
+            color: #6a6a80;
+            font-size: 0.78rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .popup-summary {
+            color: #9a9ab0;
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+
+        .popup-link {
+            display: inline-block;
+            color: #c9a84c;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 16px;
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: 50px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .popup-link:hover {
+            background: rgba(201, 168, 76, 0.1);
+        }
+
+        /* אנימציית קו מסלול */
+        .route-path {
+            stroke-dasharray: 8, 6;
+            animation: dash 40s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        /* ===== התאמה למסכים קטנים ===== */
+        @media (max-width: 768px) {
+            #story-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            #header h1 { font-size: 0.95rem; }
+            .legend { display: none; }
+            .intro-content h1 { font-size: 1.8rem; }
+            .intro-content { padding: 24px; }
+            .story-header .location-name { font-size: 1.5rem; }
+            .story-content { padding: 8px 24px 40px; font-size: 0.95rem; }
+            .story-header { padding: 24px 24px 20px; }
+            .timeline-nav { padding: 16px 24px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- מסך פתיחה -->
+<div id="intro-overlay">
+    <div class="intro-content">
+        <div class="candle-container">
+            <div class="candle-glow"></div>
+            <div class="candle-flame"></div>
+            <div class="candle-body"></div>
+        </div>
+        <div class="intro-divider"></div>
+        <h1>עדות אניטה מדי</h1>
+        <h2>מ ס ע &nbsp; מ ש פ ח ת י &nbsp; ע ל &nbsp; מ פ ת &nbsp; א י ר ו פ ה</h2>
+        <p>
+            ורד פיינארו, ילידת צ'רנוביץ שברומניה, מספרת את סיפור חייה –
+            מילדות אידילית בבית משפחתי חם, דרך הגירוש לטרנסניסטריה,
+            חיי הגטו בברשד, ועד לשחרור ובניית חיים חדשים.
+        </p>
+        <p style="font-size:0.9rem; color:#6a6a80;">
+            לחצו על הנקודות במפה כדי לגלות את הסיפור שמאחורי כל מקום
+        </p>
+        <button class="enter-btn" onclick="enterMap()">כניסה למפה</button>
+    </div>
+</div>
+
+<!-- כותרת -->
+<div id="header">
+    <div class="title-area">
+        <div class="title-icon">
+            <div>
+                <div class="mini-flame"></div>
+                <div class="mini-candle"></div>
+            </div>
+        </div>
+        <div>
+            <h1>עדות אניטה מדי – מסע משפחתי</h1>
+            <div class="subtitle">ראיון מלא · 1 בדצמבר 2009 · חיפה</div>
+        </div>
+    </div>
+    <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#4a90d9; color:#4a90d9;"></span> ילדות</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#e74c3c; color:#e74c3c;"></span> גירוש</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#8b0000; color:#8b0000;"></span> גטו ומחנות</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#27ae60; color:#27ae60;"></span> לאחר המלחמה</span>
+    </div>
+</div>
+
+<!-- מפה -->
+<div id="map"></div>
+
+<!-- פאנל סיפור -->
+<div id="story-panel">
+    <button class="close-btn" onclick="closePanel()">✕ סגירה</button>
+    <div class="story-header" id="story-header"></div>
+    <div class="story-content" id="story-content"></div>
+    <div class="timeline-nav" id="timeline-nav"></div>
+</div>
+
+<!-- סרגל ציר זמן -->
+<div id="timeline"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const locations = [
+    {
+        id: 0,
+        name: "צ'רנוביץ",
+        nameShort: "צ'רנוביץ",
+        lat: 48.2917,
+        lng: 25.9353,
+        period: "1930 – אוקטובר 1941",
+        type: "childhood",
+        typeLabel: "ילדות ובית",
+        color: "#4a90d9",
+        summary: "עיר הולדת – ילדות אידילית במשפחה חמה",
+        story: `
+            <p>ורד פיינארו (אניטה מדי) נולדה בצ'רנוביץ ב-21 ביולי 1930. המשפחה גרה ברחוב וולנגאסה 80 (בתקופה הרומנית – פטרו ראריש 80), בשכונה חדשה שבנה אביה מקס קורצברג.</p>
+
+            <div class="family-detail">
+                <strong>המשפחה הגרעינית:</strong> אבא – מקס קורצברג (נולד 1904 בלוקוויץ), אמא – סלי (נולדה 1904), אניטה ואחותה הקטנה מיליטה (צעירה ב-6 שנים).
+            </div>
+
+            <p>הבית היה בית פרטי עם שלושה חדרים יפים, מטבח גדול, וורנדה עם זכוכיות צבעוניות שאבא עשה. מאחורי הבית היה שטח ענק עם מחסן עץ ועץ ענק – "האימפריה" של הילדות.</p>
+
+            <div class="quote">אבא שלי לא היה יוצא מהבית בלי נשיקה קודם לאמא ואחר כך לילדים. באותו הדבר שהוא חזר.</div>
+
+            <p>למשפחה הייתה חנות בשר כשרה ברחוב נייוילדגאסה. אבא היה מתפלל כל בוקר עם תפילין, והבית היה מסורתי. בבית דיברו גרמנית – "גרמנית וינאית" – ואמא כתבה וקראה בכתב גותי.</p>
+
+            <p>אניטה למדה בבית ספר רומני (מייזל שולה), הייתה תלמידה מצטיינת. הייתה להם "קינדר פרוילן" – מורה פרטית שבדקה שיעורי בית ולימדה גרמנית וספרות. אבא לימד אותה גם עברית.</p>
+
+            <div class="family-detail">
+                <strong>המשפחה המורחבת:</strong> לאבא היו 7 אחים ואחיות (לייזר, שרול, מוישה, חיים, גיזה, לוטי, רבקה). לאמא – 3 אחים (מוקי, פרויקי, דלי) ואחיות (רוזה, רגינה, ברטה). כולם גרו בצ'רנוביץ או בסביבתה.
+            </div>
+
+            <p>ב-1940 נכנסו הרוסים. המשפחה קיבלה "פספורט 39" – סימן מסוכן שאיפיין "קפיטליסטים" בעלי רכוש. אמא חלמה שסבתה עברה ליד הבית ולא לקחה אותם – ולמחרת אכן דילגו עליהם. ב-1941 חזרו הרומנים עם שלושה ימים של פרעות, ואז הוקם הגטו.</p>
+
+            <div class="quote">אבא אמר שאנחנו נוסעים ולא יכול להיות יותר גרוע. היה יותר גרוע.</div>
+        `
+    },
+    {
+        id: 1,
+        name: "לוקוויץ",
+        nameShort: "לוקוויץ",
+        lat: 48.25,
+        lng: 25.85,
+        period: "עד 1930",
+        type: "childhood",
+        typeLabel: "מולדת האב",
+        color: "#4a90d9",
+        summary: "מקום הולדתו של אבא מקס קורצברג",
+        story: `
+            <p>לוקוויץ – עיירה קטנה בסמוך לצ'רנוביץ, מקום הולדתו של אבא, מקס קורצברג, בשנת 1904. העיירה הייתה חלק מבוקובינה, המחוז הרב-תרבותי שנמצא בתחום האימפריה האוסטרו-הונגרית.</p>
+
+            <div class="family-detail">
+                <strong>שורשים:</strong> הסבא ידיליף קליין ומשפחת קליין גרו באזור. הסבא נפטר בעובדובקה בתקופת הגירוש. חלק מהמשפחה הגיעו במקור מקולומיאה שבפולין.
+            </div>
+
+            <p>מלוקוויץ יצא מקס לצ'רנוביץ, שם הכיר את סלי בבית הספר – "אהבה כמו בסרטים" – והתחתנו כשהיו בני 21. הוא בנה בעצמו את הבית המשפחתי ופתח חנות בשר כשרה.</p>
+        `
+    },
+    {
+        id: 2,
+        name: "קמפולונג",
+        nameShort: "קמפולונג",
+        lat: 47.5267,
+        lng: 25.5464,
+        period: "שנות ה-30",
+        type: "childhood",
+        typeLabel: "נופש קיץ",
+        color: "#4a90d9",
+        summary: "עיר נופש קיץ – זומר פרישה",
+        story: `
+            <p>קמפולונג – עיר קייט (עיר נופש) שבה בילתה המשפחה את חופשות הקיץ. אמא הייתה נוסעת עם הילדות לשבועיים, שוכרת חדר אצל משפחה מקומית.</p>
+
+            <div class="quote">עשינו משחקים, היינו הולכות, היה גן יפה, אני זוכרת, היו כל מיני משחקים... נופש. זומר פרישה – התרעננות של קיץ.</div>
+
+            <p>אבא היה נשאר בצ'רנוביץ לנהל את החנות. ימים של שלווה ושגרה משפחתית – לפני שהעולם התהפך.</p>
+        `
+    },
+    {
+        id: 3,
+        name: "ואטרה דורניי",
+        nameShort: "ואטרה דורניי",
+        lat: 47.3500,
+        lng: 25.3667,
+        period: "שנות ה-30",
+        type: "childhood",
+        typeLabel: "נופש קיץ",
+        color: "#4a90d9",
+        summary: "עיר נופש נוספת בהרי הקרפטים",
+        story: `
+            <p>ואטרה דורניי (בטרדורניי) – עיר נופש נוספת בהרי הקרפטים שבה בילו בחופשות הקיץ. עיירה ציורית עם אוויר הרים צלול ונופים עוצרי נשימה.</p>
+
+            <p>אלה היו הימים האחרונים של ילדות רגילה – חופשות משפחתיות, משחקים בפארקים, ימי קיץ חמים באוויר ההרים. חיים של משפחה יהודית מהמעמד הבינוני בבוקובינה, שעוד לא ידעה מה צופן לה העתיד.</p>
+        `
+    },
+    {
+        id: 4,
+        name: "מרקולשט",
+        nameShort: "מרקולשט",
+        lat: 47.8636,
+        lng: 28.9511,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "תחנת גירוש",
+        color: "#e74c3c",
+        summary: "תחנה ראשונה בדרך הגירוש – מראות אימה",
+        story: `
+            <p>מרקולשט בבסרביה היה התחנה הראשונה אחרי הנסיעה בקרונות הבקר מצ'רנוביץ. המשפחה הגיעה בקרון צפוף – כל משפחת קורצברג, כל האחים והאחיות, ביחד.</p>
+
+            <div class="quote">אני ואחותי ועוד כמה ילדים, רצנו מבית לבית, לראות את המתים. על יד כל בית היו המשפחה הרוגה.</div>
+
+            <p>במרקולשט הוקם "מסלול שוד" – שורה ארוכה שדרכה עברו כל המגורשים ונאלצו למסור את כל חפצי הערך שלהם. אמא הצליחה להסתיר כמה דברים בתוך שמיכת הפוך.</p>
+
+            <p>המשפחה שהתה שם כיום וחצי, ואז החלו לצעוד ברגל. אבא ואחיו שכרו עגלה עם סוס מגוי מקומי כדי שהילדים יוכלו לשבת. הגברים הלכו ברגל מסביב.</p>
+        `
+    },
+    {
+        id: 5,
+        name: "יער קוסאוץ",
+        nameShort: "יער קוסאוץ",
+        lat: 48.2500,
+        lng: 28.6000,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "נקודת סכנה",
+        color: "#e74c3c",
+        summary: "יער האימה – הפרדת הגברים",
+        story: `
+            <p>יער קוסאוץ היה אחד הרגעים המפחידים ביותר בדרך. שמועות סיפרו שבטרנספורט הקודם נרצחו שם כל הגברים, ושגשר על הנהר נפתח וכולם טבעו.</p>
+
+            <div class="quote">כל הפחד שלנו היה קוסאוץ. ששמענו. היו שמועות ששם... זה סוף הדרך.</div>
+
+            <p>בהגעה ליער, פקדו "כל הגברים בצד אחד". אמא התחננה שאבא יסתתר בין החבילות – "אתה לא הולך!" – אבל אי אפשר היה. לפי השמועות, בזכות הקצין שהוביל את הטרנספורט, שהייתה לו חברה יהודיה, הגברים שלהם נשארו בחיים – שלא כמו בטרנספורט הקודם.</p>
+
+            <p>הלילה ביער עבר באימה. למחרת המשיכו לצעוד לכיוון הנסטר.</p>
+        `
+    },
+    {
+        id: 6,
+        name: "יאמפול",
+        nameShort: "יאמפול",
+        lat: 48.2378,
+        lng: 28.2769,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "מעבר הנסטר",
+        color: "#e74c3c",
+        summary: "חציית נהר הנסטר – הכניסה לטרנסניסטריה",
+        story: `
+            <p>ביאמפול חצו המגורשים את נהר הנסטר על גשר – הכניסה לטרנסניסטריה, השטח שנכבש על ידי הרומנים מהברית המועצות. רגע מכונן של חרדה.</p>
+
+            <div class="quote">שמענו שהגשר נפתח וכולם נטבעו. ואם זה היה נכון או לא נכון, לא יודעים.</div>
+
+            <p>מעבר הגשר עבר "די חלק", אך הפחד היה עצום. מעבר לנהר המתינה מציאות חדשה – שטחי אוקראינה הכבושים, בוץ אינסופי של בסרביה, וצעידה של ימים נוספים.</p>
+        `
+    },
+    {
+        id: 7,
+        name: "קריז'ופול",
+        nameShort: "קריז'ופול",
+        lat: 48.3767,
+        lng: 28.8636,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "תחנת מעבר",
+        color: "#e74c3c",
+        summary: "תחנת מעבר בדרך לברשד",
+        story: `
+            <p>קריז'ופול היה תחנת מעבר בדרך. הקונבוי לא עצר שם – המשיכו ללכת ברגל לכיוון עובדובקה ומשם לברשד.</p>
+
+            <p>הצעידה נמשכה כשלושה ימים ולילות. בלילות ישנו בשדה הפתוח. הייתה קרה, אך לבשו עדיין בגדים טובים. האווירה הייתה של אדישות ופחד.</p>
+
+            <div class="quote">הייתה שמועה שאנחנו נגיע למקום איפה ש... זה לא כל כך נורא. שם נתיישב. זה כאילו השליה הייתה.</div>
+        `
+    },
+    {
+        id: 8,
+        name: "עובדובקה",
+        nameShort: "עובדובקה",
+        lat: 48.5647,
+        lng: 29.2169,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "מציאת הסבא",
+        color: "#e74c3c",
+        summary: "הקולחוזים – מציאת גופת הסבא",
+        story: `
+            <p>עובדובקה נמצאה 23 ק"מ מברשד. שם היו שלושה קולחוזים, ולכל אחד מהם – קבר אחים. מתים נזרקו לבורות.</p>
+
+            <div class="quote">אמא שלי עשתה חשבון לפי שאבא שלה גורש, הוא צריך להיות כאן. ואבא חיפש ומצא... בין הגופות... את סבא שלי.</div>
+
+            <p>אבא מצא את סבא ידיליף קליין שנפטר שם – אולי שלוש או ארבע שעות קודם. הקש סביב הגופות היה זוחל מכינים שברחו מהמתים – כינים שהפיצו טיפוס.</p>
+
+            <p>אמא ירדה לראות את אביה ונפרדה ממנו. הילדות כבר הבינו – "ידענו שהולך משהו לא טוב." מעובדובקה המשיכו ברגל לכיוון ברשד.</p>
+        `
+    },
+    {
+        id: 9,
+        name: "ברשד",
+        nameShort: "ברשד",
+        lat: 48.3667,
+        lng: 29.5167,
+        period: "דצמבר 1941 – מרץ 1944",
+        type: "ghetto",
+        typeLabel: "גטו ברשד",
+        color: "#8b0000",
+        summary: "גטו ברשד – שנות רעב, מחלה ושרידה",
+        story: `
+            <p>גטו ברשד היה מקום מגוריהם הכפוי של כ-100,000 יהודים. המשפחה הגיעה בתחילת דצמבר 1941, עייפה, רעבה ומפוחדת. אבא רץ למצוא מקום – חדר קטן בבית נטוש של יהודים שברחו לרוסיה.</p>
+
+            <div class="family-detail">
+                <strong>תנאי החיים:</strong> שולחן אחד ומיטה אחת. אניטה ישנה עם אבא במיטה, אמא עם אחותה על השולחן. בסלון הגדול – עשרות משפחות צפופות ראש על ראש.
+            </div>
+
+            <p>תוך 21 יום מההגעה, אבא מקס נפטר מטיפוס. לאניטה היו שלושת סוגי הטיפוס. כל המשפחה חלתה. שלושה חודשים שכבו חולים.</p>
+
+            <div class="quote">הוא השיט את היד ואמר לגברת קורצברג – היינו צריכים למכור את המכנסיים הישנים ולהישאר בצ'רנוביץ.</div>
+
+            <p>העגלה עם הסוס האדום ("רויטע פערדל") הייתה סמל המוות – אוספת גופות. אניטה עמדה בחלון וראתה איך זרקו את אבא לעגלה.</p>
+
+            <p>אחרי ההחלמה, אמא סלי קמה על רגליה. היא לא דיברה שנה שלמה – רק בכתה בלילות. אבל ביום – נתנה לילדות תקווה.</p>
+
+            <div class="quote">אמא אמרה: כשניגיע לפלסטינה, קודם נאכל קליפות תפוחי אדמה כמה שנרצה, אחר כך מליגה, ובסוף לחם כמה שנרצה. ואנחנו צחקנו.</div>
+
+            <p>אמא הרוויחה קצת ממכירת לחם בשוק (טולצ'וק) ומהגדת עתידות בקלפים. דוד אחד עבד בקומנדטורה הרומנית והביא אוכל. אניטה יצאה מהגטו מחופשת כגויה לקנות תפוחים בכפרים.</p>
+
+            <p>הגטו נוהל על ידי "אובשינה" בראשות ד"ר קורן, שפעל להגן על היהודים. משטרה יהודית פיזרה אנשים כשגרמנים או רומנים הגיעו. החורף היה קשה – קרח, כינים, ומוות.</p>
+
+            <div class="quote">אמרו שנכנסנו כמעט מאה אלף איש, ואחרי שלושה חודשים נשארו עשרת אלפים.</div>
+
+            <p>למרות הכל – ילדים שיחקו קלאס, אניטה סרגה גרביים לגויים, והחיים המשיכו מרגע לרגע.</p>
+        `
+    },
+    {
+        id: 10,
+        name: "בוק",
+        nameShort: "בוק",
+        lat: 48.55,
+        lng: 29.85,
+        period: "1941–1943",
+        type: "ghetto",
+        typeLabel: "מחנה השמדה",
+        color: "#8b0000",
+        summary: "טבח ובית חולים לחולי נפש שנרצחו",
+        story: `
+            <p>בוק – מקום שאליו גורשו חלק מיהודי צ'רנוביץ, כולל שכנים ממש מהבית. שם פעל בית חולים לחולי נפש שנרצחו.</p>
+
+            <div class="quote">הכניסו אותם לבוק, ובאו עם מכונת ירייה וירו בהם. הבוק היה אדום מהדם שלהם.</div>
+
+            <p>אמא של אניטה נתנה את המעיל האחרון של אבא לגוי כדי שיבריח את משפחת דרוקמן מבוק לברשד – והוא הצליח להציל ארבע נפשות.</p>
+
+            <p>הדבר הראשון שאמא עשתה כשהגיעו – בישלה מרק מקליפות תפוחי אדמה עם צמח שנתן טעם של עוף, וכמה טיפות שמן. "מלח? קצת מלח – זה היה אושר."</p>
+        `
+    },
+    {
+        id: 11,
+        name: "ניקולאייב",
+        nameShort: "ניקולאייב",
+        lat: 46.975,
+        lng: 31.9946,
+        period: "1942–1943",
+        type: "ghetto",
+        typeLabel: "עבודת כפייה",
+        color: "#8b0000",
+        summary: "מחנה עבודת כפייה – לשם נלקח הדוד",
+        story: `
+            <p>ניקולאייב היה מחנה עבודת כפייה שאליו נשלחו גברים מגטו ברשד. ביום אחד, לקחו גברים מהרחובות – ביניהם הדוד של אניטה.</p>
+
+            <p>דוד אחר, שעבד בקומנדטורה הרומנית ותמך בכל המשפחה, הוציא אותו מהשורה – והאח הצעיר נכנס במקומו, כי ספרו ראשים וצריך היה למלא את המספר.</p>
+
+            <div class="quote">לא ידענו מה הרגע מביא. אנחנו חיינו באי-וודאות. ממש.</div>
+
+            <p>מי ששרד את עבודת הכפייה – חזר. אך רבים לא שבו.</p>
+        `
+    },
+    {
+        id: 12,
+        name: "חיפה, ישראל",
+        nameShort: "חיפה",
+        lat: 32.7940,
+        lng: 34.9896,
+        period: "לאחר המלחמה",
+        type: "after",
+        typeLabel: "חיים חדשים",
+        color: "#27ae60",
+        summary: "ארץ ישראל – בניית חיים חדשים",
+        story: `
+            <p>אחרי שנות הזוועה, אניטה ומשפחתה הגיעו לארץ ישראל – הארץ שדודה ברטה שלחה אליה מכתבים עוד לפני המלחמה: "תבואו לישראל, תמכרו הכל ותבואו."</p>
+
+            <p>ב-1 בדצמבר 2009, בגיל 79, ישבה אניטה בביתה בחיפה ונתנה עדות מפורטת על חייה לשרה רוזן.</p>
+
+            <div class="quote">יש כוח בתוך אדם... מה שעברתי שם, עברתי.</div>
+
+            <p>היא חזרה לבקר בצ'רנוביץ ובברשד – ראתה את הבית שאבא בנה (ללא העץ הענק שנעלם), את הגטו ההרוס, ואת המקומות שבהם עברה את הילדות ואת הגיהנום.</p>
+
+            <div class="family-detail">
+                <strong>מה נשאר:</strong> אמא סלי המשיכה לסבול מהפצע ברגלה עד יומה האחרון. האח הקטן חיים, שלושת הדודים, ודודה רגינה – שרדו. אבא מקס ורבים מהמשפחה המורחבת – נספו.
+            </div>
+
+            <p>העדות שנתנה אניטה היא מסמך יקר ערך – תיעוד חי של עולם שנחרב, של אהבה משפחתית שעמדה מול רוע בלתי נתפס, ושל כוח האדם לשרוד.</p>
+        `
+    }
+];
+
+const routeCoords = [
+    [48.2917, 25.9353],
+    [47.8636, 28.9511],
+    [48.2500, 28.6000],
+    [48.2378, 28.2769],
+    [48.3767, 28.8636],
+    [48.5647, 29.2169],
+    [48.3667, 29.5167]
+];
+
+let map;
+let currentLocationId = null;
+let markers = [];
+
+function initMap() {
+    map = L.map('map', {
+        center: [47.5, 29],
+        zoom: 7,
+        minZoom: 4,
+        maxZoom: 15,
+        zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+
+    const routeLine = L.polyline(routeCoords, {
+        color: '#c9a84c',
+        weight: 1.5,
+        opacity: 0.3,
+        dashArray: '8, 6',
+        className: 'route-path'
+    }).addTo(map);
+
+    locations.forEach((loc, index) => {
+        const markerIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `
+                <div class="marker-label">${loc.nameShort}</div>
+                <div class="marker-icon" style="background:${loc.color};">${index + 1}</div>
+            `,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -22]
+        });
+
+        const marker = L.marker([loc.lat, loc.lng], { icon: markerIcon }).addTo(map);
+
+        marker.bindPopup(`
+            <div class="popup-title">${loc.name}</div>
+            <div class="popup-desc">${loc.period}</div>
+            <div class="popup-summary">${loc.summary}</div>
+            <span class="popup-link" onclick="openStory(${loc.id})">לחצו לקריאת הסיפור המלא</span>
+        `, { maxWidth: 280 });
+
+        marker.on('click', function() {
+            openStory(loc.id);
+        });
+
+        markers.push(marker);
+    });
+
+    buildTimeline();
+}
+
+function buildTimeline() {
+    const timeline = document.getElementById('timeline');
+    timeline.innerHTML = '';
+
+    locations.forEach((loc, i) => {
+        const item = document.createElement('button');
+        item.className = 'timeline-item';
+        item.textContent = loc.nameShort;
+        item.onclick = () => openStory(loc.id);
+        item.id = `timeline-${loc.id}`;
+        timeline.appendChild(item);
+
+        if (i < locations.length - 1) {
+            const conn = document.createElement('div');
+            conn.className = 'timeline-connector';
+            timeline.appendChild(conn);
+        }
+    });
+}
+
+const typeColors = {
+    childhood: '#4a90d9',
+    deportation: '#e74c3c',
+    ghetto: '#8b0000',
+    after: '#27ae60'
+};
+
+function openStory(id) {
+    const loc = locations.find(l => l.id === id);
+    if (!loc) return;
+
+    currentLocationId = id;
+
+    document.getElementById('story-header').innerHTML = `
+        <div class="location-number" style="background:${typeColors[loc.type]};">${id + 1}</div>
+        <div class="location-name">${loc.name}</div>
+        <div class="location-period">${loc.period}</div>
+        <span class="location-type" style="background:${typeColors[loc.type]}15; color:${typeColors[loc.type]}; border:1px solid ${typeColors[loc.type]}30;">${loc.typeLabel}</span>
+    `;
+
+    document.getElementById('story-content').innerHTML = loc.story;
+
+    const prevLoc = locations.find(l => l.id === id - 1);
+    const nextLoc = locations.find(l => l.id === id + 1);
+
+    document.getElementById('timeline-nav').innerHTML = `
+        <button ${nextLoc ? `onclick="openStory(${nextLoc.id})"` : 'disabled'}>${nextLoc ? `התחנה הבאה: ${nextLoc.nameShort} →` : 'סוף המסע'}</button>
+        <button ${prevLoc ? `onclick="openStory(${prevLoc.id})"` : 'disabled'}>${prevLoc ? `← התחנה הקודמת: ${prevLoc.nameShort}` : 'תחילת המסע'}</button>
+    `;
+
+    document.getElementById('story-panel').classList.add('open');
+
+    map.flyTo([loc.lat, loc.lng], loc.id === 9 ? 11 : 9, { duration: 1.2 });
+
+    document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+    const timelineEl = document.getElementById(`timeline-${id}`);
+    if (timelineEl) {
+        timelineEl.classList.add('active');
+        timelineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    if (markers[id]) {
+        markers[id].openPopup();
+    }
+}
+
+function closePanel() {
+    document.getElementById('story-panel').classList.remove('open');
+    document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+    currentLocationId = null;
+    map.flyTo([47.5, 29], 7, { duration: 1 });
+}
+
+function enterMap() {
+    document.getElementById('intro-overlay').classList.add('hidden');
+    setTimeout(() => {
+        document.getElementById('intro-overlay').style.display = 'none';
+    }, 1000);
+    initMap();
+}
+
+document.addEventListener('keydown', function(e) {
+    if (currentLocationId === null) return;
+    if (e.key === 'Escape') closePanel();
+    if (e.key === 'ArrowLeft' && currentLocationId < locations.length - 1) openStory(currentLocationId + 1);
+    if (e.key === 'ArrowRight' && currentLocationId > 0) openStory(currentLocationId - 1);
+});
+</script>
+</body>
+</html>
