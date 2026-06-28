@@ -89,6 +89,29 @@
             border-radius: 0 0 3px 3px;
         }
 
+        .intro-particles {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(201, 168, 76, 0.4);
+            border-radius: 50%;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+
         .candle-glow {
             position: absolute;
             top: -20px;
@@ -252,6 +275,14 @@
             z-index: 1;
         }
 
+        .map-vignette {
+            position: fixed;
+            top: 60px; left: 0; right: 0; bottom: 0;
+            z-index: 2;
+            pointer-events: none;
+            box-shadow: inset 0 0 120px 40px rgba(10, 10, 20, 0.6);
+        }
+
         /* ===== פאנל סיפור ===== */
         #story-panel {
             position: fixed;
@@ -300,6 +331,62 @@
 
         #story-panel .close-btn:hover {
             color: #c9a84c;
+        }
+
+        .story-progress {
+            position: sticky;
+            top: 44px;
+            z-index: 9;
+            height: 3px;
+            background: rgba(201, 168, 76, 0.08);
+        }
+
+        .story-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #c9a84c, #ffd700);
+            width: 0%;
+            transition: width 0.15s ease-out;
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+        }
+
+        .journey-progress {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 32px;
+            margin-bottom: 16px;
+        }
+
+        .journey-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(201, 168, 76, 0.15);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .journey-dot.visited {
+            background: #c9a84c;
+            box-shadow: 0 0 6px rgba(201, 168, 76, 0.4);
+        }
+
+        .journey-dot.current {
+            background: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+            transform: scale(1.4);
+        }
+
+        .journey-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(201, 168, 76, 0.1);
+            min-width: 4px;
+        }
+
+        .journey-line.visited {
+            background: rgba(201, 168, 76, 0.4);
         }
 
         .story-header {
@@ -351,6 +438,12 @@
             font-size: 1.02rem;
             color: #b8b8cc;
             font-weight: 300;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .story-content p {
@@ -360,10 +453,11 @@
         .story-content .quote {
             position: relative;
             border: none;
+            border-right: 3px solid rgba(201, 168, 76, 0.4);
             padding: 20px 28px 20px 20px;
             margin: 24px 0;
-            background: linear-gradient(135deg, rgba(201, 168, 76, 0.06) 0%, rgba(201, 168, 76, 0.02) 100%);
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.08) 0%, rgba(201, 168, 76, 0.02) 100%);
+            border-radius: 2px 12px 12px 2px;
             font-family: 'Frank Ruhl Libre', serif;
             font-style: normal;
             color: #e8d5a0;
@@ -386,7 +480,8 @@
         .story-content .family-detail {
             background: rgba(100, 160, 220, 0.06);
             border: 1px solid rgba(100, 160, 220, 0.1);
-            border-radius: 12px;
+            border-right: 3px solid rgba(100, 160, 220, 0.3);
+            border-radius: 2px 12px 12px 2px;
             padding: 16px 20px;
             margin: 20px 0;
             font-size: 0.92rem;
@@ -471,10 +566,16 @@
         }
 
         .timeline-item.active {
-            background: rgba(201, 168, 76, 0.12);
-            color: #c9a84c;
-            border-color: rgba(201, 168, 76, 0.25);
+            background: rgba(201, 168, 76, 0.15);
+            color: #ffd700;
+            border-color: rgba(201, 168, 76, 0.35);
             font-weight: 500;
+            box-shadow: 0 0 16px rgba(201, 168, 76, 0.15);
+        }
+
+        .timeline-item.passed {
+            color: #c9a84c;
+            opacity: 0.7;
         }
 
         .timeline-connector {
@@ -486,6 +587,24 @@
 
         /* ===== סמני מפה ===== */
         .custom-marker { position: relative; }
+
+        .marker-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            animation: marker-pulse 2.5s ease-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes marker-pulse {
+            0% { box-shadow: 0 0 0 0 currentColor; opacity: 0.6; }
+            70% { box-shadow: 0 0 0 18px currentColor; opacity: 0; }
+            100% { box-shadow: 0 0 0 0 currentColor; opacity: 0; }
+        }
 
         .marker-icon {
             width: 32px;
@@ -501,6 +620,8 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
         }
 
         .marker-icon:hover {
@@ -523,6 +644,12 @@
             font-family: 'Heebo', sans-serif;
             pointer-events: none;
             border: 1px solid rgba(201, 168, 76, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .custom-marker:hover .marker-label {
+            opacity: 1;
         }
 
         /* ===== שם מדינה ===== */
@@ -631,6 +758,7 @@
 
 <!-- מסך פתיחה -->
 <div id="intro-overlay">
+    <div class="intro-particles" id="intro-particles"></div>
     <div class="intro-content">
         <div class="candle-container">
             <div class="candle-glow"></div>
@@ -676,10 +804,13 @@
 
 <!-- מפה -->
 <div id="map"></div>
+<div class="map-vignette"></div>
 
 <!-- פאנל סיפור -->
 <div id="story-panel">
     <button class="close-btn" onclick="closePanel()">✕ סגירה</button>
+    <div class="story-progress"><div class="story-progress-bar" id="story-progress-bar"></div></div>
+    <div class="journey-progress" id="journey-progress"></div>
     <div class="story-header" id="story-header"></div>
     <div class="story-content" id="story-content"></div>
     <div class="timeline-nav" id="timeline-nav"></div>
@@ -1061,6 +1192,7 @@ function initMap() {
         const markerIcon = L.divIcon({
             className: 'custom-marker',
             html: `
+                <div class="marker-pulse" style="color:${loc.color};"></div>
                 <div class="marker-label">${loc.nameShort}</div>
                 <div class="marker-icon" style="background:${loc.color};">${index + 1}</div>
             `,
@@ -1115,11 +1247,34 @@ const typeColors = {
     after: '#27ae60'
 };
 
+function buildJourneyProgress(currentId) {
+    const container = document.getElementById('journey-progress');
+    container.innerHTML = '';
+    locations.forEach((loc, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'journey-dot';
+        if (i < currentId) dot.classList.add('visited');
+        if (i === currentId) dot.classList.add('current');
+        dot.title = loc.nameShort;
+        dot.style.cursor = 'pointer';
+        dot.onclick = () => openStory(i);
+        container.appendChild(dot);
+        if (i < locations.length - 1) {
+            const line = document.createElement('div');
+            line.className = 'journey-line';
+            if (i < currentId) line.classList.add('visited');
+            container.appendChild(line);
+        }
+    });
+}
+
 function openStory(id) {
     const loc = locations.find(l => l.id === id);
     if (!loc) return;
 
     currentLocationId = id;
+
+    buildJourneyProgress(id);
 
     document.getElementById('story-header').innerHTML = `
         <div class="location-number" style="background:${typeColors[loc.type]};">${id + 1}</div>
@@ -1129,6 +1284,7 @@ function openStory(id) {
     `;
 
     document.getElementById('story-content').innerHTML = loc.story;
+    document.getElementById('story-progress-bar').style.width = '0%';
 
     const prevLoc = locations.find(l => l.id === id - 1);
     const nextLoc = locations.find(l => l.id === id + 1);
@@ -1139,13 +1295,17 @@ function openStory(id) {
     `;
 
     document.getElementById('story-panel').classList.add('open');
+    document.getElementById('story-panel').scrollTop = 0;
 
     map.flyTo([loc.lat, loc.lng], loc.id === 9 ? 11 : 9, { duration: 1.2 });
 
-    document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.timeline-item').forEach((el, i) => {
+        el.classList.remove('active', 'passed');
+        if (i === id) el.classList.add('active');
+        else if (i < id) el.classList.add('passed');
+    });
     const timelineEl = document.getElementById(`timeline-${id}`);
     if (timelineEl) {
-        timelineEl.classList.add('active');
         timelineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
@@ -1175,6 +1335,28 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'ArrowLeft' && currentLocationId < locations.length - 1) openStory(currentLocationId + 1);
     if (e.key === 'ArrowRight' && currentLocationId > 0) openStory(currentLocationId - 1);
 });
+
+document.getElementById('story-panel').addEventListener('scroll', function() {
+    const panel = this;
+    const scrollTop = panel.scrollTop;
+    const scrollHeight = panel.scrollHeight - panel.clientHeight;
+    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    document.getElementById('story-progress-bar').style.width = progress + '%';
+});
+
+(function createParticles() {
+    const container = document.getElementById('intro-particles');
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (6 + Math.random() * 10) + 's';
+        p.style.animationDelay = (Math.random() * 8) + 's';
+        p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+        p.style.opacity = 0.2 + Math.random() * 0.4;
+        container.appendChild(p);
+    }
+})();
 </script>
 </body>
 </html>
