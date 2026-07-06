@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+:root {
+  --radius: 0.85rem;
+
+  --background: #f5f7f9;
+  --foreground: #101827;
+
+  --surface: #ffffff;
+  --surface-foreground: #101827;
+
+  --card: #ffffff;
+  --card-foreground: #101827;
+
+  /* Deep sport navy - brand / trust */
+  --primary: #0b2545;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eef2f6;
+  --secondary-foreground: #101827;
+
+  /* Pitch green - the one clear accent used for primary actions */
+  --accent: #1a8f4c;
+  --accent-foreground: #ffffff;
+  --accent-hover: #157a40;
+
+  --muted: #eef1f5;
+  --muted-foreground: #5b6675;
+
+  --border: #e2e7ed;
+  --input: #dde3ea;
+  --ring: #1a8f4c;
+
+  --destructive: #d3392e;
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #fdecea;
+
+  --warning: #b7791f;
+  --warning-foreground: #ffffff;
+  --warning-soft: #fdf3e0;
+
+  --success: #1a8f4c;
+  --success-soft: #e8f6ee;
+
+  --sidebar: #0b2545;
+  --sidebar-foreground: #dde6f0;
+  --sidebar-muted: #90a3bd;
+  --sidebar-active: #12335e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
+
+  --radius-sm: calc(var(--radius) - 0.35rem);
+  --radius-md: calc(var(--radius) - 0.15rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.35rem);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
