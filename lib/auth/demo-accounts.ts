@@ -11,30 +11,30 @@ export interface DemoAccount {
 export const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     role: "school_admin",
-    label: "School Admin",
+    label: "מנהל בית ספר",
     name: "Dana Shapiro",
     email: "admin@nextplay.demo",
-    description: "School-wide engagement, teams, and risk overview.",
+    description: "מעורבות ברמת בית הספר, קבוצות וסקירת סיכונים.",
   },
   {
     role: "coach",
-    label: "Coach",
+    label: "מאמן",
     name: "Amir Levi",
     email: "coach@nextplay.demo",
-    description: "Assign tasks, review reports, flag players for attention.",
+    description: "הקצאת משימות, בדיקת דוחות וסימון שחקנים לתשומת לב.",
   },
   {
     role: "parent",
-    label: "Parent",
+    label: "הורה",
     name: "Noa Katz",
     email: "parent@nextplay.demo",
-    description: "See Daniel's approved tasks, reports, and consent status.",
+    description: "צפייה במשימות המאושרות של דניאל, בדוחות ובסטטוס האישור.",
   },
   {
     role: "player",
-    label: "Player",
+    label: "שחקן",
     name: "Daniel Katz",
     email: "player@nextplay.demo",
-    description: "Today's task, this week's plan, and progress.",
+    description: "המשימה של היום, התוכנית השבועית וההתקדמות.",
   },
 ];

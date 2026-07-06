@@ -25,9 +25,9 @@ export default async function AssignTasksPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Assign Weekly Tasks</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">הקצאת משימות שבועיות</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Suggestions come from a simple, transparent rules engine. You always review and approve before a player sees anything.
+          ההצעות מגיעות ממנוע חוקים פשוט ושקוף. אתם תמיד בודקים ומאשרים לפני שהשחקן רואה משהו.
         </p>
       </div>
 

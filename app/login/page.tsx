@@ -16,9 +16,9 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Sign in</CardTitle>
+            <CardTitle>התחברות</CardTitle>
             <CardDescription>
-              Access your school&apos;s player-development dashboard.
+              גישה ללוח הבקרה לפיתוח שחקנים של בית הספר שלכם.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -27,9 +27,9 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground">
-          Just exploring?{" "}
+          רק מסתכלים?{" "}
           <Link href="/demo" className="font-medium text-accent hover:underline">
-            Try instant demo accounts
+            נסו חשבונות הדגמה מיידיים
           </Link>
         </p>
       </div>

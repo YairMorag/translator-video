@@ -6,7 +6,7 @@ export function CoachApprovedBadge({ className }: { className?: string }) {
   return (
     <Badge variant="success" className={className}>
       <BadgeCheck className="h-3.5 w-3.5" />
-      Coach approved
+      באישור המאמן
     </Badge>
   );
 }

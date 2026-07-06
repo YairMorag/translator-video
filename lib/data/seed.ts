@@ -142,7 +142,7 @@ const PLAYER_SEEDS: PlayerSeed[] = [
   // U12
   { id: "player-daniel", fullName: "Daniel Katz", age: 12, teamId: "team-u12", position: "winger", dominantFoot: "right", weeklyAvailability: 3, parentConsentStatus: "approved" },
   { id: "player-noam", fullName: "Noam Shaked", age: 11, teamId: "team-u12", position: "goalkeeper", dominantFoot: "right", weeklyAvailability: 3, parentConsentStatus: "approved" },
-  { id: "player-eitan", fullName: "Eitan Marom", age: 12, teamId: "team-u12", position: "defender", dominantFoot: "left", weeklyAvailability: 2, parentConsentStatus: "pending", knownLimitations: "Mild ankle sprain last season, fully resolved" },
+  { id: "player-eitan", fullName: "Eitan Marom", age: 12, teamId: "team-u12", position: "defender", dominantFoot: "left", weeklyAvailability: 2, parentConsentStatus: "pending", knownLimitations: "נקע קל בקרסול בעונה שעברה, החלים במלואו" },
   { id: "player-roy", fullName: "Roy Ben-David", age: 11, teamId: "team-u12", position: "midfielder", dominantFoot: "right", weeklyAvailability: 3, parentConsentStatus: "approved" },
   { id: "player-ariel", fullName: "Ariel Dahan", age: 12, teamId: "team-u12", position: "striker", dominantFoot: "right", weeklyAvailability: 2, parentConsentStatus: "approved" },
   // U14
@@ -231,7 +231,7 @@ const PLAN_SEEDS: PlanSeed[] = [
   { playerId: "player-omer", coachId: "profile-coach-amir", focusArea: "position_specific", taskIds: ["task-4", "task-3", "task-23"], scenario: "pain" },
   { playerId: "player-adam", coachId: "profile-coach-amir", focusArea: "ball_control", taskIds: ["task-2", "task-15", "task-21"], scenario: "partial" },
   { playerId: "player-liam", coachId: "profile-coach-amir", focusArea: "position_specific", taskIds: ["task-16", "task-3", "task-1"], scenario: "high_fatigue" },
-  { playerId: "player-daniel", coachId: "profile-coach-amir", focusArea: "first_touch", focusLabel: "First touch and change of direction", taskIds: ["task-1", "task-3", "task-5"], scenario: "partial" },
+  { playerId: "player-daniel", coachId: "profile-coach-amir", focusArea: "first_touch", focusLabel: "מגע ראשון ושינוי כיוון", taskIds: ["task-1", "task-3", "task-5"], scenario: "partial" },
   { playerId: "player-noam", coachId: "profile-coach-amir", focusArea: "position_specific", taskIds: ["task-6", "task-22", "task-14"], scenario: "completed_all" },
   { playerId: "player-roy", coachId: "profile-coach-amir", focusArea: "passing", taskIds: ["task-26", "task-11", "task-17"], scenario: "partial" },
   { playerId: "player-ariel", coachId: "profile-coach-amir", focusArea: "position_specific", taskIds: ["task-16", "task-15", "task-9"], scenario: "high_fatigue" },
@@ -308,9 +308,9 @@ for (const seed of PLAN_SEEDS) {
         fatigue: isFatigueTask ? (seed.playerId === "player-ariel" ? 5 : 4) : isPainTask ? 3 : 2,
         painReported: isPainTask,
         note: isPainTask
-          ? "Felt a sharp pinch in my ankle during the drill."
+          ? "הרגשתי צביטה חדה בקרסול במהלך התרגיל."
           : isFatigueTask
-          ? "Legs felt heavy today, still finished the session."
+          ? "הרגליים הרגישו כבדות היום, בכל זאת סיימתי את האימון."
           : undefined,
         createdAt: iso(addDays(CURRENT_WEEK_START, index * 2 + 1)),
       });
@@ -324,7 +324,7 @@ export const COACH_NOTES: CoachNote[] = [
     id: "note-1",
     coachId: "profile-coach-amir",
     playerId: "player-omer",
-    note: "Reported ankle pain after the reaction-steps drill. Advised rest, no further home tasks until reviewed at next session.",
+    note: "דיווח על כאב בקרסול אחרי תרגיל צעדי התגובה. הומלץ על מנוחה, ללא משימות בית נוספות עד לבדיקה באימון הבא.",
     visibility: "parent_visible",
     createdAt: iso(subDays(NOW, 1)),
   },
@@ -332,7 +332,7 @@ export const COACH_NOTES: CoachNote[] = [
     id: "note-2",
     coachId: "profile-coach-amir",
     playerId: "player-daniel",
-    note: "Great focus on weak-foot control this week. Keep encouraging consistency over intensity.",
+    note: "מיקוד מצוין בבקרת הרגל החלשה השבוע. המשיכו לעודד עקביות מעל עצימות.",
     visibility: "parent_visible",
     createdAt: iso(subDays(NOW, 2)),
   },
@@ -340,7 +340,7 @@ export const COACH_NOTES: CoachNote[] = [
     id: "note-3",
     coachId: "profile-coach-amir",
     playerId: "player-liam",
-    note: "Watch training load — second high-fatigue report in three weeks.",
+    note: "לשים לב לעומס האימונים — דיווח שני על עייפות גבוהה בתוך שלושה שבועות.",
     visibility: "private",
     createdAt: iso(subDays(NOW, 1)),
   },
@@ -355,7 +355,7 @@ export const RISK_FLAGS: RiskFlag[] = [
     type: "pain",
     severity: "high",
     status: "open",
-    note: "Pain reported during Defender Reaction Steps. Home training paused pending coach review.",
+    note: "דווח כאב במהלך צעדי תגובה לבלם. האימון הביתי הושהה עד לבדיקת המאמן.",
     createdAt: iso(subDays(NOW, 1)),
   },
   {
@@ -365,7 +365,7 @@ export const RISK_FLAGS: RiskFlag[] = [
     type: "high_fatigue",
     severity: "medium",
     status: "open",
-    note: "Fatigue reported at 4/5 after Striker Finishing Touches.",
+    note: "דווחה עייפות ברמה 4/5 לאחר נגיעות סיום לחלוץ.",
     createdAt: iso(subDays(NOW, 1)),
   },
   {
@@ -375,7 +375,7 @@ export const RISK_FLAGS: RiskFlag[] = [
     type: "high_fatigue",
     severity: "medium",
     status: "open",
-    note: "Fatigue reported at 5/5 after Striker Finishing Touches.",
+    note: "דווחה עייפות ברמה 5/5 לאחר נגיעות סיום לחלוץ.",
     createdAt: iso(subDays(NOW, 2)),
   },
   {
@@ -385,14 +385,14 @@ export const RISK_FLAGS: RiskFlag[] = [
     type: "no_activity",
     severity: "low",
     status: "open",
-    note: "No tasks started yet this week.",
+    note: "טרם החלו משימות השבוע.",
     createdAt: iso(subDays(NOW, 1)),
   },
 ];
 
 // ---- Prior-week snapshot data for simple engagement trend charts ----
 export const WEEKLY_ENGAGEMENT_TREND = [
-  { weekStart: iso(TWO_WEEKS_AGO_START), label: "2 weeks ago", completionRate: 58 },
-  { weekStart: iso(PREVIOUS_WEEK_START), label: "Last week", completionRate: 66 },
-  { weekStart: iso(CURRENT_WEEK_START), label: "This week", completionRate: 74 },
+  { weekStart: iso(TWO_WEEKS_AGO_START), label: "לפני שבועיים", completionRate: 58 },
+  { weekStart: iso(PREVIOUS_WEEK_START), label: "שבוע שעבר", completionRate: 66 },
+  { weekStart: iso(CURRENT_WEEK_START), label: "השבוע", completionRate: 74 },
 ];

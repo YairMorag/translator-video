@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -14,9 +14,9 @@ export default function AdminTeamsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Teams</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">קבוצות</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {teams.length} teams across {school.name}.
+          {teams.length} קבוצות ב-{school.name}.
         </p>
       </div>
 
@@ -44,23 +44,23 @@ export default function AdminTeamsPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle>{team.name}</CardTitle>
                     {openFlags > 0 && (
-                      <Badge variant="warning">{openFlags} flag{openFlags === 1 ? "" : "s"}</Badge>
+                      <Badge variant="warning">{openFlags} {openFlags === 1 ? "דגל" : "דגלים"}</Badge>
                     )}
                   </div>
                   <CardDescription>
-                    {players.length} players · Coach {coach?.fullName ?? "Unassigned"}
+                    {players.length} שחקנים · מאמן {coach?.fullName ?? "לא משויך"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Weekly completion</span>
+                      <span>השלמה שבועית</span>
                       <span>{rate}%</span>
                     </div>
                     <Progress value={rate} />
                   </div>
                   <div className="flex items-center gap-1 text-sm font-medium text-accent">
-                    View team <ArrowRight className="h-3.5 w-3.5" />
+                    צפייה בקבוצה <ArrowLeft className="h-3.5 w-3.5" />
                   </div>
                 </CardContent>
               </Card>

@@ -22,11 +22,11 @@ export default async function PlayerHomePage() {
   if (player.parentConsentStatus !== "approved") {
     return (
       <div className="mx-auto max-w-md space-y-4 pt-8">
-        <h1 className="text-xl font-semibold">Hi, {firstName}</h1>
+        <h1 className="text-xl font-semibold">היי, {firstName}</h1>
         <EmptyState
           icon={ShieldAlert}
-          title="Parent approval needed"
-          description="Your parent needs to approve home training before you can see your tasks. Ask them to check their NextPlay account."
+          title="נדרש אישור הורה"
+          description="ההורה שלך צריך לאשר את האימון הביתי לפני שתוכל/י לראות את המשימות שלך. בקש/י ממנו לבדוק את חשבון NextPlay שלו."
         />
       </div>
     );
@@ -43,16 +43,16 @@ export default async function PlayerHomePage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Hi, {firstName}</h1>
-        {focusLabel && <p className="mt-1 text-sm text-muted-foreground">This week: {focusLabel}</p>}
+        <h1 className="text-xl font-semibold">היי, {firstName}</h1>
+        {focusLabel && <p className="mt-1 text-sm text-muted-foreground">השבוע: {focusLabel}</p>}
       </div>
 
       <Card>
         <CardContent className="flex items-center justify-between gap-4 p-5">
           <div>
-            <p className="text-sm text-muted-foreground">Weekly progress</p>
+            <p className="text-sm text-muted-foreground">התקדמות שבועית</p>
             <p className="text-lg font-semibold">
-              {progress.completed} of {progress.total} tasks completed
+              {progress.completed} מתוך {progress.total} משימות הושלמו
             </p>
           </div>
           <ProgressRing value={progress.rate} />
@@ -60,33 +60,33 @@ export default async function PlayerHomePage() {
       </Card>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Today&apos;s task</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">המשימה של היום</p>
         {nextTask && nextTaskCatalog ? (
           <>
             <TaskCard task={nextTaskCatalog} status={nextTask.status} href={`/player/tasks/${nextTaskCatalog.id}`} />
             <Button asChild size="lg" className="w-full">
-              <Link href={`/player/tasks/${nextTaskCatalog.id}`}>Start Task</Link>
+              <Link href={`/player/tasks/${nextTaskCatalog.id}`}>התחלת משימה</Link>
             </Button>
           </>
         ) : assignedTasks.length === 0 ? (
-          <EmptyState title="No tasks assigned yet" description="Your coach will publish this week's plan soon." />
+          <EmptyState title="עדיין לא הוקצו משימות" description="המאמן שלך יפרסם את התוכנית השבועית בקרוב." />
         ) : (
           <Card className="border-success/40 bg-success-soft/30">
             <CardContent className="flex items-center gap-3 p-5">
               <Sparkles className="h-5 w-5 text-success" />
-              <p className="text-sm font-medium">All tasks completed for this week. Great work!</p>
+              <p className="text-sm font-medium">כל המשימות הושלמו השבוע. עבודה מעולה!</p>
             </CardContent>
           </Card>
         )}
         <Button asChild variant="outline" className="w-full">
-          <Link href="/player/week">View Week</Link>
+          <Link href="/player/week">צפייה בשבוע</Link>
         </Button>
       </div>
 
       <Card className="bg-secondary/50">
         <CardContent className="space-y-2 p-5 text-sm">
-          <p className="font-medium">Small work between sessions creates big progress.</p>
-          <p className="text-muted-foreground">If something hurts, stop and report it.</p>
+          <p className="font-medium">עבודה קטנה בין האימונים יוצרת התקדמות גדולה.</p>
+          <p className="text-muted-foreground">אם משהו כואב, תעצור/י ותדווח/י על זה.</p>
         </CardContent>
       </Card>
     </div>

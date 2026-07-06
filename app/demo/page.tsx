@@ -25,11 +25,11 @@ export default function DemoPage() {
             <span className="text-lg font-semibold">{APP_NAME}</span>
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            See the platform from every point of view
+            הכירו את הפלטפורמה מכל נקודת מבט
           </h1>
           <p className="mx-auto max-w-xl text-muted-foreground">
-            Pick a role below to jump straight into a live, seeded demo of North Valley Football
-            Academy — no account setup required.
+            בחרו תפקיד למטה כדי לצלול ישר להדגמה חיה של בית הספר North Valley Football
+            Academy — ללא צורך בהרשמה.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function DemoPage() {
                 <CardContent>
                   <form action={loginAsDemoRole.bind(null, account.email)}>
                     <Button type="submit" className="w-full">
-                      Continue as {account.name.split(" ")[0]}
+                      כניסה בתור {account.name.split(" ")[0]}
                     </Button>
                   </form>
                 </CardContent>
@@ -58,9 +58,9 @@ export default function DemoPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
-          Prefer the sign-in form?{" "}
+          מעדיפים טופס התחברות?{" "}
           <Link href="/login" className="font-medium text-accent hover:underline">
-            Go to login
+            מעבר להתחברות
           </Link>
         </p>
       </div>

@@ -1,13 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ROLE_LABELS } from "@/lib/labels";
 import type { Role } from "@/lib/types";
-
-const ROLE_LABELS: Record<Role, string> = {
-  school_admin: "School Admin",
-  coach: "Coach",
-  parent: "Parent",
-  player: "Player",
-};
 
 export function RoleBadge({
   role,

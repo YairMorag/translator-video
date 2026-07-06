@@ -12,7 +12,7 @@ import {
   Ban,
   Salad,
   Trophy,
-  ArrowRight,
+  ArrowLeft,
   CheckCircle2,
 } from "lucide-react";
 
@@ -54,16 +54,16 @@ function SiteHeader() {
           <span className="text-lg font-semibold">{APP_NAME}</span>
         </div>
         <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
-          <a href="#how-it-works" className="hover:text-foreground">How it works</a>
-          <a href="#safety" className="hover:text-foreground">Safety</a>
-          <a href="#pilot" className="hover:text-foreground">Pilot program</a>
+          <a href="#how-it-works" className="hover:text-foreground">איך זה עובד</a>
+          <a href="#safety" className="hover:text-foreground">בטיחות</a>
+          <a href="#pilot" className="hover:text-foreground">תוכנית פיילוט</a>
         </nav>
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-            <Link href="/login">Log in</Link>
+            <Link href="/login">התחברות</Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/demo">View Demo</Link>
+            <Link href="/demo">צפייה בהדגמה</Link>
           </Button>
         </div>
       </div>
@@ -78,10 +78,10 @@ function Hero() {
       <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-3xl text-center">
           <Badge variant="outline" className="border-white/20 text-white/90">
-            Player development, between sessions
+            פיתוח שחקנים, בין האימונים
           </Badge>
           <h1 className="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-            The training session does not end when the player leaves the pitch.
+            האימון לא מסתיים כשהשחקן עוזב את המגרש.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-white/80 sm:text-lg">
             {APP_DESCRIPTION}
@@ -89,7 +89,7 @@ function Hero() {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button asChild size="lg">
               <Link href="/demo">
-                View Demo <ArrowRight className="h-4 w-4" />
+                צפייה בהדגמה <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>
             <form action={loginAsDemoRole.bind(null, DEMO_ACCOUNTS[1].email)}>
@@ -99,7 +99,7 @@ function Hero() {
                 variant="outline"
                 className="border-white/30 bg-transparent text-white hover:bg-white/10"
               >
-                See Coach Dashboard
+                לוח הבקרה של המאמן
               </Button>
             </form>
           </div>
@@ -111,24 +111,23 @@ function Hero() {
 
 function Problem() {
   const questions = [
-    "Who practiced between sessions?",
-    "Who struggled with a task?",
-    "Who is at risk of being overloaded?",
-    "Who reported pain that needs follow-up?",
-    "Which players need extra attention this week?",
+    "מי התאמן בין האימונים?",
+    "מי התקשה עם משימה?",
+    "מי נמצא בסיכון לעומס יתר?",
+    "מי דיווח על כאב שדורש מעקב?",
+    "אילו שחקנים זקוקים לתשומת לב נוספת השבוע?",
   ];
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">The problem</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-accent">הבעיה</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            Football schools usually see players only during official sessions.
+            בתי ספר לכדורגל רואים בדרך כלל את השחקנים רק במהלך האימונים הרשמיים.
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Between sessions, coaches have limited visibility into what actually happens with each
-            player — and parents are left guessing whether their child&apos;s activity is safe and
-            age-appropriate.
+            בין האימונים, למאמנים יש נראות מוגבלת לגבי מה שקורה בפועל עם כל שחקן — וההורים
+            נשארים בניחוש האם הפעילות של הילד שלהם בטוחה ומתאימה לגיל.
           </p>
         </div>
         <Card>
@@ -152,20 +151,20 @@ function Problem() {
 
 function Solution() {
   const items = [
-    { icon: ClipboardCheck, title: "Coach-approved weekly tasks", desc: "Nothing reaches a player without explicit coach approval." },
-    { icon: Activity, title: "Age and position adaptation", desc: "A simple rules engine tailors suggestions — coaches always decide." },
-    { icon: HeartHandshake, title: "Parent visibility", desc: "Parents see exactly what was assigned, by whom, and why." },
-    { icon: Footprints, title: "Player self-reporting", desc: "Difficulty, fatigue, and pain — reported in under a minute." },
-    { icon: Eye, title: "Coach dashboard", desc: "One glance answers: who needs my attention this week?" },
-    { icon: Building2, title: "School-level insights", desc: "Engagement, adherence, and safety flags across every team." },
+    { icon: ClipboardCheck, title: "משימות שבועיות באישור המאמן", desc: "שום דבר לא מגיע לשחקן ללא אישור מפורש של המאמן." },
+    { icon: Activity, title: "התאמה לגיל ולעמדה", desc: "מנוע חוקים פשוט מתאים הצעות — המאמנים תמיד מחליטים." },
+    { icon: HeartHandshake, title: "שקיפות להורים", desc: "ההורים רואים בדיוק מה הוקצה, על ידי מי ולמה." },
+    { icon: Footprints, title: "דיווח עצמי של השחקן", desc: "קושי, עייפות וכאב — מדווחים תוך פחות מדקה." },
+    { icon: Eye, title: "לוח בקרה למאמן", desc: "מבט אחד עונה: מי דורש את תשומת לבי השבוע?" },
+    { icon: Building2, title: "תובנות ברמת בית הספר", desc: "מעורבות, עמידה ביעדים ודגלי בטיחות בכל קבוצה." },
   ];
   return (
     <section className="bg-secondary/40 py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">The solution</p>
+          <p className="text-sm font-semibold uppercase tracking-wide text-accent">הפתרון</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-            A supervised bridge between the pitch and home.
+            גשר מפוקח בין המגרש לבית.
           </h2>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -188,17 +187,17 @@ function Solution() {
 
 function HowItWorks() {
   const steps = [
-    { title: "Coach assigns", desc: "The coach picks a focus area; the rules engine suggests safe, age-appropriate tasks." },
-    { title: "Coach approves", desc: "The coach reviews, edits, and approves the final weekly plan before anything is visible." },
-    { title: "Player performs", desc: "The player sees today's task, completes it, and reports difficulty, fatigue, and pain." },
-    { title: "Everyone sees progress", desc: "Parents see safety and consistency. Coaches and admins see adherence and risk flags." },
+    { title: "המאמן מקצה", desc: "המאמן בוחר תחום מיקוד; מנוע החוקים מציע משימות בטוחות ומתאימות לגיל." },
+    { title: "המאמן מאשר", desc: "המאמן בודק, עורך ומאשר את התוכנית השבועית הסופית לפני שמשהו נחשף." },
+    { title: "השחקן מבצע", desc: "השחקן רואה את המשימה של היום, משלים אותה ומדווח על קושי, עייפות וכאב." },
+    { title: "כולם רואים התקדמות", desc: "ההורים רואים בטיחות ועקביות. המאמנים והמנהלים רואים עמידה ביעדים ודגלי סיכון." },
   ];
   return (
     <section id="how-it-works" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-accent">How it works</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-accent">איך זה עובד</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-          From coach plan to player progress, in four steps.
+          מתוכנית של המאמן להתקדמות של השחקן, בארבעה צעדים.
         </h2>
       </div>
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -216,17 +215,17 @@ function HowItWorks() {
 
 function BuiltForFour() {
   const roles = [
-    { icon: Footprints, role: "Player", quote: "I know what to do today to improve." },
-    { icon: HeartHandshake, role: "Parent", quote: "My child is developing safely, with coach supervision." },
-    { icon: ClipboardCheck, role: "Coach", quote: "I can see what happens between training sessions." },
-    { icon: Building2, role: "Football School", quote: "We provide a more professional development experience." },
+    { icon: Footprints, role: "שחקן", quote: "אני יודע מה לעשות היום כדי להשתפר." },
+    { icon: HeartHandshake, role: "הורה", quote: "הילד שלי מתפתח בבטחה, בפיקוח המאמן." },
+    { icon: ClipboardCheck, role: "מאמן", quote: "אני יכול לראות מה קורה בין האימונים." },
+    { icon: Building2, role: "בית ספר לכדורגל", quote: "אנחנו מספקים חוויית פיתוח מקצועית יותר." },
   ];
   return (
     <section className="bg-primary py-16 text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-white/60">Built for four users</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">One platform, four points of view.</h2>
+          <p className="text-sm font-semibold uppercase tracking-wide text-white/60">בנוי לארבעה סוגי משתמשים</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">פלטפורמה אחת, ארבע נקודות מבט.</h2>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {roles.map((r) => (
@@ -246,23 +245,23 @@ function BuiltForFour() {
 
 function Safety() {
   const dos = [
-    "Parental consent required before activation",
-    "Coach approval required before any task is visible",
-    "Pain reports pause training and flag the coach",
-    "High fatigue triggers a recovery-first suggestion",
+    "נדרש אישור הורה לפני הפעלה",
+    "נדרש אישור מאמן לפני שמשימה כלשהי נחשפת",
+    "דיווחי כאב עוצרים את האימון ומתריעים למאמן",
+    "עייפות גבוהה מפעילה הצעה שמתמקדת בהתאוששות",
   ];
   const donts = [
-    "No calorie counting or weight tracking",
-    "No public rankings or profiles",
-    "No social feed, likes, or peer comparison",
-    "No medical advice or injury diagnosis",
+    "ללא ספירת קלוריות או מעקב משקל",
+    "ללא דירוגים או פרופילים ציבוריים",
+    "ללא פיד חברתי, לייקים או השוואה בין שחקנים",
+    "ללא ייעוץ רפואי או אבחון פציעות",
   ];
   return (
     <section id="safety" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-accent">Safety & parent supervision</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-accent">בטיחות ופיקוח הורים</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-          Built for minors, with safety as a first-class feature.
+          בנוי לקטינים, כשהבטיחות היא ערך מוביל.
         </h2>
       </div>
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -270,7 +269,7 @@ function Safety() {
           <CardHeader>
             <div className="flex items-center gap-2 text-success">
               <UserCheck className="h-5 w-5" />
-              <CardTitle>What the platform always does</CardTitle>
+              <CardTitle>מה הפלטפורמה תמיד עושה</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -286,7 +285,7 @@ function Safety() {
           <CardHeader>
             <div className="flex items-center gap-2 text-destructive">
               <Ban className="h-5 w-5" />
-              <CardTitle>What we deliberately don&apos;t build</CardTitle>
+              <CardTitle>מה שאנחנו בכוונה לא בונים</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -309,25 +308,25 @@ function CoachPreview({ stats }: { stats: ReturnType<typeof computeCoachDashboar
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-accent">Coach dashboard preview</p>
+            <p className="text-sm font-semibold uppercase tracking-wide text-accent">תצוגה מקדימה של לוח הבקרה למאמן</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              {`“${stats.playersNeedingAttention} players need your attention this week.”`}
+              {`“${stats.playersNeedingAttention} שחקנים דורשים תשומת לב השבוע.”`}
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Live data from our seeded demo school — North Valley Football Academy. Every number
-              below comes from the same dashboard a coach sees after logging in.
+              נתונים חיים מבית הספר להדגמה שלנו — North Valley Football Academy. כל מספר למטה
+              מגיע מאותו לוח בקרה שמאמן רואה לאחר ההתחברות.
             </p>
             <form action={loginAsDemoRole.bind(null, DEMO_ACCOUNTS[1].email)} className="mt-6">
               <Button type="submit">
-                Open the coach dashboard <ArrowRight className="h-4 w-4" />
+                פתיחת לוח הבקרה של המאמן <ArrowLeft className="h-4 w-4" />
               </Button>
             </form>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Active players" value={stats.activePlayers} icon={Footprints} />
-            <StatCard label="Weekly completion" value={`${stats.weeklyCompletionRate}%`} icon={ClipboardCheck} tone="success" />
-            <StatCard label="Need attention" value={stats.playersNeedingAttention} icon={AlertTriangle} tone="warning" />
-            <StatCard label="Pain reports" value={stats.painReports} icon={Activity} tone="destructive" />
+            <StatCard label="שחקנים פעילים" value={stats.activePlayers} icon={Footprints} />
+            <StatCard label="השלמה שבועית" value={`${stats.weeklyCompletionRate}%`} icon={ClipboardCheck} tone="success" />
+            <StatCard label="דורשים תשומת לב" value={stats.playersNeedingAttention} icon={AlertTriangle} tone="warning" />
+            <StatCard label="דיווחי כאב" value={stats.painReports} icon={Activity} tone="destructive" />
           </div>
         </div>
       </div>
@@ -337,12 +336,12 @@ function CoachPreview({ stats }: { stats: ReturnType<typeof computeCoachDashboar
 
 function Pilot() {
   const items = [
-    "Player onboarding with parental consent",
-    "Coach-approved weekly task plans",
-    "Parent visibility into every assignment",
-    "Player completion reports",
-    "Coach dashboard for daily attention",
-    "School engagement report at the end of the pilot",
+    "קליטת שחקנים עם אישור הורה",
+    "תוכניות משימות שבועיות באישור המאמן",
+    "שקיפות להורים בכל הקצאה",
+    "דוחות השלמה של שחקנים",
+    "לוח בקרה למאמן לתשומת לב יומית",
+    "דוח מעורבות בית ספר בסיום הפיילוט",
   ];
   return (
     <section id="pilot" className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
@@ -351,13 +350,13 @@ function Pilot() {
           <div>
             <div className="flex items-center gap-2 text-white/60">
               <Trophy className="h-5 w-5" />
-              <p className="text-sm font-semibold uppercase tracking-wide">Pilot program</p>
+              <p className="text-sm font-semibold uppercase tracking-wide">תוכנית פיילוט</p>
             </div>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Designed for an 8-week paid pilot with football schools.
+              מיועד לפיילוט בתשלום של 8 שבועות עם בתי ספר לכדורגל.
             </h2>
             <p className="mt-4 text-white/70">
-              A focused pilot that proves engagement, safety, and value before a full rollout.
+              פיילוט ממוקד שמוכיח מעורבות, בטיחות וערך לפני השקה מלאה.
             </p>
           </div>
           <ul className="space-y-3">
@@ -379,19 +378,19 @@ function FinalCta() {
     <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
       <div className="rounded-2xl border border-border bg-card p-10 text-center">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Turn every football school into a personalized player-development academy.
+          הפכו כל בית ספר לכדורגל לאקדמיה מותאמת אישית לפיתוח שחקנים.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Explore the full demo — switch between admin, coach, parent, and player in seconds.
+          גלו את ההדגמה המלאה — עברו בין מנהל, מאמן, הורה ושחקן תוך שניות.
         </p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild size="lg">
             <Link href="/demo">
-              View Demo <ArrowRight className="h-4 w-4" />
+              צפייה בהדגמה <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="/login">Log in</Link>
+            <Link href="/login">התחברות</Link>
           </Button>
         </div>
       </div>
@@ -407,7 +406,7 @@ function SiteFooter() {
           <ShieldCheck className="h-4 w-4" />
           <span>{APP_NAME}</span>
         </div>
-        <p>Proof of concept — not for clinical or medical use.</p>
+        <p>הוכחת היתכנות (POC) — לא לשימוש קליני או רפואי.</p>
       </div>
     </footer>
   );

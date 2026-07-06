@@ -22,15 +22,15 @@ export default async function PlayerProgressPage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">My Progress</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Consistency between sessions is how players grow.</p>
+        <h1 className="text-xl font-semibold">ההתקדמות שלי</h1>
+        <p className="mt-1 text-sm text-muted-foreground">עקביות בין האימונים היא איך ששחקנים משתפרים.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <Card>
           <CardContent className="flex flex-col items-center gap-2 p-5">
-            <ProgressRing value={progress.rate} label="This week" />
-            <p className="text-xs text-muted-foreground">{progress.completed}/{progress.total || 0} tasks</p>
+            <ProgressRing value={progress.rate} label="השבוע" />
+            <p className="text-xs text-muted-foreground">{progress.completed}/{progress.total || 0} משימות</p>
           </CardContent>
         </Card>
         <Card>
@@ -39,15 +39,15 @@ export default async function PlayerProgressPage() {
               <Flame className="h-6 w-6" />
             </div>
             <p className="text-2xl font-semibold">{totalCompleted}</p>
-            <p className="text-xs text-muted-foreground">Tasks completed all-time</p>
+            <p className="text-xs text-muted-foreground">משימות שהושלמו בסך הכול</p>
           </CardContent>
         </Card>
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Recent activity</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">פעילות אחרונה</p>
         {reports.length === 0 ? (
-          <EmptyState title="No activity yet" description="Complete a task and report how it went to see your progress here." />
+          <EmptyState title="אין פעילות עדיין" description="השלימו משימה ודווחו איך היא הלכה כדי לראות את ההתקדמות שלכם כאן." />
         ) : (
           reports.slice(0, 8).map((report) => (
             <Card key={report.id}>
@@ -55,7 +55,7 @@ export default async function PlayerProgressPage() {
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="h-4 w-4 text-success" />
                   <div>
-                    <p className="text-sm font-medium">Difficulty {report.difficulty}/5 · Fatigue {report.fatigue}/5</p>
+                    <p className="text-sm font-medium">קושי {report.difficulty}/5 · עייפות {report.fatigue}/5</p>
                     <p className="text-xs text-muted-foreground">{formatDate(report.createdAt)}</p>
                   </div>
                 </div>

@@ -22,17 +22,17 @@ export default async function CoachTeamDetailPage({ params }: { params: Promise<
         <div>
           <p className="text-sm text-muted-foreground">{team.ageGroup} · {team.season}</p>
           <h1 className="text-2xl font-semibold tracking-tight">{team.name}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{rows.length} players on this team</p>
+          <p className="mt-1 text-sm text-muted-foreground">{rows.length} שחקנים בקבוצה זו</p>
         </div>
         <Button asChild>
-          <Link href={`/coach/assign?teamId=${team.id}`}>Assign tasks to this team</Link>
+          <Link href={`/coach/assign?teamId=${team.id}`}>הקצאת משימות לקבוצה זו</Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Roster</CardTitle>
-          <CardDescription>Tap a player to view their full profile, reports, and notes.</CardDescription>
+          <CardTitle>סד השחקנים</CardTitle>
+          <CardDescription>הקישו על שחקן כדי לראות את הפרופיל המלא, הדוחות וההערות שלו.</CardDescription>
         </CardHeader>
         <CardContent>
           <TeamRosterTable rows={rows} playerHref={(id) => `/coach/players/${id}`} />

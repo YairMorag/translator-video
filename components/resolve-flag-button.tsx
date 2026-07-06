@@ -18,7 +18,7 @@ export function ResolveFlagButton({ riskFlagId, playerId }: { riskFlagId: string
       onClick={() => startTransition(() => resolveRiskFlagAction(riskFlagId, playerId))}
     >
       {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-      Mark reviewed
+      סימון כנבדק
     </Button>
   );
 }

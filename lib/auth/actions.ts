@@ -11,7 +11,7 @@ export async function loginWithEmail(_prevState: { error?: string } | undefined,
   const profile = getProfileByEmail(email);
 
   if (!profile) {
-    return { error: "We couldn't find a demo account with that email. Try one of the demo accounts below." };
+    return { error: "לא מצאנו חשבון הדגמה עם האימייל הזה. נסו אחד מחשבונות ההדגמה למטה." };
   }
 
   const jar = await cookies();

@@ -29,41 +29,43 @@ export default async function CoachDashboardPage() {
     <div className="space-y-8">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-muted-foreground">Week of {currentWeekLabel()}</p>
-          <h1 className="text-2xl font-semibold tracking-tight">Coach Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Who needs my attention?</p>
+          <p className="text-sm text-muted-foreground">שבוע {currentWeekLabel()}</p>
+          <h1 className="text-2xl font-semibold tracking-tight">לוח הבקרה של המאמן</h1>
+          <p className="mt-1 text-sm text-muted-foreground">מי דורש את תשומת לבי?</p>
         </div>
         <Button asChild>
-          <Link href="/coach/assign">Assign Weekly Tasks</Link>
+          <Link href="/coach/assign">הקצאת משימות שבועיות</Link>
         </Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Active players" value={stats.activePlayers} icon={Users2} />
-        <StatCard label="Weekly completion" value={`${stats.weeklyCompletionRate}%`} icon={ClipboardCheck} tone="success" />
+        <StatCard label="שחקנים פעילים" value={stats.activePlayers} icon={Users2} />
+        <StatCard label="השלמה שבועית" value={`${stats.weeklyCompletionRate}%`} icon={ClipboardCheck} tone="success" />
         <StatCard
-          label="Need attention"
+          label="דורשים תשומת לב"
           value={stats.playersNeedingAttention}
           icon={AlertTriangle}
           tone={stats.playersNeedingAttention > 0 ? "warning" : "default"}
         />
-        <StatCard label="Pain reports" value={stats.painReports} icon={Activity} tone={stats.painReports > 0 ? "destructive" : "default"} />
-        <StatCard label="High fatigue" value={stats.highFatigueReports} icon={BatteryLow} tone={stats.highFatigueReports > 0 ? "warning" : "default"} />
-        <StatCard label="No activity yet" value={stats.noActivityPlayers} icon={CalendarX} />
+        <StatCard label="דיווחי כאב" value={stats.painReports} icon={Activity} tone={stats.painReports > 0 ? "destructive" : "default"} />
+        <StatCard label="עייפות גבוהה" value={stats.highFatigueReports} icon={BatteryLow} tone={stats.highFatigueReports > 0 ? "warning" : "default"} />
+        <StatCard label="אין פעילות עדיין" value={stats.noActivityPlayers} icon={CalendarX} />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Today&apos;s attention list</CardTitle>
+          <CardTitle>רשימת תשומת הלב של היום</CardTitle>
           <CardDescription>
             {attentionRows.length > 0
-              ? `${attentionRows.length} player${attentionRows.length === 1 ? "" : "s"} need your attention this week.`
-              : "No players need attention right now."}
+              ? attentionRows.length === 1
+                ? "שחקן אחד דורש את תשומת לבך השבוע."
+                : `${attentionRows.length} שחקנים דורשים את תשומת לבך השבוע.`
+              : "אין שחקנים שדורשים תשומת לב כרגע."}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {attentionRows.length === 0 ? (
-            <EmptyState title="All clear" description="No pain, high fatigue, or inactivity flags right now." />
+            <EmptyState title="הכול תקין" description="אין דגלי כאב, עייפות גבוהה או חוסר פעילות כרגע." />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {attentionRows.map((row) => (
@@ -77,8 +79,8 @@ export default async function CoachDashboardPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>My teams</CardTitle>
-            <CardDescription>Completion rate by team this week.</CardDescription>
+            <CardTitle>הקבוצות שלי</CardTitle>
+            <CardDescription>שיעור השלמה לפי קבוצה השבוע.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <CompletionByTeamChart data={stats.completionByTeam} />
@@ -98,12 +100,12 @@ export default async function CoachDashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Task category distribution</CardTitle>
-            <CardDescription>What this week&apos;s assigned tasks focus on.</CardDescription>
+            <CardTitle>התפלגות קטגוריות משימות</CardTitle>
+            <CardDescription>במה מתמקדות המשימות שהוקצו השבוע.</CardDescription>
           </CardHeader>
           <CardContent>
             {stats.categoryDistribution.length === 0 ? (
-              <EmptyState title="No tasks assigned yet" />
+              <EmptyState title="טרם הוקצו משימות" />
             ) : (
               <CategoryDistributionChart data={stats.categoryDistribution} />
             )}
@@ -113,22 +115,22 @@ export default async function CoachDashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent reports</CardTitle>
-          <CardDescription>The latest completion reports from your players.</CardDescription>
+          <CardTitle>דוחות אחרונים</CardTitle>
+          <CardDescription>דוחות ההשלמה האחרונים של השחקנים שלך.</CardDescription>
         </CardHeader>
         <CardContent>
           {recentReports.length === 0 ? (
-            <EmptyState title="No reports yet" description="Reports will appear here after players complete tasks." />
+            <EmptyState title="אין דוחות עדיין" description="דוחות יופיעו כאן לאחר שהשחקנים ישלימו משימות." />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Player</TableHead>
-                  <TableHead>Task</TableHead>
-                  <TableHead>Difficulty</TableHead>
-                  <TableHead>Fatigue</TableHead>
-                  <TableHead>Pain</TableHead>
-                  <TableHead>When</TableHead>
+                  <TableHead>שחקן</TableHead>
+                  <TableHead>משימה</TableHead>
+                  <TableHead>קושי</TableHead>
+                  <TableHead>עייפות</TableHead>
+                  <TableHead>כאב</TableHead>
+                  <TableHead>מתי</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -143,13 +145,13 @@ export default async function CoachDashboardPage() {
                           {player?.fullName}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{taskTitle ?? "Home task"}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{taskTitle ?? "משימת בית"}</TableCell>
                       <TableCell>{report.difficulty}/5</TableCell>
                       <TableCell>
                         <Badge variant={report.fatigue >= 4 ? "warning" : "muted"}>{report.fatigue}/5</Badge>
                       </TableCell>
                       <TableCell>
-                        {report.painReported ? <Badge variant="destructive">Yes</Badge> : <span className="text-xs text-muted-foreground">No</span>}
+                        {report.painReported ? <Badge variant="destructive">כן</Badge> : <span className="text-xs text-muted-foreground">לא</span>}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">{formatDateTime(report.createdAt)}</TableCell>
                     </TableRow>

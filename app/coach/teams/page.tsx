@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { requireProfile } from "@/lib/auth/session";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -15,8 +15,8 @@ export default async function CoachTeamsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">My Teams</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{teams.length} teams assigned to you.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">הקבוצות שלי</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{teams.length} קבוצות משויכות אליך.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -40,20 +40,20 @@ export default async function CoachTeamsPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>{team.name}</CardTitle>
-                    {flags > 0 && <Badge variant="warning">{flags} flag{flags === 1 ? "" : "s"}</Badge>}
+                    {flags > 0 && <Badge variant="warning">{flags} {flags === 1 ? "דגל" : "דגלים"}</Badge>}
                   </div>
-                  <CardDescription>{players.length} players · {team.ageGroup}</CardDescription>
+                  <CardDescription>{players.length} שחקנים · {team.ageGroup}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Weekly completion</span>
+                      <span>השלמה שבועית</span>
                       <span>{rate}%</span>
                     </div>
                     <Progress value={rate} />
                   </div>
                   <div className="flex items-center gap-1 text-sm font-medium text-accent">
-                    View roster <ArrowRight className="h-3.5 w-3.5" />
+                    צפייה בסד השחקנים <ArrowLeft className="h-3.5 w-3.5" />
                   </div>
                 </CardContent>
               </Card>

@@ -1,8 +1,8 @@
 import { AlertOctagon } from "lucide-react";
 
 export function ErrorState({
-  title = "Something went wrong",
-  description = "Please try again. If the problem continues, contact your school admin.",
+  title = "משהו השתבש",
+  description = "אנא נסו שוב. אם הבעיה נמשכת, פנו למנהל בית הספר.",
 }: {
   title?: string;
   description?: string;

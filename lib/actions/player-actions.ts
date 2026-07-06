@@ -35,7 +35,7 @@ export async function submitTaskReportAction(
   const assignedTask = getAssignedTaskById(assignedTaskId);
   const player = assignedTask ? getPlayerById(assignedTask.playerId) : undefined;
   if (!assignedTask || !player || player.profileId !== profile.id) {
-    return { error: "We couldn't find that task." };
+    return { error: "לא הצלחנו למצוא את המשימה הזו." };
   }
 
   const parsed = taskReportSchema.safeParse({
@@ -47,7 +47,7 @@ export async function submitTaskReportAction(
   });
 
   if (!parsed.success) {
-    return { error: "Please check your answers and try again." };
+    return { error: "יש לבדוק את התשובות ולנסות שוב." };
   }
 
   const { report } = submitTaskReport(assignedTaskId, {

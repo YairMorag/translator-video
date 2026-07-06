@@ -36,23 +36,23 @@ export interface NavItem {
 // into a Client Component — only serializable data crosses that boundary.
 const NAV_BY_ROLE: Record<Role, NavItem[]> = {
   school_admin: [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "Teams", href: "/admin/teams", icon: Users2 },
-    { label: "Reports", href: "/admin/reports", icon: FileBarChart },
+    { label: "לוח בקרה", href: "/admin", icon: LayoutDashboard },
+    { label: "קבוצות", href: "/admin/teams", icon: Users2 },
+    { label: "דוחות", href: "/admin/reports", icon: FileBarChart },
   ],
   coach: [
-    { label: "Dashboard", href: "/coach", icon: LayoutDashboard },
-    { label: "My Teams", href: "/coach/teams", icon: Users2 },
-    { label: "Assign Tasks", href: "/coach/assign", icon: ClipboardPlus },
+    { label: "לוח בקרה", href: "/coach", icon: LayoutDashboard },
+    { label: "הקבוצות שלי", href: "/coach/teams", icon: Users2 },
+    { label: "הקצאת משימות", href: "/coach/assign", icon: ClipboardPlus },
   ],
   parent: [
-    { label: "Home", href: "/parent", icon: Home },
-    { label: "Consent", href: "/parent/consent", icon: ShieldCheck },
+    { label: "בית", href: "/parent", icon: Home },
+    { label: "אישור הורה", href: "/parent/consent", icon: ShieldCheck },
   ],
   player: [
-    { label: "Today", href: "/player", icon: CalendarDays },
-    { label: "My Week", href: "/player/week", icon: ListChecks },
-    { label: "Progress", href: "/player/progress", icon: TrendingUp },
+    { label: "היום", href: "/player", icon: CalendarDays },
+    { label: "השבוע שלי", href: "/player/week", icon: ListChecks },
+    { label: "התקדמות", href: "/player/progress", icon: TrendingUp },
   ],
 };
 
@@ -112,7 +112,7 @@ export function AppShell({
           type="submit"
           className="flex items-center gap-2 text-xs text-sidebar-muted transition-colors hover:text-white"
         >
-          <LogOut className="h-3.5 w-3.5" /> Sign out
+          <LogOut className="h-3.5 w-3.5" /> התנתקות
         </button>
       </form>
     </div>
@@ -120,7 +120,7 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-sidebar py-5 md:flex">
+      <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col bg-sidebar py-5 md:flex">
         <div className="flex items-center gap-2 px-4 pb-4">
           <ShieldCheck className="h-6 w-6 text-white" />
           <span className="text-sm font-semibold text-white">{APP_NAME}</span>
@@ -136,7 +136,7 @@ export function AppShell({
         </div>
         <button
           onClick={() => setOpen(true)}
-          aria-label="Open menu"
+          aria-label="פתיחת תפריט"
           className="rounded-md p-2 text-foreground hover:bg-muted"
         >
           <Menu className="h-5 w-5" />
@@ -146,7 +146,7 @@ export function AppShell({
       {open && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute inset-y-0 left-0 flex w-64 flex-col bg-sidebar py-5">
+          <div className="absolute inset-y-0 start-0 flex w-64 flex-col bg-sidebar py-5">
             <div className="flex items-center justify-between px-4 pb-4">
               <div className="flex items-center gap-2 text-white">
                 <ShieldCheck className="h-5 w-5" />
@@ -154,7 +154,7 @@ export function AppShell({
               </div>
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Close menu"
+                aria-label="סגירת תפריט"
                 className="rounded-md p-1 text-white hover:bg-white/10"
               >
                 <X className="h-5 w-5" />
@@ -166,7 +166,7 @@ export function AppShell({
         </div>
       )}
 
-      <main className="md:ml-60">
+      <main className="md:ms-60">
         <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
       </main>
     </div>

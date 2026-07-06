@@ -19,8 +19,8 @@ export default async function PlayerWeekPage() {
     return (
       <EmptyState
         icon={ShieldAlert}
-        title="Parent approval needed"
-        description="Your parent needs to approve home training before you can see your weekly plan."
+        title="נדרש אישור הורה"
+        description="ההורה שלך צריך לאשר את האימון הביתי לפני שתוכל/י לראות את התוכנית השבועית שלך."
       />
     );
   }
@@ -33,18 +33,18 @@ export default async function PlayerWeekPage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <p className="text-sm text-muted-foreground">Week of {currentWeekLabel()}</p>
-        <h1 className="text-xl font-semibold">My Week</h1>
-        {focusLabel && <p className="mt-1 text-sm text-muted-foreground">Focus: {focusLabel}</p>}
+        <p className="text-sm text-muted-foreground">שבוע {currentWeekLabel()}</p>
+        <h1 className="text-xl font-semibold">השבוע שלי</h1>
+        {focusLabel && <p className="mt-1 text-sm text-muted-foreground">מיקוד: {focusLabel}</p>}
       </div>
 
       {assignedTasks.length === 0 ? (
-        <EmptyState title="No tasks assigned yet" description="Your coach will publish this week's plan soon." />
+        <EmptyState title="עדיין לא הוקצו משימות" description="המאמן שלך יפרסם את התוכנית השבועית בקרוב." />
       ) : (
         <>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{progress.completed} of {progress.total} completed</span>
+              <span>{progress.completed} מתוך {progress.total} הושלמו</span>
               <span>{progress.rate}%</span>
             </div>
             <Progress value={progress.rate} />

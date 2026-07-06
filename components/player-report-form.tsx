@@ -19,7 +19,7 @@ function YesNoToggle({ name, defaultValue = "no" }: { name: string; defaultValue
         <label
           key={v}
           className={cn(
-            "flex-1 cursor-pointer rounded-md border border-input px-4 py-2 text-center text-sm font-medium capitalize transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent/10 has-[:checked]:text-accent"
+            "flex-1 cursor-pointer rounded-md border border-input px-4 py-2 text-center text-sm font-medium transition-colors has-[:checked]:border-accent has-[:checked]:bg-accent/10 has-[:checked]:text-accent"
           )}
         >
           <input
@@ -30,7 +30,7 @@ function YesNoToggle({ name, defaultValue = "no" }: { name: string; defaultValue
             className="sr-only"
             required
           />
-          {v}
+          {v === "yes" ? "כן" : "לא"}
         </label>
       ))}
     </div>
@@ -53,8 +53,8 @@ function ScalePicker({ name, label }: { name: string; label: string }) {
         ))}
       </div>
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Easy / Fresh</span>
-        <span>Very hard / Exhausted</span>
+        <span>קל / רענן</span>
+        <span>קשה מאוד / מותש</span>
       </div>
     </div>
   );
@@ -71,27 +71,27 @@ export function PlayerReportForm({ assignedTaskId, taskId }: { assignedTaskId: s
         {state.painReported ? (
           <>
             <p className="text-base font-semibold text-destructive">
-              Thanks for reporting. Stop training for now.
+              תודה על הדיווח. עצור/י את האימון לעת עתה.
             </p>
-            <p className="text-sm text-muted-foreground">Your coach will review this before your next task.</p>
+            <p className="text-sm text-muted-foreground">המאמן שלך יבדוק את זה לפני המשימה הבאה שלך.</p>
           </>
         ) : state.highFatigue ? (
           <>
-            <p className="text-base font-semibold text-warning">You reported high fatigue.</p>
+            <p className="text-base font-semibold text-warning">דיווחת על עייפות גבוהה.</p>
             <p className="text-sm text-muted-foreground">
-              Recovery is part of training. Your coach will see this report.
+              התאוששות היא חלק מהאימון. המאמן שלך יראה את הדיווח הזה.
             </p>
           </>
         ) : (
           <>
-            <p className="text-base font-semibold text-success">Nice work!</p>
+            <p className="text-base font-semibold text-success">כל הכבוד!</p>
             <p className="text-sm text-muted-foreground">
-              Consistency between sessions is how players grow. Your coach uses this report to adjust your training.
+              עקביות בין האימונים היא איך ששחקנים משתפרים. המאמן שלך משתמש בדיווח הזה כדי להתאים את האימון שלך.
             </p>
           </>
         )}
         <Button onClick={() => router.push("/player")} className="w-full">
-          Back to today
+          חזרה להיום
         </Button>
       </div>
     );
@@ -100,24 +100,24 @@ export function PlayerReportForm({ assignedTaskId, taskId }: { assignedTaskId: s
   return (
     <form action={formAction} className="space-y-6">
       <div className="space-y-1.5">
-        <Label>Did you complete the task?</Label>
+        <Label>השלמת את המשימה?</Label>
         <YesNoToggle name="completed" defaultValue="yes" />
       </div>
 
-      <ScalePicker name="difficulty" label="How difficult did it feel? (1-5)" />
-      <ScalePicker name="fatigue" label="How fatigued do you feel? (1-5)" />
+      <ScalePicker name="difficulty" label="כמה קשה זה הרגיש? (1-5)" />
+      <ScalePicker name="fatigue" label="כמה עייף/ה את/ה מרגיש/ה? (1-5)" />
 
       <div className="space-y-1.5">
-        <Label>Any pain?</Label>
+        <Label>יש כאב?</Label>
         <YesNoToggle name="pain" defaultValue="no" />
         <p className="text-xs text-muted-foreground">
-          If something hurt during the task, please say yes — your coach will follow up before your next task.
+          אם משהו כאב במהלך המשימה, אנא בחר/י כן — המאמן שלך יחזור אליך לפני המשימה הבאה.
         </p>
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="note">Optional note</Label>
-        <Textarea id="note" name="note" placeholder="Anything you want your coach to know?" rows={3} />
+        <Label htmlFor="note">הערה (לא חובה)</Label>
+        <Textarea id="note" name="note" placeholder="משהו שתרצה/י שהמאמן ידע?" rows={3} />
       </div>
 
       {state?.error && (
@@ -126,7 +126,7 @@ export function PlayerReportForm({ assignedTaskId, taskId }: { assignedTaskId: s
 
       <Button type="submit" size="lg" className="w-full" disabled={pending}>
         {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-        Submit report
+        שליחת דיווח
       </Button>
     </form>
   );

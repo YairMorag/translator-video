@@ -24,6 +24,7 @@ import {
   getCoachNotesForPlayer,
 } from "@/lib/data/store";
 import { CATEGORY_LABELS } from "@/lib/data/task-catalog";
+import { POSITION_LABELS, INTENSITY_LABELS, ASSIGNED_TASK_STATUS_LABELS } from "@/lib/labels";
 import { currentWeekLabel, formatDate } from "@/lib/date";
 
 export default async function ParentChildPage({ params }: { params: Promise<{ playerId: string }> }) {
@@ -45,7 +46,7 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <div>
-          <p className="text-sm text-muted-foreground">{team?.name} · {child.position}</p>
+          <p className="text-sm text-muted-foreground">{team?.name} · {POSITION_LABELS[child.position]}</p>
           <h1 className="text-xl font-semibold">{child.fullName}</h1>
         </div>
         <ConsentStatusBadge status={child.parentConsentStatus} />
@@ -54,9 +55,9 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
       {child.parentConsentStatus !== "approved" && (
         <Card className="border-warning/40 bg-warning-soft/40">
           <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm">Home training tasks are hidden from {child.fullName} until you complete consent.</p>
+            <p className="text-sm">משימות אימון ביתי מוסתרות מ-{child.fullName} עד שתשלימו את תהליך האישור.</p>
             <Button asChild size="sm">
-              <Link href="/parent/consent">Review consent</Link>
+              <Link href="/parent/consent">בדיקת אישור</Link>
             </Button>
           </CardContent>
         </Card>
@@ -66,7 +67,7 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
         <Card className="border-destructive/40 bg-destructive-soft/40">
           <CardContent className="flex items-start gap-3 p-4 text-sm">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-            <p>Your child reported pain. The coach has been notified. Please avoid additional training until reviewed.</p>
+            <p>הילד/ה שלך דיווח/ה על כאב. המאמן קיבל התראה. אנא הימנעו מאימון נוסף עד לבדיקה.</p>
           </CardContent>
         </Card>
       )}
@@ -74,22 +75,22 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
         <Card className="border-warning/40 bg-warning-soft/40">
           <CardContent className="flex items-start gap-3 p-4 text-sm">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-            <p>Your child reported high fatigue recently. Recovery is part of training — the coach has been notified.</p>
+            <p>הילד/ה שלך דיווח/ה לאחרונה על עייפות גבוהה. התאוששות היא חלק מהאימון — המאמן קיבל התראה.</p>
           </CardContent>
         </Card>
       )}
 
       <Card>
         <CardHeader>
-          <CardTitle>This week&apos;s plan · {currentWeekLabel()}</CardTitle>
+          <CardTitle>התוכנית השבועית · {currentWeekLabel()}</CardTitle>
           <CardDescription>
-            {focusLabel ? `Focus: ${focusLabel}` : "No plan published yet"}
-            {coach && ` · Approved by ${coach.fullName}`}
+            {focusLabel ? `מיקוד: ${focusLabel}` : "טרם פורסמה תוכנית"}
+            {coach && ` · אושר על ידי ${coach.fullName}`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {assignedTasks.length === 0 ? (
-            <EmptyState title="No tasks assigned yet" description="Your coach will publish this week's plan soon." />
+            <EmptyState title="עדיין לא הוקצו משימות" description="המאמן יפרסם את התוכנית השבועית בקרוב." />
           ) : (
             assignedTasks.map((assigned) => {
               const task = getTaskById(assigned.taskId);
@@ -98,13 +99,13 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
                 <div key={assigned.id} className="rounded-lg border border-border p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="font-medium">{task.title}</p>
-                    <Badge variant={assigned.status === "completed" ? "success" : "muted"} className="capitalize">
-                      {assigned.status}
+                    <Badge variant={assigned.status === "completed" ? "success" : "muted"}>
+                      {ASSIGNED_TASK_STATUS_LABELS[assigned.status]}
                     </Badge>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {task.durationMinutes} min</span>
-                    <Badge variant="outline" className="capitalize">{task.intensity}</Badge>
+                    <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {task.durationMinutes} דקות</span>
+                    <Badge variant="outline">עצימות {INTENSITY_LABELS[task.intensity]}</Badge>
                     <span className="inline-flex items-center gap-1"><Dumbbell className="h-3.5 w-3.5" /> {task.equipmentNeeded}</span>
                     <CoachApprovedBadge />
                   </div>
@@ -117,20 +118,20 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
 
       <Card>
         <CardHeader>
-          <CardTitle>Reports</CardTitle>
-          <CardDescription>How your child felt after each task.</CardDescription>
+          <CardTitle>דוחות</CardTitle>
+          <CardDescription>איך הילד/ה שלך הרגיש/ה אחרי כל משימה.</CardDescription>
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
-            <EmptyState title="No reports yet" description="Reports will appear here after tasks are completed." />
+            <EmptyState title="אין דוחות עדיין" description="דוחות יופיעו כאן לאחר שהמשימות יושלמו." />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Difficulty</TableHead>
-                  <TableHead>Fatigue</TableHead>
-                  <TableHead>Pain</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>קושי</TableHead>
+                  <TableHead>עייפות</TableHead>
+                  <TableHead>כאב</TableHead>
+                  <TableHead>תאריך</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -141,7 +142,7 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
                       <Badge variant={report.fatigue >= 4 ? "warning" : "muted"}>{report.fatigue}/5</Badge>
                     </TableCell>
                     <TableCell>
-                      {report.painReported ? <RiskBadge type="pain" /> : <span className="text-xs text-muted-foreground">No</span>}
+                      {report.painReported ? <RiskBadge type="pain" /> : <span className="text-xs text-muted-foreground">לא</span>}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{formatDate(report.createdAt)}</TableCell>
                   </TableRow>
@@ -155,7 +156,7 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
       {parentNotes.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Notes from the coach</CardTitle>
+            <CardTitle>הערות מהמאמן</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {parentNotes.map((note) => (
@@ -170,8 +171,8 @@ export default async function ParentChildPage({ params }: { params: Promise<{ pl
 
       <Card>
         <CardHeader>
-          <CardTitle>Contact the coach</CardTitle>
-          <CardDescription>Send a note or flag a concern — the coach will follow up.</CardDescription>
+          <CardTitle>יצירת קשר עם המאמן</CardTitle>
+          <CardDescription>שלחו הערה או סמנו חשש — המאמן יחזור אליכם.</CardDescription>
         </CardHeader>
         <CardContent>
           <ParentConcernForm playerId={child.id} />

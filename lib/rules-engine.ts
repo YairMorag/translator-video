@@ -5,6 +5,8 @@ import type {
   SuggestionResult,
   SuggestedTask,
 } from "@/lib/types";
+import { POSITION_LABELS } from "@/lib/labels";
+import { CATEGORY_LABELS } from "@/lib/data/task-catalog";
 
 const MAX_WEEKLY_TASKS = 3;
 const MAX_WEEKLY_DURATION_MINUTES = 90;
@@ -41,7 +43,7 @@ export function suggestTasksForPlayer(
   // Safety rule: a recent pain report blocks all training suggestions.
   if (mostRecentReport?.painReported) {
     warnings.push(
-      `${player.fullName} reported pain in their last report. No new training tasks are suggested until a coach reviews this player.`
+      `${player.fullName} דיווח/ה על כאב בדיווח האחרון. לא יוצעו משימות אימון חדשות עד שמאמן יבדוק את השחקן/ית.`
     );
     return {
       suggested: [],
@@ -54,7 +56,7 @@ export function suggestTasksForPlayer(
   const highFatigue = (mostRecentReport?.fatigue ?? 0) >= HIGH_FATIGUE_THRESHOLD;
   if (highFatigue) {
     warnings.push(
-      `${player.fullName} reported high fatigue (${mostRecentReport?.fatigue}/5). Only recovery and mobility tasks are suggested this week.`
+      `${player.fullName} דיווח/ה על עייפות גבוהה (${mostRecentReport?.fatigue}/5). השבוע יוצעו רק משימות התאוששות וניידות.`
     );
   }
 
@@ -108,7 +110,7 @@ export function suggestTasksForPlayer(
 
   if (suggested.length === 0) {
     warnings.push(
-      "No suitable tasks were found for this player's age, position, and focus area. Try a different focus or check the task catalog."
+      "לא נמצאו משימות מתאימות לגיל, לעמדה ולמיקוד השבועי של השחקן/ית. נסו מיקוד אחר או בדקו את קטלוג המשימות."
     );
   }
 
@@ -121,12 +123,12 @@ function buildReason(
   focusArea: string | undefined,
   highFatigue: boolean
 ): string {
-  const ageGroup = `${player.position}`;
+  const positionLabel = POSITION_LABELS[player.position];
   if (highFatigue) {
-    return `Suggested because ${player.fullName} reported high fatigue recently, so only recovery/mobility work is included.`;
+    return `מוצע כי ${player.fullName} דיווח/ה לאחרונה על עייפות גבוהה, לכן נכללות רק משימות התאוששות/ניידות.`;
   }
   const focusText = focusArea
-    ? `the weekly focus is ${focusArea.replace(/_/g, " ")}`
-    : `it fits ${player.fullName}'s position and age group`;
-  return `Suggested because ${player.fullName} is a ${player.age}-year-old ${ageGroup}, ${focusText}, and no fatigue or pain was reported recently.`;
+    ? `המיקוד השבועי הוא ${CATEGORY_LABELS[focusArea as keyof typeof CATEGORY_LABELS] ?? focusArea}`
+    : `זה מתאים לעמדה ולגיל של ${player.fullName}`;
+  return `מוצע כי ${player.fullName} הוא/היא ${positionLabel} בן/בת ${player.age}, ${focusText}, ולא דווחו לאחרונה עייפות או כאב.`;
 }

@@ -318,7 +318,7 @@ export function submitTaskReport(
         player.id,
         "pain",
         "high",
-        `Pain reported during "${task?.title ?? "a home task"}". Home training should pause until a coach reviews this.`,
+        `דווח כאב במהלך "${task?.title ?? "משימת בית"}". האימון הביתי צריך להיעצר עד לבדיקת מאמן.`,
         "task_report"
       )
     );
@@ -328,7 +328,7 @@ export function submitTaskReport(
         player.id,
         "high_fatigue",
         "medium",
-        `Fatigue reported at ${input.fatigue}/5 after "${task?.title ?? "a home task"}".`,
+        `דווחה עייפות ברמה ${input.fatigue}/5 לאחר "${task?.title ?? "משימת בית"}".`,
         "task_report"
       )
     );

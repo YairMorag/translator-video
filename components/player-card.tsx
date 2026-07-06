@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { RiskBadge } from "@/components/risk-badge";
 import { Progress } from "@/components/ui/progress";
+import { POSITION_LABELS } from "@/lib/labels";
 import type { PlayerRow } from "@/lib/data/metrics";
 
 function initials(name: string) {
@@ -27,15 +28,15 @@ export function PlayerCard({ row, href }: { row: PlayerRow; href: string }) {
             </Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{player.fullName}</p>
-              <p className="text-xs capitalize text-muted-foreground">{player.position}</p>
+              <p className="text-xs text-muted-foreground">{POSITION_LABELS[player.position]}</p>
             </div>
           </div>
 
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>This week</span>
+              <span>השבוע</span>
               <span>
-                {progress.completed}/{progress.total || 0} tasks
+                {progress.completed}/{progress.total || 0} משימות
               </span>
             </div>
             <Progress value={progress.rate} />

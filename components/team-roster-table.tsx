@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { RiskBadge } from "@/components/risk-badge";
 import { ConsentStatusBadge } from "@/components/consent-status-badge";
 import { Badge } from "@/components/ui/badge";
+import { POSITION_LABELS } from "@/lib/labels";
 import type { PlayerRow } from "@/lib/data/metrics";
 
 export function TeamRosterTable({ rows, playerHref }: { rows: PlayerRow[]; playerHref?: (playerId: string) => string }) {
@@ -12,12 +13,12 @@ export function TeamRosterTable({ rows, playerHref }: { rows: PlayerRow[]; playe
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Player</TableHead>
-          <TableHead>Position</TableHead>
-          <TableHead>This week</TableHead>
-          <TableHead>Fatigue</TableHead>
-          <TableHead>Consent</TableHead>
-          <TableHead>Flags</TableHead>
+          <TableHead>שחקן</TableHead>
+          <TableHead>עמדה</TableHead>
+          <TableHead>השבוע</TableHead>
+          <TableHead>עייפות</TableHead>
+          <TableHead>אישור הורה</TableHead>
+          <TableHead>דגלים</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -32,10 +33,10 @@ export function TeamRosterTable({ rows, playerHref }: { rows: PlayerRow[]; playe
           return (
             <TableRow key={row.player.id}>
               <TableCell>{name}</TableCell>
-              <TableCell className="capitalize text-muted-foreground">{row.player.position}</TableCell>
+              <TableCell className="text-muted-foreground">{POSITION_LABELS[row.player.position]}</TableCell>
               <TableCell>
                 {row.progress.total === 0 ? (
-                  <span className="text-xs text-muted-foreground">No plan yet</span>
+                  <span className="text-xs text-muted-foreground">אין תוכנית עדיין</span>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Progress value={row.progress.rate} className="w-24" />
@@ -58,7 +59,7 @@ export function TeamRosterTable({ rows, playerHref }: { rows: PlayerRow[]; playe
               <TableCell>
                 <div className="flex flex-wrap gap-1">
                   {row.openFlags.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">None</span>
+                    <span className="text-xs text-muted-foreground">אין</span>
                   ) : (
                     row.openFlags.map((flag) => <RiskBadge key={flag.id} type={flag.type} />)
                   )}

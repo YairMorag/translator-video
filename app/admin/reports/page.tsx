@@ -12,23 +12,23 @@ export default function AdminReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">School Reports</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">דוחות בית ספר</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          A pilot-readiness snapshot you can share with school leadership.
+          תמונת מצב על מוכנות הפיילוט, לשיתוף עם הנהלת בית הספר.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Weekly engagement" value={`${stats.weeklyEngagementRate}%`} icon={Users2} tone="success" />
-        <StatCard label="Average completion" value={`${stats.averageCompletionRate}%`} icon={ClipboardCheck} />
-        <StatCard label="Parent consent completed" value={`${stats.parentConsentRate}%`} icon={HeartHandshake} />
+        <StatCard label="מעורבות שבועית" value={`${stats.weeklyEngagementRate}%`} icon={Users2} tone="success" />
+        <StatCard label="השלמה ממוצעת" value={`${stats.averageCompletionRate}%`} icon={ClipboardCheck} />
+        <StatCard label="השלמת אישור הורה" value={`${stats.parentConsentRate}%`} icon={HeartHandshake} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Engagement by team</CardTitle>
-            <CardDescription>Completion rate per team this week.</CardDescription>
+            <CardTitle>מעורבות לפי קבוצה</CardTitle>
+            <CardDescription>שיעור השלמה לכל קבוצה השבוע.</CardDescription>
           </CardHeader>
           <CardContent>
             <CompletionByTeamChart data={stats.engagementByTeam} />
@@ -36,8 +36,8 @@ export default function AdminReportsPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>3-week completion trend</CardTitle>
-            <CardDescription>Whether the pilot is generating sustained engagement.</CardDescription>
+            <CardTitle>מגמת השלמה תלת-שבועית</CardTitle>
+            <CardDescription>האם הפיילוט מייצר מעורבות עקבית.</CardDescription>
           </CardHeader>
           <CardContent>
             <AdherenceTrendChart data={stats.completionTrend} />
@@ -47,10 +47,10 @@ export default function AdminReportsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Parent consent completion</CardTitle>
+          <CardTitle>השלמת אישור הורה</CardTitle>
           <CardDescription>
-            {stats.parentConsentRate}% of players have completed parental consent. Players without consent
-            cannot see or perform home-training tasks.
+            {stats.parentConsentRate}% מהשחקנים השלימו אישור הורה. שחקנים ללא אישור אינם יכולים
+            לראות או לבצע משימות אימון ביתי.
           </CardDescription>
         </CardHeader>
       </Card>

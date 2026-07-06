@@ -5,19 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CoachApprovedBadge } from "@/components/coach-approved-badge";
 import { CATEGORY_LABELS } from "@/lib/data/task-catalog";
+import { INTENSITY_LABELS, ASSIGNED_TASK_STATUS_LABELS } from "@/lib/labels";
 import type { AssignedTaskStatus, Intensity, TaskCatalogItem } from "@/lib/types";
 
 const INTENSITY_VARIANT: Record<Intensity, "success" | "warning" | "destructive"> = {
   low: "success",
   medium: "warning",
   high: "destructive",
-};
-
-const STATUS_LABEL: Record<AssignedTaskStatus, string> = {
-  assigned: "Not started",
-  started: "In progress",
-  completed: "Completed",
-  skipped: "Skipped",
 };
 
 export function TaskCard({
@@ -46,10 +40,10 @@ export function TaskCard({
 
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5" /> {task.durationMinutes} min
+              <Clock className="h-3.5 w-3.5" /> {task.durationMinutes} דקות
             </span>
-            <Badge variant={INTENSITY_VARIANT[task.intensity]} className="capitalize">
-              {task.intensity} intensity
+            <Badge variant={INTENSITY_VARIANT[task.intensity]}>
+              עצימות {INTENSITY_LABELS[task.intensity]}
             </Badge>
             <span className="inline-flex items-center gap-1">
               <Dumbbell className="h-3.5 w-3.5" /> {task.equipmentNeeded}
@@ -58,7 +52,9 @@ export function TaskCard({
 
           <div className="flex items-center justify-between">
             <CoachApprovedBadge />
-            <span className="text-xs font-medium text-muted-foreground">{STATUS_LABEL[status]}</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {ASSIGNED_TASK_STATUS_LABELS[status]}
+            </span>
           </div>
         </CardContent>
       </Card>

@@ -18,13 +18,13 @@ export default async function AdminTeamDetailPage({ params }: { params: Promise<
       <div>
         <p className="text-sm text-muted-foreground">{team.ageGroup} · {team.season}</p>
         <h1 className="text-2xl font-semibold tracking-tight">{team.name}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Coach {coach?.fullName ?? "Unassigned"} · {rows.length} players</p>
+        <p className="mt-1 text-sm text-muted-foreground">מאמן {coach?.fullName ?? "לא משויך"} · {rows.length} שחקנים</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Roster</CardTitle>
-          <CardDescription>Consent, adherence, and safety status for every player on this team.</CardDescription>
+          <CardTitle>סד השחקנים</CardTitle>
+          <CardDescription>אישור הורה, עמידה ביעדים וסטטוס בטיחות עבור כל שחקן בקבוצה.</CardDescription>
         </CardHeader>
         <CardContent>
           <TeamRosterTable rows={rows} />

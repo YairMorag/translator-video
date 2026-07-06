@@ -13,6 +13,29 @@ This is not a fitness app, a social network, or a medical tool. It does not
 track calories, weight, or body shape, and it never gives medical or
 nutrition advice. See [Safety principles](#safety-principles) below.
 
+## Localization
+
+The product UI is localized to Hebrew for the Israeli football-school market,
+with full RTL support (`<html lang="he" dir="rtl">`). Code, data models,
+routes, file names, and this README stay in English — only user-facing copy
+is Hebrew.
+
+- Layout uses CSS logical properties (`ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`)
+  instead of physical left/right so the whole app mirrors correctly.
+- Dashboard charts (Recharts) are mirrored for RTL reading (reversed axes,
+  value axis on the right).
+- `@radix-ui/react-direction`'s `DirectionProvider` wraps the app in
+  `app/layout.tsx` so every Radix primitive (Tabs, Select, …) inherits `rtl`
+  — without it, Radix defaults those to `ltr` internally regardless of the
+  document's own `dir`, which silently breaks CSS direction inheritance for
+  anything rendered inside them.
+- `lib/labels.ts` centralizes Hebrew display labels for every enum (position,
+  intensity, task status, risk type, etc.) so raw English enum values are
+  never rendered directly.
+- Proper nouns (people's names, the demo school name, team codes like
+  `U10`/`U12`) are kept in Latin script, matching the demo credentials above
+  and common practice in Hebrew product UIs.
+
 ## Core demo flow
 
 1. **Coach** logs in, opens a team, selects a player, and assigns weekly

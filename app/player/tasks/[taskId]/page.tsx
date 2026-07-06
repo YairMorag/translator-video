@@ -16,6 +16,7 @@ import {
   getReportForAssignedTask,
 } from "@/lib/data/store";
 import { CATEGORY_LABELS } from "@/lib/data/task-catalog";
+import { INTENSITY_LABELS } from "@/lib/labels";
 
 export default async function PlayerTaskDetailPage({ params }: { params: Promise<{ taskId: string }> }) {
   const profile = await requireProfile("player");
@@ -27,8 +28,8 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
     return (
       <EmptyState
         icon={ShieldAlert}
-        title="Parent approval needed"
-        description="Your parent needs to approve home training before you can see this task."
+        title="נדרש אישור הורה"
+        description="ההורה שלך צריך לאשר את האימון הביתי לפני שתוכל/י לראות משימה זו."
       />
     );
   }
@@ -47,8 +48,8 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{CATEGORY_LABELS[task.category]}</p>
         <h1 className="text-xl font-semibold">{task.title}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-2">
-          <Badge variant="outline"><Clock className="h-3.5 w-3.5" /> {task.durationMinutes} min</Badge>
-          <Badge variant="outline" className="capitalize">{task.intensity} intensity</Badge>
+          <Badge variant="outline"><Clock className="h-3.5 w-3.5" /> {task.durationMinutes} דקות</Badge>
+          <Badge variant="outline">עצימות {INTENSITY_LABELS[task.intensity]}</Badge>
           <Badge variant="outline"><Dumbbell className="h-3.5 w-3.5" /> {task.equipmentNeeded}</Badge>
           <CoachApprovedBadge />
         </div>
@@ -57,12 +58,12 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
       <Card>
         <CardContent className="space-y-4 p-5">
           <div>
-            <p className="text-sm font-semibold">Why this matters</p>
+            <p className="text-sm font-semibold">למה זה חשוב</p>
             <p className="mt-1 text-sm text-muted-foreground">{task.whyItMatters}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold">Steps</p>
-            <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground">
+            <p className="text-sm font-semibold">שלבים</p>
+            <ol className="mt-2 list-decimal space-y-1.5 ps-5 text-sm text-muted-foreground">
               {task.instructions.map((step) => (
                 <li key={step}>{step}</li>
               ))}
@@ -70,7 +71,7 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
           </div>
           <div className="rounded-md bg-warning-soft px-3 py-2 text-sm text-warning">{task.safetyNotes}</div>
           <div className="flex items-center justify-center rounded-md border border-dashed border-border py-6 text-sm text-muted-foreground">
-            Video demonstration coming soon
+            הדגמת וידאו בקרוב
           </div>
         </CardContent>
       </Card>
@@ -79,12 +80,12 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
         <Card className="border-success/40 bg-success-soft/30">
           <CardContent className="space-y-2 p-5">
             <p className="flex items-center gap-2 font-medium text-success">
-              <CheckCircle2 className="h-4 w-4" /> Task completed
+              <CheckCircle2 className="h-4 w-4" /> המשימה הושלמה
             </p>
             {report && (
               <p className="text-sm text-muted-foreground">
-                You reported difficulty {report.difficulty}/5 and fatigue {report.fatigue}/5.
-                {report.painReported && " Pain was reported — your coach was notified."}
+                דיווחת על קושי {report.difficulty}/5 ועייפות {report.fatigue}/5.
+                {report.painReported && " דווח כאב — המאמן שלך קיבל התראה."}
               </p>
             )}
           </CardContent>
@@ -92,12 +93,12 @@ export default async function PlayerTaskDetailPage({ params }: { params: Promise
       ) : assignedTask.status === "assigned" ? (
         <form action={startTask.bind(null, assignedTask.id)}>
           <Button type="submit" size="lg" className="w-full">
-            <PlayCircle className="h-4 w-4" /> Start Task
+            <PlayCircle className="h-4 w-4" /> התחלת משימה
           </Button>
         </form>
       ) : (
         <Button asChild size="lg" className="w-full">
-          <Link href={`/player/tasks/${task.id}/report`}>Mark as complete</Link>
+          <Link href={`/player/tasks/${task.id}/report`}>סימון כהושלם</Link>
         </Button>
       )}
     </div>

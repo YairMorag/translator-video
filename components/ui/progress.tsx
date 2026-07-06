@@ -18,7 +18,8 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         className={cn("h-full flex-1 bg-accent transition-all", indicatorClassName)}
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        // RTL app: fill grows from the reading-start (right) edge.
+        style={{ transform: `translateX(${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
   );

@@ -18,12 +18,12 @@ export async function submitParentConcernAction(
   const profile = await requireProfile("parent");
   const players = getPlayersForParent(profile.id);
   if (!players.some((p) => p.id === playerId)) {
-    return { error: "You don't have access to this player." };
+    return { error: "אין לך גישה לשחקן זה." };
   }
 
   const note = String(formData.get("note") ?? "").trim();
   if (!note) {
-    return { error: "Please describe your concern before sending." };
+    return { error: "יש לתאר את החשש שלך לפני השליחה." };
   }
 
   storeSubmitParentConcern(profile.id, playerId, note);

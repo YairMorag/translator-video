@@ -21,9 +21,9 @@ export default async function PlayerTaskReportPage({ params }: { params: Promise
     <div className="mx-auto max-w-xl space-y-6">
       <div>
         <p className="text-sm text-muted-foreground">{task.title}</p>
-        <h1 className="text-xl font-semibold">How did it go?</h1>
+        <h1 className="text-xl font-semibold">איך זה הלך?</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Your answers help your coach adjust your training safely.
+          התשובות שלך עוזרות למאמן שלך להתאים את האימון שלך בבטחה.
         </p>
       </div>
 

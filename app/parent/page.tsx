@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight } from "lucide-react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 
 import { requireProfile } from "@/lib/auth/session";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { RiskBadge } from "@/components/risk-badge";
 import { EmptyState } from "@/components/empty-state";
 import { getPlayersForParent, getTeamById, getOpenRiskFlagsForPlayer } from "@/lib/data/store";
 import { getPlayerWeekProgress } from "@/lib/data/metrics";
+import { POSITION_LABELS } from "@/lib/labels";
 
 export default async function ParentHomePage() {
   const profile = await requireProfile("parent");
@@ -19,9 +20,9 @@ export default async function ParentHomePage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h1 className="text-xl font-semibold">Welcome, {profile.fullName.split(" ")[0]}</h1>
+        <h1 className="text-xl font-semibold">ברוכים הבאים, {profile.fullName.split(" ")[0]}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Tasks are coach-approved and designed for short, safe practice at home.
+          המשימות מאושרות על ידי המאמן ותוכננו לתרגול קצר ובטוח בבית.
         </p>
       </div>
 
@@ -30,14 +31,14 @@ export default async function ParentHomePage() {
           <CardContent className="flex items-start gap-3 p-4 text-sm">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
             <p>
-              Your child reported pain. The coach has been notified. Please avoid additional training until reviewed.
+              הילד/ה שלך דיווח/ה על כאב. המאמן קיבל התראה. אנא הימנעו מאימון נוסף עד לבדיקה.
             </p>
           </CardContent>
         </Card>
       )}
 
       {children.length === 0 ? (
-        <EmptyState title="No linked players yet" description="Contact your football school to link your child's account." />
+        <EmptyState title="עדיין אין שחקנים מקושרים" description="פנו לבית הספר לכדורגל כדי לקשר את חשבון הילד/ה שלכם." />
       ) : (
         <div className="space-y-3">
           {children.map((child) => {
@@ -51,7 +52,7 @@ export default async function ParentHomePage() {
                     <ProgressRing value={progress.rate} size={56} strokeWidth={6} />
                     <div className="min-w-0 flex-1 space-y-1">
                       <p className="font-semibold">{child.fullName}</p>
-                      <p className="text-xs text-muted-foreground">{team?.name} · {child.position}</p>
+                      <p className="text-xs text-muted-foreground">{team?.name} · {POSITION_LABELS[child.position]}</p>
                       <div className="flex flex-wrap gap-1.5">
                         <ConsentStatusBadge status={child.parentConsentStatus} />
                         {flags.map((f) => (
@@ -59,7 +60,7 @@ export default async function ParentHomePage() {
                         ))}
                       </div>
                     </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <ArrowLeft className="h-4 w-4 shrink-0 text-muted-foreground" />
                   </CardContent>
                 </Card>
               </Link>

@@ -26,7 +26,7 @@ export async function addCoachNoteAction(
   const visibility = (formData.get("visibility") as NoteVisibility) ?? "private";
 
   if (!note) {
-    return { error: "Please write a note before saving." };
+    return { error: "יש לכתוב הערה לפני השמירה." };
   }
 
   storeAddCoachNote(profile.id, playerId, note, visibility);
@@ -56,12 +56,12 @@ export async function approveWeeklyPlanAction(
 ): Promise<AssignFormState> {
   const profile = await requireProfile("coach");
   const player = getPlayerById(playerId);
-  if (!player) return { error: "Player not found." };
+  if (!player) return { error: "השחקן לא נמצא." };
   if (player.parentConsentStatus !== "approved") {
-    return { error: "This player does not have approved parental consent yet." };
+    return { error: "לשחקן זה עדיין אין אישור הורה מאושר." };
   }
   if (taskIds.length === 0) {
-    return { error: "Select at least one task before approving the plan." };
+    return { error: "יש לבחור לפחות משימה אחת לפני אישור התוכנית." };
   }
 
   createApprovedWeeklyPlan({

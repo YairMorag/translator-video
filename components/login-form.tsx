@@ -14,14 +14,14 @@ export function LoginForm() {
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">אימייל</Label>
         <Input id="email" name="email" type="email" placeholder="coach@nextplay.demo" required />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">סיסמה</Label>
         <Input id="password" name="password" type="password" placeholder="••••••••" />
         <p className="text-xs text-muted-foreground">
-          Demo mode: any password works with a demo account email.
+          מצב הדגמה: כל סיסמה עובדת עם אימייל של חשבון הדגמה.
         </p>
       </div>
       {state?.error && (
@@ -29,7 +29,7 @@ export function LoginForm() {
       )}
       <Button type="submit" className="w-full" disabled={pending}>
         {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-        Sign in
+        התחברות
       </Button>
     </form>
   );
