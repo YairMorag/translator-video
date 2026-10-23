@@ -114,6 +114,11 @@ body.cine .letterbox{height:7vh}
   border-bottom:1px solid var(--line);transform:translateY(-100%);transition:transform 1.2s var(--ease) .6s}
 body.on-map #header{transform:none}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
+.home-btn{flex:none;display:inline-flex;align-items:center;gap:7px;margin-inline-start:14px;padding:7px 13px;border-radius:999px;border:1px solid rgba(214,178,110,.35);background:rgba(20,16,12,.55);color:var(--gold-2);font:inherit;font-size:.82rem;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .3s,border-color .3s,transform .3s}
+.home-btn:hover{background:rgba(214,178,110,.14);border-color:rgba(214,178,110,.6)}
+.home-btn:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
+.home-btn:active{transform:scale(.96)}
+@media (max-width:820px){.home-btn{padding:7px;margin-inline-start:8px}.home-lbl{display:none}}
 .mini-candle{position:relative;width:14px;height:30px;flex-shrink:0}
 .mini-candle i{position:absolute;left:50%;top:0;width:7px;height:13px;margin-left:-3.5px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
   background:radial-gradient(ellipse at 50% 85%,#fff6d0,#ffc65a 40%,rgba(255,120,0,0) 75%);box-shadow:0 0 12px rgba(255,190,80,.6);animation:flicker 2.2s ease-in-out infinite alternate;transform-origin:50% 90%}
@@ -483,6 +488,10 @@ body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
     </div>
   </div>
   <div class="legend" id="legend" aria-label="מקרא פרקים"></div>
+  <button type="button" id="home-btn" class="home-btn" onclick="goHome()" aria-label="חזרה למסך הפתיחה" title="חזרה למסך הפתיחה">
+    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M4 11.2 12 4.5l8 6.7M6.5 9.8V19.5h11V9.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="home-lbl">מסך הפתיחה</span>
+  </button>
 </header>
 
 <div id="map-controls">
@@ -1556,8 +1565,8 @@ function enterMap(withTour, then){
   const go = () => {
     if (onMap) return; onMap = true;
     const intro = $('intro'); intro.classList.add('leaving');
-    setTimeout(() => intro.classList.add('hidden'), 350);
-    setTimeout(() => { intro.style.display = 'none'; }, 2000);
+    setTimeout(() => { if (onMap) intro.classList.add('hidden'); }, 350);
+    setTimeout(() => { if (onMap) intro.style.display = 'none'; }, 2000);
     document.body.classList.add('on-map');
     cancelAnimationFrame(driftRAF); cancelAnimationFrame(cometRAF); cancelAnimationFrame(embersRAF);
     map && map.getSource('comet') && map.getSource('comet').setData(empty);
@@ -1566,6 +1575,23 @@ function enterMap(withTour, then){
     else showOverview(3800);
   };
   mapLoaded ? go() : (pendingEnter = go);
+}
+
+// ===== חזרה למסך הפתיחה =====
+function goHome(){
+  if (!onMap) return;
+  stopTour(); clearTimeout(openStory.t); clearTimeout(openStory.f); clearTimeout(ccTimer);
+  if (typeof closeLightbox === 'function' && $('lightbox').classList.contains('on')) closeLightbox();
+  $('chapter-card').classList.remove('show'); document.body.classList.remove('cine');
+  const panel = $('story-panel'); panel.classList.remove('open','peek'); panel.setAttribute('aria-hidden','true');
+  document.body.classList.remove('panel-open','on-map');
+  updateMarkers(null); document.querySelectorAll('.tl-st.active').forEach(b => b.classList.remove('active'));
+  currentId = null; lastChapter = null; onMap = false;
+  const intro = $('intro'); intro.style.display = ''; intro.scrollTop = 0;
+  void intro.offsetWidth; intro.classList.remove('hidden','leaving');
+  if (map){ try { map.stop(); introCamera(); if (!reduceMotion && map.getSource('comet')){ cancelAnimationFrame(cometRAF); cometRAF = requestAnimationFrame(cometTick); } } catch(e) {} }
+  if (!reduceMotion && window._embersFrame){ cancelAnimationFrame(embersRAF); embersRAF = requestAnimationFrame(window._embersFrame); }
+  setTimeout(() => { const b = document.querySelector('.intro-actions button'); b && b.focus({ preventScroll:true }); }, 450);
 }
 
 // ===== גחלים בעומק (קנבס) ופרלקסה עדינה במסך הפתיחה =====
@@ -1594,6 +1620,7 @@ function initEmbers(){
     }
     embersRAF = requestAnimationFrame(frame);
   };
+  window._embersFrame = frame;
   if (reduceMotion) { frame(0); cancelAnimationFrame(embersRAF); } else embersRAF = requestAnimationFrame(frame);
 }
 function buildIntro(){
