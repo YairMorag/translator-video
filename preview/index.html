@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>עדות אניטה מדי – מסע משפחתי על מפת אירופה</title>
+<meta name="description" content="עדותה של ורד פיינארו (אניטה מדי): מצ'רנוביץ, דרך הגירוש לטרנסניסטריה וגטו ברשד, ועד חיפה. מפה אינטראקטיבית.">
+<meta name="theme-color" content="#08080d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308080d'/%3E%3Cpath d='M16 4c3 4 4 6.5 4 9a4 4 0 0 1-8 0c0-2.5 1-5 4-9z' fill='%23f2c25c'/%3E%3Crect x='13.5' y='17' width='5' height='11' rx='1' fill='%23f2e9d4'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:title" content="עדות אניטה מדי – מסע משפחתי על מפת אירופה">
+<meta property="og:description" content="עדותה של ורד פיינארו (אניטה מדי): מצ'רנוביץ, דרך הגירוש לטרנסניסטריה וגטו ברשד, ועד חיפה. מפה אינטראקטיבית.">
+<meta property="og:url" content="https://yairmorag.github.io/translator-video/">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+<link rel="preconnect" href="https://s3.amazonaws.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wdth,wght@87.5..100,200..800&family=Assistant:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080d;
+  --ink:#f1eef4; --ink-2:#d6d3de; --ink-3:#aeabbf;
+  --gold:#d9b66b; --gold-2:#f2e1b4; --gold-line:rgba(217,182,107,.32);
+  --line:rgba(255,255,255,.09);
+  --glass:rgba(14,14,22,.72);
+  --header-h:64px; --tl-h:92px; --panel-w:540px; --gap:14px;
+  --serif:'Noto Serif Hebrew','Frank Ruhl Libre',serif;
+  --sans:'Assistant','Heebo',system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-io:cubic-bezier(.65,0,.35,1);
+  --c:#d9b66b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"kern"}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold-2);outline-offset:3px;border-radius:8px}
+
+/* ===== גרעין קולנועי ===== */
+.grain{position:fixed;inset:-50%;z-index:3000;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1.4s steps(6) infinite}
+body.on-map .grain{opacity:.03}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+.letterbox{position:fixed;left:0;right:0;height:0;background:#000;z-index:2500;pointer-events:none;transition:height 1.4s var(--ease-io)}
+.letterbox.t{top:0}.letterbox.b{bottom:0}
+body.cine .letterbox{height:7vh}
+
+/* ===== מסך פתיחה (מעל מפה תלת-ממדית שנעה לאט) ===== */
+#intro{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(70% 60% at 50% 42%,rgba(8,8,13,.55) 0%,rgba(8,8,13,.86) 60%,rgba(5,5,8,.97) 100%);
+  transition:opacity 1.6s var(--ease-io),visibility 1.6s}
+#intro.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#intro.leaving .intro-content{transform:scale(1.04) translateY(-10px)!important;filter:blur(8px);opacity:0;transition:all 1.3s var(--ease-io)}
+#embers{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.intro-content{position:relative;z-index:2;text-align:center;max-width:780px;padding:40px 28px;margin:auto}
+/* מסכים נמוכים: התוכן נגלל במקום להיחתך למעלה ולמטה */
+#intro{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+@media (max-height:760px) and (max-width:820px){.candle{transform:scale(.8);margin-bottom:6px}.intro-lede{margin-bottom:20px}.chapters-preview{margin-bottom:22px}.intro-names{margin:12px auto 18px}}
+.rv{opacity:0;transform:translateY(16px);filter:blur(8px);animation:rise 1.8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none;filter:none}}
+
+.candle{position:relative;display:inline-block;margin-bottom:22px;height:92px;width:40px}
+.candle .glow{position:absolute;left:50%;top:-70px;width:300px;height:300px;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(255,196,100,.20) 0%,rgba(255,150,60,.06) 38%,transparent 70%);animation:glow 4.2s ease-in-out infinite;mix-blend-mode:screen}
+.candle .flame{position:absolute;left:50%;top:6px;width:15px;height:32px;margin-left:-7.5px;
+  background:radial-gradient(ellipse at 50% 85%,#fffbe6 0%,#ffe08a 22%,#ffa23a 52%,rgba(255,80,0,0) 76%);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;transform-origin:50% 90%;animation:flicker 2.6s ease-in-out infinite alternate;
+  filter:blur(.35px);box-shadow:0 0 26px rgba(255,190,80,.5),0 0 80px rgba(255,140,40,.28)}
+.candle .flame::after{content:'';position:absolute;left:50%;bottom:3px;width:5px;height:9px;margin-left:-2.5px;border-radius:50%;background:rgba(120,160,255,.35);filter:blur(1px)}
+.candle .wick{position:absolute;left:50%;top:34px;width:2px;height:6px;margin-left:-1px;background:#2b1d10;border-radius:1px}
+.candle .body{position:absolute;left:50%;top:39px;width:13px;height:52px;margin-left:-6.5px;border-radius:2px 2px 3px 3px;
+  background:linear-gradient(90deg,#bfb18e,#f7f1e0 42%,#fffaf0 50%,#d6c9a5);box-shadow:0 0 30px rgba(255,190,90,.12)}
+.candle .body::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;border-radius:50%/40%;background:radial-gradient(ellipse at 50% 0%,rgba(255,210,120,.55),transparent 70%)}
+@keyframes flicker{0%{transform:scale(1,1) rotate(-1deg)}30%{transform:scale(.93,1.07) rotate(1.1deg)}55%{transform:scale(1.03,.97) rotate(-.6deg)}80%{transform:scale(.96,1.05) rotate(1.4deg)}100%{transform:scale(1,1.02) rotate(-1deg)}}
+@keyframes glow{0%,100%{opacity:.75;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.07)}}
+
+.kicker{font-size:.8rem;letter-spacing:.34em;color:var(--gold);font-weight:600;margin-bottom:18px}
+.kicker .sep{display:inline-block;width:34px;height:1px;background:var(--gold-line);vertical-align:middle;margin:0 14px}
+.intro-title{font-family:var(--serif);font-weight:300;font-variation-settings:"wdth" 92;font-size:clamp(3rem,8.4vw,6.4rem);line-height:1;letter-spacing:-.012em;
+  background:linear-gradient(180deg,#fffaf0 0%,#f0dcaa 48%,#b8924f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.08em}
+.intro-title small{display:block;font-size:.3em;font-weight:400;font-variation-settings:"wdth" 100;letter-spacing:.32em;margin-bottom:.5em;color:var(--ink-2);-webkit-text-fill-color:var(--ink-2)}
+.intro-names{margin:16px auto 26px;font-family:var(--serif);font-size:1.18rem;color:var(--ink-2);font-weight:300}
+.intro-names b{color:var(--gold-2);font-weight:500}
+.rule{width:140px;height:1px;margin:0 auto 26px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform-origin:center}
+.rule.rv{animation:rule 2s var(--ease) forwards;animation-delay:var(--d)}
+@keyframes rule{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
+.intro-lede{font-family:var(--serif);font-size:1.1rem;line-height:2;color:var(--ink-2);font-weight:300;max-width:640px;margin:0 auto 30px}
+.chapters-preview{display:flex;justify-content:center;margin:0 auto 34px;max-width:700px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.chapters-preview li{list-style:none;flex:1;padding:14px 6px 12px;position:relative;text-align:center;transition:background .4s}
+.chapters-preview li:hover{background:rgba(255,255,255,.025)}
+.chapters-preview li+li{border-right:1px solid var(--line)}
+.chapters-preview li::before{content:'';position:absolute;top:-1px;right:22%;left:22%;height:2px;background:var(--cc);transform:scaleX(0);animation:rule 1.4s var(--ease) forwards;animation-delay:calc(var(--d) + var(--i) * .12s)}
+.chapters-preview .n{display:block;font-size:.68rem;letter-spacing:.2em;color:var(--cc);font-weight:700;margin-bottom:3px}
+.chapters-preview .t{display:block;font-family:var(--serif);font-size:1.06rem;color:var(--ink);font-weight:500}
+.chapters-preview .y{display:block;font-size:.76rem;color:var(--ink-3);margin-top:2px;font-variant-numeric:tabular-nums}
+.intro-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{position:relative;overflow:hidden;cursor:pointer;border-radius:999px;font-size:1.02rem;font-weight:600;padding:14px 36px;letter-spacing:.04em;transition:all .5s var(--ease);display:inline-flex;align-items:center;gap:10px}
+.btn-primary{background:linear-gradient(180deg,#ecd497,#c9a253);color:#1a1407;border:1px solid #f3dfa7;box-shadow:0 10px 40px rgba(217,182,107,.25),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-primary::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);transition:left .9s var(--ease)}
+.btn-primary:hover::after{left:120%}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 50px rgba(217,182,107,.38),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn-ghost{background:rgba(255,255,255,.03);color:var(--gold-2);border:1px solid var(--gold-line);backdrop-filter:blur(6px)}
+.btn-ghost:hover{background:rgba(217,182,107,.1);border-color:var(--gold);transform:translateY(-2px)}
+.intro-hint{margin-top:22px;font-size:.88rem;color:var(--ink-3)}
+
+/* ===== כותרת ===== */
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:1100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  background:linear-gradient(180deg,rgba(8,8,13,.94),rgba(8,8,13,.76));backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);
+  border-bottom:1px solid var(--line);transform:translateY(-100%);transition:transform 1.2s var(--ease) .6s}
+body.on-map #header{transform:none}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.mini-candle{position:relative;width:14px;height:30px;flex-shrink:0}
+.mini-candle i{position:absolute;left:50%;top:0;width:7px;height:13px;margin-left:-3.5px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(ellipse at 50% 85%,#fff6d0,#ffc65a 40%,rgba(255,120,0,0) 75%);box-shadow:0 0 12px rgba(255,190,80,.6);animation:flicker 2.2s ease-in-out infinite alternate;transform-origin:50% 90%}
+.mini-candle b{position:absolute;left:50%;top:13px;width:5px;height:16px;margin-left:-2.5px;background:linear-gradient(90deg,#cfc2a0,#f6f0de,#d9cda9);border-radius:1px}
+.brand h1{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--gold-2);line-height:1.15;white-space:nowrap;letter-spacing:.005em}
+.brand .sub{font-size:.8rem;color:var(--ink-3);font-weight:400;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .sub-s{display:none}
+.legend{display:flex;gap:18px;align-items:center}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--ink-2)}
+.legend i{width:9px;height:9px;border-radius:50%;background:var(--cc);box-shadow:0 0 0 3px color-mix(in srgb,var(--cc) 22%,transparent)}
+
+/* ===== מפה ===== */
+#map{position:fixed;inset:0;z-index:1;background:var(--bg)}
+.map-vignette{position:fixed;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(120% 95% at 50% 45%,transparent 55%,rgba(5,5,9,.6) 100%),linear-gradient(180deg,rgba(5,5,9,.55),transparent 18%)}
+.map-paper{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity 1s;mix-blend-mode:multiply;
+  background:radial-gradient(120% 95% at 50% 45%,transparent 50%,rgba(80,50,20,.45) 100%),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.035' numOctaves='4'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .42  0 0 0 0 .25  0 0 0 .4 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>")}
+body.archive .map-paper{opacity:1}
+body.archive .map-vignette{opacity:.3}
+.country-tip{position:fixed;z-index:1070;pointer-events:none;background:rgba(10,10,18,.9);color:var(--gold-2);border:1px solid var(--gold-line);border-radius:8px;font-size:.84rem;padding:3px 10px;box-shadow:0 6px 18px rgba(0,0,0,.4);opacity:0;transition:opacity .2s;transform:translate(-50%,-140%)}
+.country-tip.on{opacity:1}
+
+/* פקדי מפה */
+#map-controls{position:fixed;top:calc(var(--header-h) + var(--gap));left:50%;transform:translateX(-50%);z-index:1050;display:flex;gap:8px;transition:left .8s var(--ease),opacity .6s}
+body:not(.on-map) #map-controls{opacity:0;pointer-events:none}
+body.panel-open #map-controls{left:calc((100vw - var(--panel-w) - var(--gap)) / 2)}
+.seg{position:relative;display:flex;padding:4px;border-radius:999px;background:var(--glass);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)}
+.seg button{position:relative;z-index:1;background:none;border:0;cursor:pointer;color:var(--ink-3);font-size:.84rem;font-weight:600;padding:8px 16px;border-radius:999px;white-space:nowrap;transition:color .3s}
+.seg button[aria-pressed="true"]{color:#fff7df}
+.seg button:not([aria-pressed="true"]):hover{color:var(--ink)}
+.seg .glider{position:absolute;top:4px;bottom:4px;border-radius:999px;background:linear-gradient(180deg,rgba(217,182,107,.42),rgba(217,182,107,.16));border:1px solid rgba(217,182,107,.5);
+  transition:left .55s cubic-bezier(.34,1.3,.64,1),width .55s cubic-bezier(.34,1.3,.64,1)}
+.seg .lbl-s{display:none}
+.maplibregl-ctrl-top-left{top:calc(var(--header-h) + var(--gap));left:var(--gap)}
+.maplibregl-ctrl-top-left .maplibregl-ctrl{margin:0}
+.maplibregl-ctrl-group{background:var(--glass)!important;border-radius:14px!important;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4)!important;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px)}
+.maplibregl-ctrl-group button{width:36px!important;height:36px!important}
+.maplibregl-ctrl-group button+button{border-top:1px solid var(--line)!important}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(.88) sepia(.4) saturate(2) hue-rotate(5deg)}
+.maplibregl-ctrl-group button:hover{background:rgba(217,182,107,.18)!important}
+.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right{bottom:var(--tl-h)}
+.maplibregl-ctrl-attrib{background:rgba(8,8,13,.6)!important;color:#8f8ca2!important;font-size:10px}
+.maplibregl-ctrl-attrib a{color:#bcb9cc!important}
+.maplibregl-ctrl-attrib-button{filter:invert(1)}
+.maplibregl-control-container{transition:opacity 1s}
+body:not(.on-map) .maplibregl-control-container{opacity:0}
+
+/* סמנים */
+.mk-anchor{width:28px;height:28px}
+.mk{position:relative;width:28px;height:28px;--s:1;cursor:pointer;transition:opacity .8s}
+body:not(.on-map) .mk{opacity:0;pointer-events:none}
+.mk-ring{position:absolute;inset:0;border-radius:50%;background:#12111a;border:2px solid var(--c);
+  box-shadow:0 0 0 3px rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;
+  transform:scale(var(--s));transition:transform .6s var(--ease),background .5s,box-shadow .5s}
+.mk-num{font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;transition:opacity .3s}
+.mk.visited .mk-ring{background:var(--c)}
+.mk.visited .mk-num{color:#0d0c12}
+.mk:hover .mk-ring{transform:scale(calc(var(--s) * 1.2));box-shadow:0 0 0 5px color-mix(in srgb,var(--c) 25%,transparent),0 6px 18px rgba(0,0,0,.55)}
+.mk:hover .mk-label{opacity:1!important}
+.mk.active{--s:1.3}
+.mk.active .mk-ring{background:var(--c);box-shadow:0 0 0 4px rgba(255,255,255,.14),0 0 30px var(--c),0 6px 18px rgba(0,0,0,.55)}
+.mk.active .mk-num{color:#0d0c12}
+.mk-halo{position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--c);opacity:0;pointer-events:none}
+.mk.active .mk-halo{animation:halo 2.8s ease-out infinite}
+.mk.active .mk-halo.h2{animation-delay:1.4s}
+@keyframes halo{0%{transform:scale(1);opacity:.75}100%{transform:scale(2.8);opacity:0}}
+.mk-label{position:absolute;white-space:nowrap;font-size:13px;font-weight:600;color:var(--ink);pointer-events:none;
+  padding:2px 9px;border-radius:6px;background:rgba(8,8,13,.8);border:1px solid rgba(255,255,255,.1);
+  text-shadow:0 1px 2px rgba(0,0,0,.6);transition:opacity .4s;opacity:0}
+.mk-label.top{bottom:calc(100% + 7px);left:50%;transform:translateX(-50%)}
+.mk-label.bottom{top:calc(100% + 7px);left:50%;transform:translateX(-50%)}
+.mk-label.left{right:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.mk-label.right{left:calc(100% + 8px);top:50%;transform:translateY(-50%)}
+.mk.active .mk-label{background:var(--c);color:#0d0c12;border-color:transparent;font-weight:700;text-shadow:none}
+.z-far .mk{--s:.42}.z-far .mk-num{opacity:0}.z-far .mk.kf .mk-label{opacity:1}
+.z-mid .mk{--s:.55}.z-mid .mk-num{opacity:0}.z-mid .mk.k{--s:.85}.z-mid .mk.k .mk-num{opacity:1}.z-mid .mk.k .mk-label{opacity:1}
+.z-near .mk-label{opacity:1}.z-near .mk.dup .mk-label{opacity:0}
+.mk.active .mk-label{opacity:1!important}
+.z-far .mk.active,.z-mid .mk.active{--s:1.15}
+.z-far .mk.active .mk-num,.z-mid .mk.active .mk-num{opacity:1}
+body.archive .mk-ring{background:#efe3c6;box-shadow:0 0 0 3px rgba(60,40,15,.18),0 3px 10px rgba(60,40,15,.35)}
+body.archive .mk-num{color:#2a2015}
+body.archive .mk.visited .mk-ring,body.archive .mk.active .mk-ring{background:var(--c)}
+body.archive .mk-label{background:rgba(245,236,214,.92);color:#2a2015;border-color:rgba(90,60,20,.25);text-shadow:none}
+.sea-label{font-family:var(--serif);font-size:14px;font-weight:300;letter-spacing:.42em;color:rgba(195,208,232,.42);pointer-events:none;white-space:nowrap;transition:opacity .6s}
+body:not(.on-map) .sea-label{opacity:0}
+body.archive .sea-label{color:rgba(70,55,35,.6)}
+.z-near .sea-label{opacity:0}.z-far .sea-label{font-size:11px;letter-spacing:.24em}
+
+/* ===== כרטיס פרק ===== */
+#chapter-card{position:fixed;inset:0;z-index:1500;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;
+  background:radial-gradient(60% 55% at 50% 50%,rgba(6,6,10,.88),rgba(6,6,10,.62) 60%,rgba(6,6,10,.3));backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);transition:opacity 1s var(--ease-io),visibility 1s}
+#chapter-card.show{opacity:1;visibility:visible}
+.cc-inner{text-align:center;--cc:#d9b66b}
+.cc-n{font-size:.9rem;letter-spacing:.5em;color:var(--cc);font-weight:700;opacity:0;transform:translateY(10px)}
+.cc-line{width:0;height:1px;margin:18px auto;background:linear-gradient(90deg,transparent,var(--cc),transparent)}
+.cc-t{font-family:var(--serif);font-weight:300;font-variation-settings:"wdth" 92;font-size:clamp(3.2rem,9vw,7rem);line-height:1.05;color:#fbf4e4;opacity:0;letter-spacing:-.01em;filter:blur(10px);transform:scale(1.04)}
+.cc-y{margin-top:16px;font-family:var(--serif);font-size:1.3rem;color:var(--ink-2);font-weight:300;letter-spacing:.2em;opacity:0}
+#chapter-card.show .cc-n{animation:ccIn 1.2s var(--ease) .15s forwards}
+#chapter-card.show .cc-line{animation:ccLine 1.6s var(--ease) .3s forwards}
+#chapter-card.show .cc-t{animation:ccT 1.8s var(--ease) .35s forwards}
+#chapter-card.show .cc-y{animation:ccIn 1.4s var(--ease) .7s forwards}
+@keyframes ccIn{to{opacity:1;transform:none}}
+@keyframes ccLine{to{width:220px}}
+@keyframes ccT{to{opacity:1;filter:none;transform:none}}
+
+/* ===== פאנל הסיפור ===== */
+#story-panel{position:fixed;z-index:1060;top:calc(var(--header-h) + var(--gap));bottom:calc(var(--tl-h) + var(--gap));right:var(--gap);width:var(--panel-w);
+  display:flex;flex-direction:column;border-radius:22px;overflow:hidden;
+  background:linear-gradient(170deg,rgba(19,18,28,.93),rgba(9,9,15,.97));backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);
+  border:1px solid rgba(255,255,255,.10);box-shadow:0 40px 100px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.06);
+  transform:perspective(1400px) translateX(calc(100% + 60px)) rotateY(-8deg);transform-origin:100% 50%;opacity:0;visibility:hidden;transition:transform 1s var(--ease),opacity .7s,visibility 1s}
+#story-panel.open{transform:perspective(1400px) translateX(0) rotateY(0);opacity:1;visibility:visible}
+#story-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:280px;pointer-events:none;z-index:0;
+  background:radial-gradient(90% 100% at 85% 0%,color-mix(in srgb,var(--c) 24%,transparent),transparent 70%);transition:background 1s}
+.sheet-handle{display:none}
+.panel-top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 12px 14px;border-bottom:1px solid var(--line)}
+.chap-chip{display:flex;align-items:center;gap:10px;font-size:.84rem;color:var(--ink-2);font-weight:600;letter-spacing:.03em;min-width:0}
+.chap-chip i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);flex-shrink:0}
+.chap-chip .cnt{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
+.icon-btn{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink-2);width:34px;height:34px;border-radius:50%;cursor:pointer;display:grid;place-items:center;font-size:15px;transition:all .35s var(--ease);flex-shrink:0}
+.icon-btn:hover{background:rgba(255,255,255,.1);color:#fff;transform:rotate(90deg)}
+.read-progress{position:absolute;bottom:-1px;right:0;height:2px;width:0;background:var(--c);box-shadow:0 0 10px var(--c);transition:width .12s linear}
+.panel-scroll{position:relative;z-index:1;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(217,182,107,.3) transparent}
+.panel-scroll::-webkit-scrollbar{width:6px}.panel-scroll::-webkit-scrollbar-thumb{background:rgba(217,182,107,.3);border-radius:3px}
+.st-head{position:relative;padding:34px 40px 8px}
+.st-head > *{opacity:0;animation:rise 1.1s var(--ease) forwards}
+.st-head > *:not(.st-num){transform:translateY(12px)}
+.st-kicker{font-size:.76rem;letter-spacing:.26em;color:var(--c);font-weight:700;margin-bottom:16px;margin-left:130px;display:flex;align-items:center;gap:12px}
+.st-kicker::after{content:'';flex:1;height:1px;background:linear-gradient(270deg,color-mix(in srgb,var(--c) 50%,transparent),transparent)}
+.st-num{position:absolute;left:34px;top:78px;font-family:var(--serif);font-size:5.6rem;line-height:.8;font-weight:200;color:color-mix(in srgb,var(--c) 50%,transparent);will-change:transform}
+.st-title{position:relative;font-family:var(--serif);font-size:2.9rem;line-height:1.1;font-weight:600;font-variation-settings:"wdth" 94;color:#fcf6e8;letter-spacing:-.012em;margin-bottom:16px;max-width:80%}
+.st-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:.92rem;color:var(--ink-2)}
+.st-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--ink-3)}
+.st-type{display:inline-block;padding:3px 12px;border-radius:999px;font-size:.82rem;font-weight:600;color:var(--c);
+  background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.st-summary{margin-top:20px;font-family:var(--serif);font-size:1.16rem;font-weight:300;color:var(--ink-2);line-height:1.6;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.st-body{padding:24px 40px 10px;font-family:var(--serif);font-size:1.07rem;line-height:2.02;color:var(--ink-2);font-weight:400}
+.st-body > *:not(.quote){opacity:0;transform:translateY(14px);animation:rise 1.1s var(--ease) forwards}
+.st-body p{margin-bottom:18px}
+.st-body > p:first-child{font-size:1.24rem;line-height:1.85;color:var(--ink);font-weight:400}
+.st-body .quote{position:relative;margin:34px 0;padding:6px 32px 6px 0;font-family:var(--serif);font-size:1.32rem;line-height:1.8;font-weight:300;color:#f5e9c9}
+.st-body .quote::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--c),color-mix(in srgb,var(--c) 30%,transparent));transform-origin:top;transform:scaleY(0);transition:transform 1.4s var(--ease)}
+.st-body .quote::before{content:'”';position:absolute;top:-.36em;right:-.06em;transform:translateX(100%) scale(.6);font-size:4.4rem;line-height:1;color:var(--c);opacity:0;font-family:var(--serif);font-weight:300;transition:opacity 1.2s var(--ease) .2s,transform 1.2s var(--ease) .2s}
+.st-body .quote .qw{opacity:0;filter:blur(4px);transition:opacity 1.1s var(--ease),filter 1.1s var(--ease)}
+.st-body .quote.in::after{transform:scaleY(1)}
+.st-body .quote.in::before{opacity:.6;transform:translateX(100%) scale(1)}
+.st-body .quote.in .qw{opacity:1;filter:none}
+.st-body .family-detail{margin:26px 0;padding:16px 20px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid var(--line);font-family:var(--sans);font-size:1rem;line-height:1.85;color:var(--ink-2)}
+.st-body .family-detail strong{display:block;font-size:.76rem;letter-spacing:.2em;color:var(--gold);font-weight:700;margin-bottom:4px}
+.st-nav{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:22px 40px 32px;border-top:1px solid var(--line);margin-top:10px}
+.nav-card{cursor:pointer;text-align:right;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid var(--line);transition:all .45s var(--ease);display:flex;flex-direction:column;gap:4px;min-height:72px}
+.nav-card .k{font-size:.8rem;color:var(--ink-3);letter-spacing:.05em;transition:transform .45s var(--ease)}
+.nav-card .n{font-family:var(--serif);font-size:1.14rem;color:var(--ink);font-weight:500}
+.nav-card.next{text-align:left;background:linear-gradient(135deg,color-mix(in srgb,var(--nc) 22%,transparent),color-mix(in srgb,var(--nc) 6%,transparent));border-color:color-mix(in srgb,var(--nc) 45%,transparent)}
+.nav-card.next .k{color:color-mix(in srgb,var(--nc) 70%,#fff)}
+.nav-card:hover:not(:disabled){transform:translateY(-3px);border-color:rgba(255,255,255,.25);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.nav-card.next:hover .k{transform:translateX(-5px)}
+.nav-card.prev:hover:not(:disabled) .k{transform:translateX(5px)}
+.nav-card:disabled{opacity:.35;cursor:default}
+
+/* ===== ציר זמן ===== */
+#timeline{position:fixed;left:0;right:0;bottom:0;z-index:1080;display:flex;align-items:stretch;
+  background:linear-gradient(0deg,rgba(8,8,13,.97),rgba(8,8,13,.86));backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);transform:translateY(105%);transition:transform 1.2s var(--ease) .8s}
+body.on-map #timeline{transform:none}
+.play-btn{position:relative;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 18px;background:none;border:0;border-left:1px solid var(--line);cursor:pointer;color:var(--gold-2);font-size:.88rem;font-weight:600}
+.play-btn .pi{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid var(--gold-line);display:grid;place-items:center;background:rgba(217,182,107,.08);transition:all .4s var(--ease)}
+.play-btn:hover .pi{background:rgba(217,182,107,.2);border-color:var(--gold);transform:scale(1.08)}
+.play-btn svg.ring{position:absolute;inset:-1px;width:38px;height:38px;transform:rotate(-90deg)}
+.play-btn svg.ring circle{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:100;stroke-dashoffset:100;opacity:0}
+.play-btn.on svg.ring circle{opacity:1;animation:ringp var(--dwell,12s) linear forwards}
+@keyframes ringp{to{stroke-dashoffset:0}}
+.play-btn .ico-pause{display:none}.play-btn.on .ico-pause{display:block}.play-btn.on .ico-play{display:none}
+.tl-scroll{flex:1;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:10px 8px;scroll-behavior:smooth}
+.tl-scroll::-webkit-scrollbar{display:none}
+.tl-ch{flex:auto;display:flex;flex-direction:column;gap:6px;padding:0 4px;position:relative}
+.tl-ch + .tl-ch{border-right:1px solid var(--line);padding-right:8px}
+.tl-ch-head{display:flex;align-items:baseline;gap:8px;font-size:.74rem;white-space:nowrap;padding:0 6px}
+.tl-ch-head .n{color:var(--cc);font-weight:700;letter-spacing:.1em}
+.tl-ch-head .t{color:var(--ink);font-weight:700;font-size:.84rem}
+.tl-ch-head .y{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.tl-sts{display:flex;gap:2px}
+.tl-st{position:relative;flex-shrink:0;background:none;border:1px solid transparent;color:var(--ink-3);font-size:.8rem;font-weight:500;padding:5px 6px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:all .35s var(--ease)}
+.tl-st:hover{color:var(--ink);background:rgba(255,255,255,.06);transform:translateY(-1px)}
+.tl-st.passed{color:var(--ink-2)}
+.tl-st.active{color:#0d0c12;background:var(--cc);font-weight:700;box-shadow:0 0 18px color-mix(in srgb,var(--cc) 50%,transparent)}
+.tl-bar{height:2px;border-radius:2px;background:color-mix(in srgb,var(--cc) 20%,transparent);margin:0 6px;overflow:hidden}
+.tl-bar i{display:block;height:100%;width:0;background:var(--cc);transition:width 1.2s var(--ease)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:1560px){.play-btn .lbl{display:none}.play-btn{padding:0 14px}}
+@media (max-width:820px){
+  :root{--header-h:56px;--tl-h:84px;--gap:10px}
+  #header{padding:0 14px}
+  .brand h1{font-size:1.04rem}
+  .brand .sub{font-size:.74rem;max-width:72vw}
+  .brand .sub-l{display:none}.brand .sub-s{display:inline}
+  .legend{display:none}
+  .maplibregl-ctrl-top-left{display:none}
+  .seg button{font-size:.78rem;padding:7px 11px}
+  .seg .lbl-l{display:none}.seg .lbl-s{display:inline}
+  body.panel-open #map-controls{left:50%;opacity:0;pointer-events:none}
+  #story-panel{left:0;right:0;width:auto;top:auto;bottom:var(--tl-h);height:min(66vh,calc(100vh - var(--tl-h) - var(--header-h) - 60px));border-radius:24px 24px 0 0;
+    transform:perspective(1200px) translateY(105%) rotateX(8deg);transform-origin:50% 100%;border-bottom:0}
+  #story-panel.open{transform:perspective(1200px) translateY(0) rotateX(0)}
+  #story-panel.peek{transform:translateY(calc(100% - 118px))}
+  .sheet-handle{display:block;position:relative;z-index:3;height:22px;cursor:grab;background:none;border:0;width:100%}
+  .sheet-handle::after{content:'';position:absolute;top:9px;left:50%;width:42px;height:4px;margin-left:-21px;border-radius:2px;background:rgba(255,255,255,.28)}
+  .panel-top{padding:2px 14px 10px 12px}
+  .st-head{padding:22px 22px 6px}
+  .st-num{font-size:3.8rem;left:20px;top:56px}
+  .st-kicker{margin-left:90px}
+  .z-far .mk-label.left,.z-far .mk-label.right{top:auto;right:auto;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%)}
+  .st-title{font-size:2.15rem;max-width:calc(100% - 84px)}
+  .st-body{padding:18px 22px 6px;font-size:1.03rem}
+  .st-body > p:first-child{font-size:1.14rem}
+  .st-body .quote{font-size:1.2rem;padding-right:22px}
+  .st-body .quote::before{font-size:3.2rem;right:.35em}
+  .st-nav{padding:16px 22px 22px;gap:10px}
+  .nav-card .n{font-size:1rem}
+  .play-btn{padding:0 12px}
+  .play-btn .lbl{display:none}
+  .tl-scroll{padding:9px 10px}
+  .chapters-preview{flex-wrap:wrap;border-bottom:0}
+  .chapters-preview li{flex:1 1 30%;border-bottom:1px solid var(--line)}
+  .chapters-preview li:nth-child(4){border-right:0}
+  .intro-content{padding:28px 22px}
+  .intro-lede{font-size:1.02rem;line-height:1.9}
+  .kicker{font-size:.7rem;letter-spacing:.22em}
+  .kicker .sep{width:16px;margin:0 8px}
+  .btn{padding:13px 26px;font-size:.98rem}
+  .cc-n{font-size:.78rem;letter-spacing:.38em}
+}
+@media (max-height:720px) and (min-width:821px){.intro-lede{margin-bottom:18px}.chapters-preview{margin-bottom:20px}.candle{margin-bottom:8px}}
+#nogl{position:fixed;top:calc(var(--header-h) + var(--gap));left:50%;transform:translateX(-50%);z-index:1055;max-width:min(560px,92vw);padding:10px 18px;border-radius:14px;background:var(--glass);border:1px solid var(--gold-line);color:var(--ink-2);font-size:.9rem;line-height:1.6;text-align:center;backdrop-filter:blur(16px)}
+body:not(.on-map) #nogl{display:none}
+body.panel-open #nogl{left:calc((100vw - var(--panel-w) - var(--gap)) / 2);max-width:calc(100vw - var(--panel-w) - 3 * var(--gap))}
+body.no-gl #map-controls{display:none}
+body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
+@media (max-width:820px){body.panel-open #nogl{display:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .grain{animation:none}
+  .rv,.st-body > *,.st-head > *{opacity:1!important;transform:none!important;filter:none!important}
+  .st-body .quote .qw{opacity:1;filter:none}
+}
+
+/* ===== אז / היום – תמונות היסטוריות ===== */
+.st-media{position:relative;margin:14px 40px 6px;opacity:0;transform:translateY(14px);animation:rise 1.1s var(--ease) forwards}
+.sm-stage{position:relative;aspect-ratio:4/3;max-height:360px;width:100%;border-radius:14px;overflow:hidden;background:#0b0a10;border:1px solid var(--line);cursor:zoom-in;display:block;padding:0;color:inherit;font:inherit}
+.sm-slide{position:absolute;inset:0;opacity:0;transition:opacity .9s var(--ease)}
+.sm-slide.on{opacity:1}
+.sm-slide .bg{position:absolute;inset:-20px;background-size:cover;background-position:center;filter:blur(18px) brightness(.38) saturate(.7);transform:scale(1.05)}
+.sm-slide img{position:relative;width:100%;height:100%;object-fit:contain;display:block;opacity:0;transition:opacity .8s var(--ease)}
+.sm-slide img.ld{opacity:1}
+.sm-stage::after{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 60px rgba(0,0,0,.55);border-radius:inherit}
+.sm-zoom{position:absolute;bottom:10px;left:10px;z-index:2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(8,8,12,.6);border:1px solid rgba(255,255,255,.16);color:var(--ink-2);font-size:13px;pointer-events:none}
+.sm-badge{position:absolute;top:10px;right:10px;z-index:2;padding:4px 11px;border-radius:999px;font-family:var(--sans);font-size:.74rem;font-weight:700;letter-spacing:.12em;background:rgba(8,8,12,.66);border:1px solid rgba(255,255,255,.14);color:var(--gold-2);pointer-events:none}
+.sm-badge.now{color:#cfe3ff}
+.sm-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sm-tab{font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--ink-2);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;transition:all .35s var(--ease);display:flex;align-items:center;gap:7px}
+.sm-tab i{width:7px;height:7px;border-radius:50%;background:var(--gold);opacity:.6}
+.sm-tab.now i{background:#9cc3ff}
+.sm-tab:hover{background:rgba(255,255,255,.08);color:#fff}
+.sm-tab[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 20%,rgba(255,255,255,.04));border-color:color-mix(in srgb,var(--c) 55%,transparent);color:#fff}
+.sm-tab[aria-pressed="true"] i{opacity:1;box-shadow:0 0 8px currentColor}
+.sm-tab .d{font-weight:400;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.sm-cap{margin-top:10px;font-family:var(--sans);font-size:.9rem;line-height:1.6;color:var(--ink-2);min-height:3.2em;transition:opacity .4s}
+.sm-cap .cr{display:block;margin-top:3px;font-size:.76rem;color:var(--ink-3)}
+.sm-cap a,.ctx a,.cred a{color:var(--gold-2);text-decoration:none;border-bottom:1px solid var(--gold-line)}
+.sm-cap a:hover,.ctx a:hover,.cred a:hover{color:#fff}
+.sm-none{margin:14px 40px 0;padding:12px 16px;border-radius:12px;border:1px dashed var(--line);font-family:var(--sans);font-size:.86rem;line-height:1.6;color:var(--ink-3)}
+.ctx{margin:8px 40px 6px;padding:16px 20px 14px;border-radius:14px;background:linear-gradient(160deg,rgba(217,182,107,.07),rgba(255,255,255,.02));border:1px solid var(--gold-line);font-family:var(--sans);font-size:.95rem;line-height:1.8;color:var(--ink-2);opacity:0;transform:translateY(14px);animation:rise 1.1s var(--ease) forwards}
+.ctx h3{font-size:.74rem;letter-spacing:.22em;color:var(--gold);font-weight:700;margin-bottom:6px}
+.ctx .src{margin-top:8px;font-size:.76rem;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 10px}
+.cred-link{display:block;margin:0 40px 26px;background:none;border:0;color:var(--ink-3);font-family:var(--sans);font-size:.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px 0}
+.cred-link:hover{color:var(--gold-2)}
+/* מעבר רך בין תחנות */
+.panel-scroll > *{transition:opacity .28s ease,filter .28s ease}
+.panel-scroll.fading > *{opacity:0!important;filter:blur(3px)}
+/* תיבת אור */
+#lightbox{position:fixed;inset:0;z-index:3000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:56px 24px 24px;background:rgba(5,5,8,.94);backdrop-filter:blur(10px);opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility .45s}
+#lightbox.on{opacity:1;visibility:visible}
+#lightbox img{max-width:min(1600px,100%);max-height:calc(100vh - 200px);object-fit:contain;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:scale(.97);transition:transform .6s var(--ease)}
+#lightbox.on img{transform:none}
+#lightbox .lb-cap{max-width:900px;text-align:center;font-family:var(--sans);font-size:.95rem;line-height:1.6;color:var(--ink-2)}
+#lightbox .lb-cap .cr{display:block;font-size:.8rem;color:var(--ink-3);margin-top:4px}
+#lightbox .lb-cap a{color:var(--gold-2)}
+#lightbox .icon-btn{position:absolute;top:16px;left:16px}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);font-size:20px;cursor:pointer}
+.lb-nav.p{right:16px}.lb-nav.n{left:16px}
+.lb-nav:hover{background:rgba(255,255,255,.14)}
+/* מקורות וקרדיטים */
+#credits{position:fixed;inset:0;z-index:2900;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(5,5,8,.8);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#credits.on{opacity:1;visibility:visible}
+.cred{position:relative;width:min(900px,100%);max-height:calc(100vh - 48px);overflow:auto;border-radius:20px;background:linear-gradient(170deg,rgba(19,18,28,.98),rgba(9,9,15,.99));border:1px solid rgba(255,255,255,.1);padding:30px 34px;font-family:var(--sans);color:var(--ink-2);font-size:.86rem;line-height:1.65}
+.cred h2{font-family:var(--serif);font-size:1.7rem;font-weight:600;color:#fcf6e8;margin-bottom:8px}
+.cred > p{margin-bottom:14px;color:var(--ink-3)}
+.cred h3{font-size:.8rem;letter-spacing:.16em;color:var(--gold);margin:18px 0 6px}
+.cred li{margin:0 18px 6px 0}
+.cred .icon-btn{position:absolute;top:16px;left:16px}
+@media (max-width:820px){
+  .st-media{margin:10px 22px 4px}.sm-stage{max-height:240px}
+  .sm-none,.ctx{margin-left:22px;margin-right:22px}.cred-link{margin:0 22px 20px}
+  .cred{padding:24px 18px}.lb-nav{top:auto;bottom:18px;transform:none}
+}
+@media (prefers-reduced-motion:reduce){.st-media,.ctx{opacity:1!important;transform:none!important}.sm-slide,.sm-slide img{transition:none}}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="letterbox t" aria-hidden="true"></div><div class="letterbox b" aria-hidden="true"></div>
+
+<div id="map" role="application" aria-label="מפת המסע של אניטה מדי"></div>
+<div class="map-vignette" aria-hidden="true"></div>
+<div class="map-paper" aria-hidden="true"></div>
+<div class="country-tip" id="country-tip" aria-hidden="true"></div>
+
+<!-- ===== מסך פתיחה ===== -->
+<section id="intro" aria-labelledby="intro-title">
+  <canvas id="embers" aria-hidden="true"></canvas>
+  <div class="intro-content" id="intro-content">
+    <div class="candle rv" style="--d:.2s" aria-hidden="true"><span class="glow"></span><span class="flame"></span><span class="wick"></span><span class="body"></span></div>
+    <div class="kicker rv" style="--d:.7s">ראיון מלא<span class="sep"></span>חיפה · 1 בדצמבר 2009</div>
+    <h1 class="intro-title rv" id="intro-title" style="--d:1s"><small>עדות</small>אניטה מדי</h1>
+    <p class="intro-names rv" style="--d:1.4s"><b>ורד פיינארו</b> – היא אניטה מדי</p>
+    <div class="rule rv" style="--d:1.6s"></div>
+    <p class="intro-lede rv" style="--d:1.8s">
+      ורד פיינארו (אניטה מדי), ילידת צ'רנוביץ שברומניה, מספרת את סיפור חייה –
+      מילדות אידילית בבית משפחתי חם, דרך הגירוש לטרנסניסטריה,
+      חיי הגטו בברשד, השחרור והדרך הארוכה חזרה – ועד לבניית חיים חדשים בארץ.
+    </p>
+    <ol class="chapters-preview rv" id="chapters-preview" style="--d:2.1s" aria-label="פרקי המסע"></ol>
+    <div class="intro-actions rv" style="--d:2.4s">
+      <button class="btn btn-primary" id="enter-btn" onclick="enterMap()">כניסה למפה</button>
+      <button class="btn btn-ghost" id="tour-btn" onclick="enterMap(true)"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M10 1 L10 11 L2 6 Z" fill="currentColor"/></svg> מסע מודרך</button>
+    </div>
+    <p class="intro-hint rv" style="--d:2.7s">לחצו על הנקודות במפה או על התחנות בציר הזמן כדי לגלות את הסיפור שמאחורי כל מקום · <a href="#" onclick="openCredits();return false" style="color:inherit">מקורות וקרדיטים</a></p>
+  </div>
+</section>
+
+<header id="header">
+  <div class="brand">
+    <span class="mini-candle" aria-hidden="true"><i></i><b></b></span>
+    <div style="min-width:0">
+      <h1>עדות אניטה מדי – מסע משפחתי</h1>
+      <div class="sub">ורד פיינארו (אניטה מדי)<span class="sub-l"> · ראיון מלא · 1 בדצמבר 2009 · חיפה</span><span class="sub-s"> · עדות, 2009</span></div>
+    </div>
+  </div>
+  <div class="legend" id="legend" aria-label="מקרא פרקים"></div>
+</header>
+
+<div id="map-controls">
+  <div class="seg" id="seg-year" role="group" aria-label="גבולות">
+    <span class="glider"></span>
+    <button data-v="historical" aria-pressed="true"><span class="lbl-l">גבולות 1938</span><span class="lbl-s">1938</span></button>
+    <button data-v="modern" aria-pressed="false"><span class="lbl-l">גבולות היום</span><span class="lbl-s">היום</span></button>
+  </div>
+  <div class="seg" id="seg-style" role="group" aria-label="סגנון מפה">
+    <span class="glider"></span>
+    <button data-v="night" aria-pressed="true"><span class="lbl-l">לילה</span><span class="lbl-s">לילה</span></button>
+    <button data-v="archive" aria-pressed="false"><span class="lbl-l">מפת ארכיון</span><span class="lbl-s">ארכיון</span></button>
+  </div>
+</div>
+
+<div id="chapter-card" aria-hidden="true"><div class="cc-inner" id="cc-inner"></div></div>
+<div class="sr-only" id="live" aria-live="polite"></div>
+
+<aside id="story-panel" aria-hidden="true" aria-labelledby="st-title">
+  <button class="sheet-handle" id="sheet-handle" aria-label="הקטנה / הגדלה של חלון הסיפור"></button>
+  <div class="panel-top">
+    <div class="chap-chip" id="chap-chip"></div>
+    <button class="icon-btn" onclick="closePanel()" aria-label="סגירת הסיפור">✕</button>
+    <div class="read-progress" id="read-progress"></div>
+  </div>
+  <div class="panel-scroll" id="panel-scroll" tabindex="-1">
+    <header class="st-head" id="st-head"></header>
+    <section class="st-media-wrap" id="st-media" aria-label="תמונות: אז והיום"></section>
+    <article class="st-body" id="st-body"></article>
+    <aside id="st-ctx"></aside>
+    <nav class="st-nav" id="st-nav" aria-label="ניווט בין תחנות"></nav>
+    <button class="cred-link" onclick="openCredits()">מקורות התמונות והרקע ההיסטורי</button>
+  </div>
+</aside>
+
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="תצוגת תמונה" aria-hidden="true">
+  <button class="icon-btn" onclick="closeLightbox()" aria-label="סגירת התמונה">✕</button>
+  <button class="lb-nav p" onclick="lbStep(-1)" aria-label="התמונה הקודמת">›</button>
+  <img id="lb-img" alt="">
+  <button class="lb-nav n" onclick="lbStep(1)" aria-label="התמונה הבאה">‹</button>
+  <div class="lb-cap" id="lb-cap"></div>
+</div>
+<div id="credits" role="dialog" aria-modal="true" aria-labelledby="cred-title" aria-hidden="true" onclick="if(event.target===this)closeCredits()">
+  <div class="cred" id="cred-body"></div>
+</div>
+
+<nav id="timeline" aria-label="ציר הזמן של המסע">
+  <button class="play-btn" id="play-btn" onclick="toggleTour()" aria-pressed="false" aria-label="מסע מודרך – מעבר אוטומטי בין התחנות" title="מסע מודרך">
+    <span class="pi">
+      <svg class="ring" viewBox="0 0 38 38" aria-hidden="true"><circle cx="19" cy="19" r="17" pathLength="100"/></svg>
+      <svg class="ico-play" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M10 1 L10 11 L2 6 Z" fill="currentColor"/></svg>
+      <svg class="ico-pause" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="3" height="10" fill="currentColor"/><rect x="7" y="1" width="3" height="10" fill="currentColor"/></svg>
+    </span>
+    <span class="lbl" id="play-lbl">מסע מודרך</span>
+  </button>
+  <div class="tl-scroll" id="tl-scroll"></div>
+</nav>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+const locations = [
+    {
+        id: 0,
+        name: "צ'רנוביץ",
+        nameShort: "צ'רנוביץ",
+        lat: 48.2917,
+        lng: 25.9353,
+        period: "1930 – אוקטובר 1941",
+        type: "childhood",
+        typeLabel: "ילדות ובית",
+        color: "#4a90d9",
+        summary: "עיר הולדת – ילדות אידילית במשפחה חמה",
+        story: `
+            <p>ורד פיינארו (אניטה מדי) נולדה בצ'רנוביץ ב-21 ביולי 1930. המשפחה גרה ברחוב וולנגאסה 80 (בתקופה הרומנית – פטרו ראריש 80), בשכונה חדשה שבנה אביה מקס קורצברג.</p>
+
+            <div class="family-detail">
+                <strong>המשפחה הגרעינית:</strong> אבא – מקס קורצברג (נולד 1904 בלוקוויץ), אמא – סלי (נולדה 1904), אניטה ואחותה הקטנה מליטה (צעירה ב-6 שנים).
+            </div>
+
+            <p>הבית היה בית פרטי עם שלושה חדרים יפים, מטבח גדול, וורנדה עם זכוכיות צבעוניות שאבא עשה. מאחורי הבית היה שטח ענק עם מחסן עץ ועץ ענק – "האימפריה" של הילדות.</p>
+
+            <div class="quote">אבא שלי לא היה יוצא מהבית בלי נשיקה קודם לאמא ואחר כך לילדים. באותו הדבר שהוא חזר.</div>
+
+            <p>למשפחה הייתה חנות בשר כשרה ברחוב נייוילדגאסה. אבא היה מתפלל כל בוקר עם תפילין, והבית היה מסורתי. בבית דיברו גרמנית – "גרמנית וינאית" – ואמא כתבה וקראה בכתב גותי.</p>
+
+            <p>אניטה למדה בבית ספר רומני (מייזל שולה), הייתה תלמידה מצטיינת. הייתה להם "קינדר פרוילן" – מורה פרטית שבדקה שיעורי בית ולימדה גרמנית וספרות. אבא לימד אותה גם עברית.</p>
+
+            <div class="family-detail">
+                <strong>המשפחה המורחבת:</strong> לאבא היו 7 אחים ואחיות (לייזר, שרול, מוישה, חיים, גיזה, לוטי, רבקה). לאמא – 3 אחים (מוקי, פרויקי, דלי) ואחיות (רוזה, רגינה, ברטה). כולם גרו בצ'רנוביץ או בסביבתה.
+            </div>
+
+            <p>ב-1940 נכנסו הרוסים. המשפחה קיבלה "פספורט 39" – סימן מסוכן שאיפיין "קפיטליסטים" בעלי רכוש. אמא חלמה שסבתה עברה ליד הבית ולא לקחה אותם – ולמחרת אכן דילגו עליהם. ב-1941 חזרו הרומנים עם שלושה ימים של פרעות, ואז הוקם הגטו.</p>
+
+            <div class="quote">אבא אמר שאנחנו נוסעים ולא יכול להיות יותר גרוע. היה יותר גרוע.</div>
+        `
+    },
+    {
+        id: 1,
+        name: "לוקוויץ",
+        nameShort: "לוקוויץ",
+        lat: 48.25,
+        lng: 25.85,
+        period: "עד 1930",
+        type: "childhood",
+        typeLabel: "מולדת האב",
+        color: "#4a90d9",
+        summary: "מקום הולדתו של אבא מקס קורצברג",
+        story: `
+            <p>לוקוויץ – עיירה קטנה בסמוך לצ'רנוביץ, מקום הולדתו של אבא, מקס קורצברג, בשנת 1904. העיירה הייתה חלק מבוקובינה, המחוז הרב-תרבותי שנמצא בתחום האימפריה האוסטרו-הונגרית.</p>
+
+            <div class="family-detail">
+                <strong>שורשים:</strong> הסבא ידיליף קליין ומשפחת קליין גרו באזור. הסבא נפטר בעובדובקה בתקופת הגירוש. חלק מהמשפחה הגיעו במקור מקולומיאה שבפולין.
+            </div>
+
+            <p>מלוקוויץ יצא מקס לצ'רנוביץ, שם הכיר את סלי בבית הספר – "אהבה כמו בסרטים" – והתחתנו כשהיו בני 21. הוא בנה בעצמו את הבית המשפחתי ופתח חנות בשר כשרה.</p>
+        `
+    },
+    {
+        id: 2,
+        name: "קמפולונג",
+        nameShort: "קמפולונג",
+        lat: 47.5267,
+        lng: 25.5464,
+        period: "שנות ה-30",
+        type: "childhood",
+        typeLabel: "נופש קיץ",
+        color: "#4a90d9",
+        summary: "עיר נופש קיץ – זומר פרישה",
+        story: `
+            <p>קמפולונג – עיר קייט (עיר נופש) שבה בילתה המשפחה את חופשות הקיץ. אמא הייתה נוסעת עם הילדות לשבועיים, שוכרת חדר אצל משפחה מקומית.</p>
+
+            <div class="quote">עשינו משחקים, היינו הולכות, היה גן יפה, אני זוכרת, היו כל מיני משחקים... נופש. זומר פרישה – התרעננות של קיץ.</div>
+
+            <p>אבא היה נשאר בצ'רנוביץ לנהל את החנות. ימים של שלווה ושגרה משפחתית – לפני שהעולם התהפך.</p>
+        `
+    },
+    {
+        id: 3,
+        name: "ואטרה דורניי",
+        nameShort: "ואטרה דורניי",
+        lat: 47.3500,
+        lng: 25.3667,
+        period: "שנות ה-30",
+        type: "childhood",
+        typeLabel: "נופש קיץ",
+        color: "#4a90d9",
+        summary: "עיר נופש נוספת בהרי הקרפטים",
+        story: `
+            <p>ואטרה דורניי (בטרדורניי) – עיר נופש נוספת בהרי הקרפטים שבה בילו בחופשות הקיץ. עיירה ציורית עם אוויר הרים צלול ונופים עוצרי נשימה.</p>
+
+            <p>אלה היו הימים האחרונים של ילדות רגילה – חופשות משפחתיות, משחקים בפארקים, ימי קיץ חמים באוויר ההרים. חיים של משפחה יהודית מהמעמד הבינוני בבוקובינה, שעוד לא ידעה מה צופן לה העתיד.</p>
+        `
+    },
+    {
+        id: 4,
+        name: "מרקולשט",
+        nameShort: "מרקולשט",
+        lat: 47.867,
+        lng: 28.24,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "תחנת גירוש",
+        color: "#e74c3c",
+        summary: "תחנה ראשונה בדרך הגירוש – מראות אימה",
+        story: `
+            <p>מרקולשט בבסרביה היה התחנה הראשונה אחרי הנסיעה בקרונות הבקר מצ'רנוביץ. המשפחה הגיעה בקרון צפוף – כל משפחת קורצברג, כל האחים והאחיות, ביחד.</p>
+
+            <div class="quote">אני ואחותי ועוד כמה ילדים, רצנו מבית לבית, לראות את המתים. על יד כל בית היו המשפחה הרוגה.</div>
+
+            <p>במרקולשט הוקם "מסלול שוד" – שורה ארוכה שדרכה עברו כל המגורשים ונאלצו למסור את כל חפצי הערך שלהם. אמא הצליחה להסתיר כמה דברים בתוך שמיכת הפוך.</p>
+
+            <p>המשפחה שהתה שם כיום וחצי, ואז החלו לצעוד ברגל. אבא ואחיו שכרו עגלה עם סוס מגוי מקומי כדי שהילדים יוכלו לשבת. הגברים הלכו ברגל מסביב.</p>
+        `
+    },
+    {
+        id: 5,
+        name: "יער קוסאוץ",
+        nameShort: "יער קוסאוץ",
+        lat: 48.22,
+        lng: 28.37,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "נקודת סכנה",
+        color: "#e74c3c",
+        summary: "יער האימה – הפרדת הגברים",
+        story: `
+            <p>יער קוסאוץ היה אחד הרגעים המפחידים ביותר בדרך. שמועות סיפרו שבטרנספורט הקודם נרצחו שם כל הגברים, ושגשר על הנהר נפתח וכולם טבעו.</p>
+
+            <div class="quote">כל הפחד שלנו היה קוסאוץ. ששמענו. היו שמועות ששם... זה סוף הדרך.</div>
+
+            <p>בהגעה ליער, פקדו "כל הגברים בצד אחד". אמא התחננה שאבא יסתתר בין החבילות – "אתה לא הולך!" – אבל אי אפשר היה. לפי השמועות, בזכות הקצין שהוביל את הטרנספורט, שהייתה לו חברה יהודיה, הגברים שלהם נשארו בחיים – שלא כמו בטרנספורט הקודם.</p>
+
+            <p>הלילה ביער עבר באימה. למחרת המשיכו לצעוד לכיוון הנסטר.</p>
+        `
+    },
+    {
+        id: 6,
+        name: "יאמפול",
+        nameShort: "יאמפול",
+        lat: 48.2378,
+        lng: 28.2769,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "מעבר הנסטר",
+        color: "#e74c3c",
+        summary: "חציית נהר הנסטר – הכניסה לטרנסניסטריה",
+        story: `
+            <p>ביאמפול חצו המגורשים את נהר הנסטר על גשר – הכניסה לטרנסניסטריה, השטח שנכבש על ידי הרומנים מברית המועצות. רגע מכונן של חרדה.</p>
+
+            <div class="quote">שמענו שהגשר נפתח וכולם נטבעו. ואם זה היה נכון או לא נכון, לא יודעים.</div>
+
+            <p>מעבר הגשר עבר "די חלק", אך הפחד היה עצום. מעבר לנהר המתינה מציאות חדשה – שטחי אוקראינה הכבושים, בוץ אינסופי, וצעידה של ימים נוספים.</p>
+        `
+    },
+    {
+        id: 7,
+        name: "קריז'ופול",
+        nameShort: "קריז'ופול",
+        lat: 48.3767,
+        lng: 28.8636,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "תחנת מעבר",
+        color: "#e74c3c",
+        summary: "תחנת מעבר בדרך לברשד",
+        story: `
+            <p>קריז'ופול היה תחנת מעבר בדרך. הקונבוי לא עצר שם – המשיכו ללכת ברגל לכיוון עובדובקה ומשם לברשד.</p>
+
+            <p>הצעידה נמשכה כשלושה ימים ולילות. בלילות ישנו בשדה הפתוח. היה קר, אך לבשו עדיין בגדים טובים. האווירה הייתה של אדישות ופחד.</p>
+
+            <div class="quote">הייתה שמועה שאנחנו נגיע למקום איפה ש... זה לא כל כך נורא. שם נתיישב. זה כאילו אשליה הייתה.</div>
+        `
+    },
+    {
+        id: 8,
+        name: "עובדובקה",
+        nameShort: "עובדובקה",
+        lat: 48.40,
+        lng: 29.25,
+        period: "אוקטובר 1941",
+        type: "deportation",
+        typeLabel: "מציאת הסבא",
+        color: "#e74c3c",
+        summary: "הקולחוזים – מציאת גופת הסבא",
+        story: `
+            <p>עובדובקה נמצאה 23 ק"מ מברשד. שם היו שלושה קולחוזים, ולכל אחד מהם – קבר אחים. מתים נזרקו לבורות.</p>
+
+            <div class="quote">אמא שלי עשתה חשבון לפי שאבא שלה גורש, הוא צריך להיות כאן. ואבא חיפש ומצא... בין הגופות... את סבא שלי.</div>
+
+            <p>אבא מצא את סבא ידיליף קליין שנפטר שם – אולי שלוש או ארבע שעות קודם. הקש סביב הגופות היה זוחל מכינים שברחו מהמתים – כינים שהפיצו טיפוס.</p>
+
+            <p>אמא ירדה לראות את אביה ונפרדה ממנו. הילדות כבר הבינו – "ידענו שהולך משהו לא טוב." מעובדובקה המשיכו ברגל לכיוון ברשד.</p>
+        `
+    },
+    {
+        id: 9,
+        name: "ברשד",
+        nameShort: "ברשד",
+        lat: 48.3667,
+        lng: 29.5167,
+        period: "דצמבר 1941 – מרץ 1944",
+        type: "ghetto",
+        typeLabel: "גטו ברשד",
+        color: "#8b0000",
+        summary: "גטו ברשד – שנות רעב, מחלה ושרידה",
+        story: `
+            <p>גטו ברשד היה מקום מגוריהם הכפוי של כ-100,000 יהודים. המשפחה הגיעה בתחילת דצמבר 1941, עייפה, רעבה ומפוחדת. אבא רץ למצוא מקום – חדר קטן בבית נטוש של יהודים שברחו לרוסיה.</p>
+
+            <div class="family-detail">
+                <strong>תנאי החיים:</strong> שולחן אחד ומיטה אחת. אניטה ישנה עם אבא במיטה, אמא עם אחותה על השולחן. בסלון הגדול – עשרות משפחות צפופות ראש על ראש.
+            </div>
+
+            <p>תוך 21 יום מההגעה, אבא מקס נפטר מטיפוס. לאניטה היו שלושת סוגי הטיפוס. כל המשפחה חלתה. שלושה חודשים שכבו חולים.</p>
+
+            <div class="quote">הוא השיט את היד ואמר לגברת קורצברג – היינו צריכים למכור את המכנסיים הישנים ולהישאר בצ'רנוביץ.</div>
+
+            <p>העגלה עם הסוס האדום ("רויטע פערדל") הייתה סמל המוות – אוספת גופות. אניטה עמדה בחלון וראתה איך זרקו את אבא לעגלה.</p>
+
+            <p>אחרי ההחלמה, אמא סלי קמה על רגליה. היא לא דיברה שנה שלמה – רק בכתה בלילות. אבל ביום – נתנה לילדות תקווה.</p>
+
+            <div class="quote">אמא אמרה: כשניגיע לפלסטינה, קודם נאכל קליפות תפוחי אדמה כמה שנרצה, אחר כך מליגה, ובסוף לחם כמה שנרצה. ואנחנו צחקנו.</div>
+
+            <p>אמא הרוויחה קצת ממכירת לחם בשוק (טולצ'וק) ומהגדת עתידות בקלפים. דוד אחד עבד בקומנדטורה הרומנית והביא אוכל. אניטה יצאה מהגטו מחופשת כגויה לקנות תפוחים בכפרים.</p>
+
+            <p>הגטו נוהל על ידי "אובשינה" בראשות ד"ר קורן, שפעל להגן על היהודים. משטרה יהודית פיזרה אנשים כשגרמנים או רומנים הגיעו. החורף היה קשה – קרח, כינים, ומוות.</p>
+
+            <div class="quote">אמרו שנכנסנו כמעט מאה אלף איש, ואחרי שלושה חודשים נשארו עשרת אלפים.</div>
+
+            <p>למרות הכל – ילדים שיחקו קלאס, אניטה סרגה גרביים לגויים, והחיים המשיכו מרגע לרגע.</p>
+        `
+    },
+    {
+        id: 10,
+        name: "נהר הבוג (בוק)",
+        nameShort: "נהר הבוג",
+        lat: 48.55,
+        lng: 29.85,
+        period: "1941–1943",
+        type: "ghetto",
+        typeLabel: "טבח על גדות הבוג",
+        color: "#8b0000",
+        summary: "טבח ובית חולים לחולי נפש שנרצחו",
+        story: `
+            <p>בוק – מקום שאליו גורשו חלק מיהודי צ'רנוביץ, כולל שכנים ממש מהבית. שם פעל בית חולים לחולי נפש שנרצחו.</p>
+
+            <div class="quote">הכניסו אותם לבוק, ובאו עם מכונת ירייה וירו בהם. הבוק היה אדום מהדם שלהם.</div>
+
+            <p>אמא של אניטה נתנה את המעיל האחרון של אבא לגוי כדי שיבריח את משפחת דרוקמן מבוק לברשד – והוא הצליח להציל ארבע נפשות.</p>
+
+            <p>הדבר הראשון שאמא עשתה כשהגיעו – בישלה מרק מקליפות תפוחי אדמה עם צמח שנתן טעם של עוף, וכמה טיפות שמן. "מלח? קצת מלח – זה היה אושר."</p>
+        `
+    },
+    {
+        id: 11,
+        name: "ניקולאייב",
+        nameShort: "ניקולאייב",
+        lat: 46.975,
+        lng: 31.9946,
+        period: "1942–1943",
+        type: "ghetto",
+        typeLabel: "עבודת כפייה",
+        color: "#8b0000",
+        summary: "מחנה עבודת כפייה – לשם נלקח הדוד",
+        story: `
+            <p>ניקולאייב היה מחנה עבודת כפייה שאליו נשלחו גברים מגטו ברשד. ביום אחד, לקחו גברים מהרחובות – ביניהם הדוד של אניטה.</p>
+
+            <p>דוד אחר, שעבד בקומנדטורה הרומנית ותמך בכל המשפחה, הוציא אותו מהשורה – והאח הצעיר נכנס במקומו, כי ספרו ראשים וצריך היה למלא את המספר.</p>
+
+            <div class="quote">לא ידענו מה הרגע מביא. אנחנו חיינו באי-וודאות. ממש.</div>
+
+            <p>מי ששרד את עבודת הכפייה – חזר. אך רבים לא שבו.</p>
+        `
+    },
+    {
+        id: 12,
+        name: "בלטה",
+        nameShort: "בלטה",
+        lat: 47.9381,
+        lng: 29.6236,
+        period: "סוף 1943 – מרץ 1944",
+        type: "return",
+        typeLabel: "בית היתומים והשחרור",
+        color: "#a374d5",
+        summary: "בית היתומים, האש במחסן – והשחרור",
+        story: `
+            <p>בסוף 1943, כשהייתה כמעט בת 14, נשלחה אניטה עם אחותה מליטה מגטו ברשד לבית יתומים בבלטה – ה"קינדרהיים". מאז מות האב נחשבו השתיים יתומות, ובבלטה חיכו לטרנספורט שאמור היה להוציא יתומים לפלסטינה.</p>
+
+            <p>הדודה רגינה נסעה איתן עד בלטה עם בתה היחידה. כשראתה את המצב במקום, החזירה את הבת לברשד ורצתה לקחת גם את שתי האחיות. אניטה סירבה:</p>
+
+            <div class="quote">אני אמרתי: לא, יש לנו סבלנות, אנחנו נגיע לפלסטינה.</div>
+
+            <p>בתחילת 1944, עם התקרבות החזית, השתלטו הגרמנים וה-SS על בלטה. בתחילת פברואר נלקחה אניטה לעבודה בתחנת הרכבת – הליכה של עשרה קילומטרים בבוץ, שבה איבדה את נעליה. משם שלחו אותה לבית של מפקד ה-SS בתחנה. האישה שפתחה את הדלת הייתה בת של שכנים מצ'רנוביץ, והיא זיהתה אותה מיד.</p>
+
+            <div class="quote">היא נתנה לי ביצה, ביצה שלמה, וחתיכת לחם, ואני הרגשתי שאני חיה.</div>
+
+            <p>האישה נתנה לה גם נעליים. זמן קצר אחר כך נפלה שם פצצה בהפצצה אווירית, ומפקד ה-SS והאישה שהגנה עליה נהרגו.</p>
+
+            <p>בימי הנסיגה הכניסו הגרמנים כמאה גברים לקרון נפט והציתו אותו. את הנשים והנערים שנלקחו לעבודה דחפו למחסן מלא "ולנקי" – מגפי לבד שבוערים כמו גפרור – ושם פרצה אש. בחור מבלטה שעמד לידה שבר חלון קטן וזרק אותה החוצה. זכוכית נכנסה לה לחזה, והוא עצמו נפגע מירייה ברגל.</p>
+
+            <p>בחסות החושך זחלו חזרה לבית היתומים, והסתתרו במחסן כיום וחצי עד שאפשר היה להיכנס. שם מצאה אניטה את מליטה. זמן קצר אחר כך, בסוף מרץ 1944, נכנסו לבלטה הרוסים והפרטיזנים.</p>
+
+            <div class="quote">הביאו לנו שק שלם עם לחם. שק עם לחם. והשמחה, איך שלא יהיה, התפרצה.</div>
+        `
+    },
+    {
+        id: 13,
+        name: "הדרך חזרה לברשד",
+        nameShort: "בחזרה לברשד",
+        lat: 48.3667,
+        lng: 29.5167,
+        offset: [22, -22],
+        zoom: 11,
+        period: "אביב 1944",
+        type: "return",
+        typeLabel: "הפגישה עם אמא",
+        color: "#a374d5",
+        summary: "60 ק״מ ברגל, מליטה על הגב – והפגישה על הגשר",
+        story: `
+            <p>יומיים-שלושה אחרי השחרור יצאה אניטה ברגל לכיוון ברשד, יחד עם מליטה וקבוצה גדולה של ילדים ומבוגרים. ברשד כבר שוחררה, ושם חיכתה אמא. המרחק: כשישים קילומטרים.</p>
+
+            <p>מליטה הייתה חלשה מאוד ולא יכלה ללכת, ואניטה סחבה אותה על הגב. לאורך הדרך היו תעלות מלאות בחיילים גרמנים מתים. ובכל זאת, מצב הרוח היה טוב:</p>
+
+            <div class="quote">שרנו שאנחנו נוסעים הביתה. ביידיש: "איך פור אהיים".</div>
+
+            <p>בדרך שמעה שסלי קורצברג – אמא – הולכת לקראתם. בכפר אחד, כשלושים קילומטרים מבלטה, יצאו נשים מקומיות עם מים ולחם. אחת מהן הורידה את מליטה מגבה של אניטה, הכניסה אותן לביתה ונתנה להן לאכול. "אמא שלך בדרך," אמרה, "תשאירי את מליטה כאן." אניטה השאירה אותה, בפחד, כי לא נשאר לה כוח.</p>
+
+            <p>אמא הגיעה בדרך שבה נשארה מליטה ולקחה אותה, ואניטה המשיכה בדרך אחרת. אחרי כיומיים וחצי של הליכה הגיעה לברשד.</p>
+
+            <div class="quote">פגשתי את אמא על הגשר, בכניסה לברשד. אמא הייתה עם מליטה. וכולנו בכינו. פשוט בכינו, משמחה.</div>
+        `
+    },
+    {
+        id: 14,
+        name: "צ'רנוביץ – החזרה הביתה",
+        nameShort: "חזרה לצ'רנוביץ",
+        lat: 48.2917,
+        lng: 25.9353,
+        offset: [22, -22],
+        period: "1944 – 1946",
+        type: "return",
+        typeLabel: "חזרה הביתה",
+        color: "#a374d5",
+        summary: "הבית ההרוס, החנות ברחוב שבצ'נקו – ומעצרה של אמא",
+        story: `
+            <p>מברשד חזרו הביתה אמא, שתי הבנות והדודה. הדרך נמשכה כשבועיים: קצת ברכבת, ובעיקר בשיירות של משאיות רוסיות, ממקום למקום. בדרך פגשו אנשים מברשד שהדריכו אותם. הדודה, שהייתה יפהפייה, כיסתה את פניה מפחד החיילים.</p>
+
+            <p>בצ'רנוביץ קיבלה אותם שכנה יהודייה שלא גורשה, ובישרה להם שאין להם לאן לחזור:</p>
+
+            <div class="quote">אתם לא יכולים להיכנס לבית שלכם, הוא הרוס.</div>
+
+            <p>אצלה, לראשונה מאז הגירוש, ישנה אניטה על כריות. אחר כך גרו שישה שבועות אצל חברה של אמא, שאמא עזרה לה בעבר. כשעזבו, היא נתנה להם בקבוק שמן וכוס מלח – "להתחלה".</p>
+
+            <p>המשפחה עברה לרחוב שבצ'נקו 46, באותו רחוב שבו הייתה החנות של לפני המלחמה. מקדימה, לרחוב, הייתה חנות, ומאחור דירה, וגרו שם יחד עם אחות של אמא. תחת השלטון הרוסי הפרנסה לא הייתה פשוטה: אמא קנתה קמח, אפתה לחם ועוגות ומכרה, עד שהחנות התחילה לפרנס.</p>
+
+            <p>אניטה חזרה ללמוד – קודם בבית ספר יהודי, ואחר כך בבית ספר מקצועי.</p>
+
+            <div class="quote">הפסדנו שלוש שנים, אנחנו נצטרך להשלים את זה.</div>
+
+            <p>כשנה אחרי החזרה נעצרה אמא בידי השלטונות הסובייטיים: היא קנתה נקניק בלי לדעת שהגיע מרשת של סחורה גנובה. אניטה לקחה את כל הכסף שהמשפחה חסכה, ודרך השכנה שאירחה אותן – שעבדה אצל שופט – הגיעה אליו יחד עם מליטה.</p>
+
+            <div class="quote">ביקשנו שהוא ישחרר את אמא, שאמא שלנו לא עשתה שום דבר. הוא לא ענה לנו, אבל הוא לקח את המתנה.</div>
+
+            <p>ב-1946 התאפשרה היציאה מצ'רנוביץ לרומניה למי שרצה. אמא עדיין הייתה במעצר, ואניטה, מליטה והדודה יצאו בלעדיה.</p>
+        `
+    },
+    {
+        id: 15,
+        name: "בקאו, רומניה",
+        nameShort: "בקאו",
+        lat: 46.5670,
+        lng: 26.9146,
+        period: "1946 – 1947",
+        type: "return",
+        typeLabel: "רומניה",
+        color: "#a374d5",
+        summary: "אמא משתחררת – והלימודים בבקאו",
+        story: `
+            <p>מצ'רנוביץ חצו אניטה, מליטה והדודה את הגבול לרומניה. כעבור כמה ימים, אולי שבוע, הגיעה הבשורה: אמא שוחררה, והביאו גם אותה לרומניה. היא הגיעה במצב רוח טוב.</p>
+
+            <div class="quote">פחדתי מאוד שהוא לקח את הכסף ו... אבל הוא עשה את זה.</div>
+
+            <p>המשפחה התיישבה בבקאו. כשאמא עברה לבוקרשט כדי להתפרנס, נשארו הבנות בבקאו עם הדודה רגינה. אניטה נסעה ללמוד לקראת בחינות הכניסה לתיכון ("ליציאום"), כדי להשלים את שנות הלימוד שהפסידה.</p>
+
+            <div class="quote">ישבתי ימים ולילות ולמדתי.</div>
+        `
+    },
+    {
+        id: 16,
+        name: "בוקרשט",
+        nameShort: "בוקרשט",
+        lat: 44.4268,
+        lng: 26.1025,
+        period: "1947",
+        type: "return",
+        typeLabel: "רומניה",
+        color: "#a374d5",
+        summary: "אמא בונה פרנסה מחדש – והחתונה עם משה",
+        story: `
+            <p>בבוקרשט נכנסה אמא סלי כשותפה לחנות מעדנים ומסעדה של קרובת משפחה. היה לה מעט כסף, ובעיקר כוח עבודה עצום.</p>
+
+            <div class="quote">היה לה כוח עבודה טוב מאוד.</div>
+
+            <p>כעבור זמן מה הצטרפו אליה גם הבנות, ואמא שכרה להן דירה בעיר.</p>
+
+            <p>ב-1947, בגיל 17, נישאה אניטה למשה. החתונה נערכה בבקאו, ומליטה, עם צמות, עמדה לצידה. משה היה יהודי מרומניה, מבוגר ממנה בעשר שנים, סוחר פרוות. גם הוא היה בטרנסניסטריה: הוא נלקח לעבודת כפייה בכריתת עצים בעובדובקה, 23 קילומטרים מברשד, ושהה שם כשנתיים. הם נפגשו אחרי ששניהם חזרו.</p>
+
+            <div class="quote">התחתנתי עם בחור נהדר – משה.</div>
+        `
+    },
+    {
+        id: 17,
+        name: "זלצבורג, אוסטריה",
+        nameShort: "זלצבורג",
+        lat: 47.8095,
+        lng: 13.0550,
+        period: "1947 – 1948",
+        type: "return",
+        typeLabel: "שנה באוסטריה",
+        color: "#a374d5",
+        summary: "דרך בודפשט ווינה – שנה באוסטריה בדרך לארץ",
+        story: `
+            <p>יום אחרי החתונה עזבו אניטה ומשה את הבית ויצאו לכיוון וינה, דרך בודפשט.</p>
+
+            <div class="quote">מרומניה להונגריה, ומהונגריה לאוסטריה. חייתי שנה באוסטריה, בזלצבורג.</div>
+
+            <p>משה הסתדר שם עם השפה – הוא דיבר גרמנית, "חצי יידיש, חצי גרמנית". מאוסטריה המשיכו לאיטליה, בדרך לארץ ישראל.</p>
+        `
+    },
+    {
+        id: 18,
+        name: "נאפולי, איטליה",
+        nameShort: "נאפולי",
+        lat: 40.8518,
+        lng: 14.2681,
+        period: "1948",
+        type: "return",
+        typeLabel: "האונייה לארץ",
+        color: "#a374d5",
+        summary: "אונייה צפופה: 2,000 עלו, 2,001 הגיעו",
+        story: `
+            <p>מנמל נאפולי הפליגו אניטה ומשה לארץ ישראל, באונייה צפופה במיוחד.</p>
+
+            <div class="quote">זאת הייתה אונייה איומה. אלפיים איש עלו על האונייה. אלפיים איש. והגענו אלפיים ואחד – נולד ילד בדרך.</div>
+        `
+    },
+    {
+        id: 19,
+        name: "חיפה, ישראל",
+        nameShort: "חיפה",
+        lat: 32.7940,
+        lng: 34.9896,
+        period: "1948 ואילך",
+        type: "after",
+        typeLabel: "חיים חדשים",
+        color: "#27ae60",
+        summary: "ארץ ישראל – בניית חיים חדשים",
+        story: `
+            <p>אחרי שנות הזוועה, אניטה ומשפחתה הגיעו לארץ ישראל – הארץ שדודה ברטה שלחה אליה מכתבים עוד לפני המלחמה: "תבואו לישראל, תמכרו הכל ותבואו."</p>
+
+            <p>מהנמל בחיפה נשלחו לבית העולים ברעננה, שהייתה אז כפר קטן – "התרנגולות היו בצד הכביש". היה יפה מאוד, אבל אניטה רצתה לגור בחיפה, ליד הדודה, אחות של אמא, שחיה בארץ עוד משנות ה-30.</p>
+
+            <p>בחיפה גרו בעיר התחתית, ליד שוק תלפיות, בדירה קטנה שחלקו עם משפחה נוספת. אמא סלי הגיעה לארץ מאוחר יותר וגרה איתם תקופה קצרה. השנים הראשונות היו קשות: משה עבד בנמל, במשמרות, וכמעט לא הייתה עבודה. בשנות ה-50 עבדו שניהם בעבודות לסוכנות, ואחר כך פתחו מכולת בשוק תלפיות.</p>
+
+            <p>מליטה עלתה ארצה עם עליית הנוער והגיעה לקיבוץ מבקיעים. בארץ קיבלה את השם מרים.</p>
+
+            <p>ב-1 בדצמבר 2009, בגיל 79, ישבה אניטה בביתה בחיפה ונתנה עדות מפורטת על חייה לשרה רוזן.</p>
+
+            <div class="quote">יש כוח בתוך אדם... מה שעברתי שם, עברתי.</div>
+
+            <p>היא חזרה לבקר בצ'רנוביץ ובברשד – ראתה את הבית שאבא בנה (ללא העץ הענק שנעלם), את הגטו ההרוס, ואת המקומות שבהם עברה את הילדות ואת הגיהנום.</p>
+
+            <div class="family-detail">
+                <strong>מה נשאר:</strong> אמא סלי המשיכה לסבול מהפצע ברגלה עד יומה האחרון. האח הקטן חיים, שלושת הדודים, ודודה רגינה – שרדו. אבא מקס ורבים מהמשפחה המורחבת – נספו.
+            </div>
+
+            <p>העדות שנתנה אניטה היא מסמך יקר ערך – תיעוד חי של עולם שנחרב, של אהבה משפחתית שעמדה מול רוע בלתי נתפס, ושל כוח האדם לשרוד.</p>
+        `
+    }
+];
+
+// ===== פרקים =====
+const chapters = [
+  { key:'childhood',   n:'א׳', title:'ילדות',        years:'\u20661930–1941\u2069', color:'#74a9ea' },
+  { key:'deportation', n:'ב׳', title:'גירוש',        years:'1941',      color:'#e8845e' },
+  { key:'ghetto',      n:'ג׳', title:'גטו ומחנות',   years:'\u20661941–1944\u2069', color:'#d6505a' },
+  { key:'return',      n:'ד׳', title:'הדרך חזרה',    years:'\u20661943–1948\u2069', color:'#b195e2' },
+  { key:'after',       n:'ה׳', title:'לאחר המלחמה', years:'1948 ואילך', color:'#66c08f' }
+];
+const chapterOf = Object.fromEntries(chapters.map(c => [c.key, c]));
+
+// תצוגה: צד התווית, עדיפות לפי זום, זום יעד (זום של MapLibre)
+const view = {
+  0:{side:'top', k:1, kf:1}, 1:{side:'left'}, 2:{side:'left', k:1}, 3:{side:'left'},
+  4:{side:'bottom', k:1}, 5:{side:'bottom', zoom:9}, 6:{side:'top', zoom:9}, 7:{side:'top'}, 8:{side:'top'},
+  9:{side:'bottom', k:1, kf:1, zoom:9}, 10:{side:'top'}, 11:{side:'bottom', k:1, zoom:7}, 12:{side:'bottom', k:1},
+  13:{side:'right', dup:1, zoom:9}, 14:{side:'right', dup:1, zoom:7, off:[30,0]}, 15:{side:'left', k:1, zoom:7},
+  16:{side:'bottom', k:1, kf:1, zoom:6}, 17:{side:'top', k:1, kf:1, zoom:6}, 18:{side:'left', k:1, kf:1, zoom:6}, 19:{side:'right', k:1, kf:1, zoom:6}
+};
+locations.forEach(l => { l.ch = chapterOf[l.type]; l.color = l.ch.color; l.v = view[l.id] || {}; });
+
+// ===== מסלול – נגזר מנתוני המקומות ([lng,lat]) =====
+const waypoints = { budapest:[19.0402,47.4979], vienna:[16.3738,48.2082], messina:[15.63,38.25], crete:[24.5,34.9] };
+const routeLegs = [
+  [0,4],[4,5],[5,6],[6,7],[7,8],[8,9],
+  [9,12],[12,13],[13,14],[14,15],[15,16],
+  [16,17,['budapest','vienna']],[17,18],[18,19,['messina','crete']]
+];
+const spurs = [[0,1],[0,2],[0,3],[9,10],[9,11]];
+const ll = id => [locations[id].lng, locations[id].lat];
+const legCoords = ([a, b, via]) => [ll(a), ...(via || []).map(w => waypoints[w]), ll(b)];
+function densify(coords, step = .04){
+  const out = [coords[0]];
+  for (let i = 1; i < coords.length; i++){
+    const [x1,y1] = coords[i-1], [x2,y2] = coords[i], n = Math.max(2, Math.ceil(Math.hypot(x2-x1, y2-y1) / step));
+    for (let k = 1; k <= n; k++) out.push([x1 + (x2-x1)*k/n, y1 + (y2-y1)*k/n]);
+  }
+  return out;
+}
+const fullRoute = densify(routeLegs.reduce((acc, leg, i) => acc.concat(i ? legCoords(leg).slice(1) : legCoords(leg)), []), .06);
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = () => window.innerWidth <= 820;
+const $ = id => document.getElementById(id);
+let map, currentId = null, markers = [], markerEls = [], mapStyle = 'night', borderYear = 'historical', lastChapter = null, onMap = false;
+
+// ===== סגנונות המפה (ללא מפתחות API) =====
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}';
+const DEM  = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
+const looks = {
+  night: {
+    bg:'#07070b',
+    raster:{'raster-saturation':-0.7,'raster-brightness-max':0.17,'raster-brightness-min':0,'raster-contrast':0.32},
+    hill:{'hillshade-shadow-color':'#000000','hillshade-highlight-color':'rgba(255,200,130,0.26)','hillshade-accent-color':'#050403','hillshade-exaggeration':0.62},
+    tint:['#0e0b16',0.18], route:'#d9b66b', head:'#fff1c9',
+    border:{historical:'#d9b66b', modern:'#93b3e0'}
+  },
+  archive: {
+    bg:'#d6c39c',
+    raster:{'raster-saturation':-0.45,'raster-brightness-max':0.96,'raster-brightness-min':0.22,'raster-contrast':0.1},
+    hill:{'hillshade-shadow-color':'#4a3218','hillshade-highlight-color':'rgba(255,246,222,0.35)','hillshade-accent-color':'#3e2a14','hillshade-exaggeration':0.42},
+    tint:['#b8894a',0.26], route:'#6b4520', head:'#7a3b10',
+    border:{historical:'#6b4520', modern:'#3d5578'}
+  }
+};
+const empty = { type:'FeatureCollection', features:[] };
+const lineF = (coords, props = {}) => ({ type:'Feature', properties:props, geometry:{ type:'LineString', coordinates:coords } });
+const ptF = (c, props = {}) => ({ type:'Feature', properties:props, geometry:{ type:'Point', coordinates:c } });
+
+function buildStyle(){
+  const L = looks.night;
+  return {
+    version:8,
+    sky:{ 'sky-color':'#07070b', 'horizon-color':'#1d1822', 'fog-color':'#0a090f', 'sky-horizon-blend':0.7, 'horizon-fog-blend':0.6, 'fog-ground-blend':0.55, 'atmosphere-blend':0 },
+    sources:{
+      base:{ type:'raster', tiles:[ESRI], tileSize:256, maxzoom:9, attribution:'Tiles © Esri — USGS, NOAA' },
+      dem:{ type:'raster-dem', tiles:[DEM], tileSize:256, encoding:'terrarium', maxzoom:11, attribution:'Elevation: Mapzen / AWS Terrain Tiles' },
+      demT:{ type:'raster-dem', tiles:[DEM], tileSize:256, encoding:'terrarium', maxzoom:11 },
+      world:{ type:'geojson', data:{ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]]] } } },
+      routeBase:{ type:'geojson', data:{ type:'FeatureCollection', features:[...routeLegs.map(l => lineF(legCoords(l))), ...spurs.map(([a,b]) => lineF([ll(a), ll(b)], {spur:1}))] } },
+      routeLit:{ type:'geojson', data:empty },
+      routeHead:{ type:'geojson', data:empty },
+      comet:{ type:'geojson', data:empty, lineMetrics:true }
+    },
+    layers:[
+      { id:'bg', type:'background', paint:{'background-color':L.bg} },
+      { id:'base', type:'raster', source:'base', paint:{...L.raster, 'raster-fade-duration':400} },
+      { id:'hill', type:'hillshade', source:'dem', paint:{...L.hill, 'hillshade-illumination-direction':315} },
+      { id:'tint', type:'fill', source:'world', paint:{'fill-color':L.tint[0], 'fill-opacity':L.tint[1]} },
+      { id:'route-base', type:'line', source:'routeBase', filter:['!', ['has','spur']], layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':L.route,'line-width':1.3,'line-opacity':0.38} },
+      { id:'route-spur', type:'line', source:'routeBase', filter:['has','spur'], paint:{'line-color':L.route,'line-width':1,'line-opacity':0.35,'line-dasharray':[1,4]} },
+      { id:'comet', type:'line', source:'comet', layout:{'line-cap':'round'}, paint:{'line-width':3,'line-blur':1.5,
+          'line-gradient':['interpolate',['linear'],['line-progress'],0,'rgba(255,220,150,0)',0.75,'rgba(255,214,140,0.55)',1,'rgba(255,246,220,1)']} },
+      { id:'lit-glow', type:'line', source:'routeLit', layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':['get','color'],'line-width':['case',['has','spur'],5,10],'line-blur':8,'line-opacity':0.35} },
+      { id:'lit', type:'line', source:'routeLit', layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':['get','color'],'line-width':['case',['has','spur'],1.6,2.8],'line-opacity':0.95} },
+      { id:'head-glow', type:'circle', source:'routeHead', paint:{'circle-radius':16,'circle-color':['get','color'],'circle-blur':1,'circle-opacity':0.7} },
+      { id:'head', type:'circle', source:'routeHead', paint:{'circle-radius':3.5,'circle-color':L.head,'circle-blur':0.3} }
+    ]
+  };
+}
+function applyLook(name){
+  mapStyle = name; const L = looks[name];
+  document.body.classList.toggle('archive', name === 'archive');
+  map.setPaintProperty('bg','background-color',L.bg);
+  Object.entries(L.raster).forEach(([k,v]) => map.setPaintProperty('base',k,v));
+  Object.entries(L.hill).forEach(([k,v]) => map.setPaintProperty('hill',k,v));
+  map.setPaintProperty('tint','fill-color',L.tint[0]); map.setPaintProperty('tint','fill-opacity',L.tint[1]);
+  ['route-base','route-spur'].forEach(id => map.setPaintProperty(id,'line-color',L.route));
+  map.setPaintProperty('route-base','line-opacity', name === 'archive' ? .55 : .38);
+  map.setPaintProperty('lit-glow','line-opacity', name === 'archive' ? .18 : .35);
+  map.setPaintProperty('head','circle-color',L.head);
+  try { map.setSky(name === 'archive' ? { 'sky-color':'#e9dcc0','horizon-color':'#d8c39a','fog-color':'#d6c39c','sky-horizon-blend':0.7,'horizon-fog-blend':0.6,'fog-ground-blend':0.5,'atmosphere-blend':0 }
+    : { 'sky-color':'#07070b','horizon-color':'#1d1822','fog-color':'#0a090f','sky-horizon-blend':0.7,'horizon-fog-blend':0.6,'fog-ground-blend':0.55,'atmosphere-blend':0 }); } catch(e) {}
+  ['historical','modern'].forEach(k => map.getLayer('b-'+k) && map.setPaintProperty('b-'+k,'line-color',L.border[k]));
+}
+
+// ===== גבולות 1938 / היום =====
+const hebrewCountryNames = {
+  "Germany":"גרמניה","Poland":"פולין","USSR":"ברית המועצות","Romania":"רומניה","Hungary":"הונגריה","Czechoslovakia":"צ'כוסלובקיה",
+  "Austria":"אוסטריה","France":"צרפת","Italy":"איטליה","Spain":"ספרד","Portugal":"פורטוגל","United Kingdom":"בריטניה","Ireland":"אירלנד",
+  "Switzerland":"שווייץ","Belgium":"בלגיה","Netherlands":"הולנד","Luxembourg":"לוקסמבורג","Denmark":"דנמרק","Norway":"נורווגיה","Sweden":"שוודיה",
+  "Finland":"פינלנד","Estonia":"אסטוניה","Latvia":"לטביה","Lithuania":"ליטא","Yugoslavia":"יוגוסלביה","Bulgaria":"בולגריה","Greece":"יוון",
+  "Albania":"אלבניה","Turkey":"טורקיה","Ukraine":"אוקראינה","Moldova":"מולדובה","Belarus":"בלארוס","Russia":"רוסיה","Russian Federation":"רוסיה",
+  "Israel":"ישראל","Slovakia":"סלובקיה","Czechia":"צ'כיה","Czech Republic":"צ'כיה","Croatia":"קרואטיה","Serbia":"סרביה",
+  "Bosnia and Herzegovina":"בוסניה והרצגובינה","North Macedonia":"צפון מקדוניה","Macedonia":"מקדוניה","Slovenia":"סלובניה","Montenegro":"מונטנגרו",
+  "Kosovo":"קוסובו","Georgia":"גאורגיה","Armenia":"ארמניה","Azerbaijan":"אזרבייג'ן","Cyprus":"קפריסין","Egypt":"מצרים","Lebanon":"לבנון",
+  "Syria":"סוריה","Jordan":"ירדן","Iraq":"עיראק","Palestine":"פלשתינה (א״י)","Iran":"איראן","Morocco":"מרוקו","Algeria":"אלג'יריה",
+  "Tunisia":"טוניסיה","Libya":"לוב","Iceland":"איסלנד","Malta":"מלטה","Saudi Arabia":"ערב הסעודית"
+};
+const borderSrc = {
+  historical:'https://raw.githubusercontent.com/aourednik/historical-basemaps/master/geojson/world_1938.geojson',
+  modern:'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
+};
+const bordersLoaded = {};
+function addBorders(){
+  const tip = $('country-tip');
+  ['historical','modern'].forEach(k => {
+    map.addSource('bd-'+k, { type:'geojson', data:k === borderYear ? borderSrc[k] : empty });   // גבולות היום (~4.6MB) נטענים רק כשבוחרים בהם
+    if (k === borderYear) bordersLoaded[k] = true;
+    const vis = k === borderYear ? 'visible' : 'none';
+    map.addLayer({ id:'bf-'+k, type:'fill', source:'bd-'+k, layout:{visibility:vis}, paint:{'fill-color':'#000','fill-opacity':0.001} }, 'route-base');
+    map.addLayer({ id:'b-'+k, type:'line', source:'bd-'+k, layout:{visibility:vis,'line-join':'round'},
+      paint:{'line-color':looks[mapStyle].border[k],'line-width':['interpolate',['linear'],['zoom'],3,.7,8,1.4],'line-opacity':.55,'line-dasharray':[3,2.5]} }, 'route-base');
+    map.on('mousemove', 'bf-'+k, e => {
+      const p = e.features[0] && e.features[0].properties, raw = p && (p.NAME || p.ADMIN || p.name);
+      if (!raw || !onMap){ tip.classList.remove('on'); return; }
+      tip.textContent = hebrewCountryNames[raw] || raw; tip.style.left = e.originalEvent.clientX + 'px'; tip.style.top = e.originalEvent.clientY + 'px'; tip.classList.add('on');
+    });
+    map.on('mouseleave', 'bf-'+k, () => tip.classList.remove('on'));
+  });
+}
+function setBorderYear(y){
+  borderYear = y;
+  if (!bordersLoaded[y] && map.getSource('bd-'+y)){ map.getSource('bd-'+y).setData(borderSrc[y]); bordersLoaded[y] = true; }
+  ['historical','modern'].forEach(k => ['bf-','b-'].forEach(p => map.getLayer(p+k) && map.setLayoutProperty(p+k,'visibility', k === y ? 'visible' : 'none')));
+}
+function initSeg(id, onChange){
+  const seg = $(id), glider = seg.querySelector('.glider'), btns = [...seg.querySelectorAll('button')];
+  const place = () => { const a = btns.find(b => b.getAttribute('aria-pressed') === 'true'); glider.style.left = a.offsetLeft + 'px'; glider.style.width = a.offsetWidth + 'px'; };
+  btns.forEach(b => b.addEventListener('click', () => { btns.forEach(x => x.setAttribute('aria-pressed', x === b)); place(); onChange(b.dataset.v); }));
+  place(); addEventListener('resize', place); document.fonts && document.fonts.ready.then(place);
+}
+
+// ===== שרטוט המסלול עם אור נע =====
+const lit = new Map();
+let routeRAF = null;
+const easeInOut = p => p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;
+function routeTick(now){
+  const feats = [], heads = []; let active = false;
+  lit.forEach(a => {
+    let p = reduceMotion ? 1 : Math.max(0, Math.min(1, (now - a.t0) / a.dur));
+    const n = Math.max(2, Math.ceil(easeInOut(p) * a.pts.length));
+    if (p > 0) feats.push(lineF(a.pts.slice(0, n), a.spur ? {color:a.color, spur:1} : {color:a.color}));
+    if (p < 1){ active = true; if (p > 0 && !a.spur) heads.push(ptF(a.pts[n-1], {color:a.color})); }
+  });
+  map.getSource('routeLit').setData({ type:'FeatureCollection', features:feats });
+  map.getSource('routeHead').setData({ type:'FeatureCollection', features:heads });
+  routeRAF = active ? requestAnimationFrame(routeTick) : null;
+}
+function updateRoute(id, delay = 500, fly = 0){
+  if (noGL) return;
+  const now = performance.now(); let k = 0;
+  routeLegs.forEach((leg, i) => {
+    const key = 'l'+i, want = id !== null && id >= leg[1];
+    if (want && !lit.has(key)){ const pts = densify(legCoords(leg));
+      lit.set(key, { pts, color:locations[leg[1]].color, t0:now + delay + k*500, dur:fly ? Math.max(1200, Math.min(4200, fly * .8)) : Math.min(3200, 1400 + pts.length * 6) }); k++; }
+    else if (!want) lit.delete(key);
+  });
+  spurs.forEach(([a,b], i) => {
+    const key = 's'+i, want = id !== null && id >= b;
+    if (want && !lit.has(key)) lit.set(key, { pts:densify([ll(a), ll(b)], .02), color:locations[b].color, t0:now + delay + 400, dur:1400, spur:1 });
+    else if (!want) lit.delete(key);
+  });
+  if (!routeRAF) routeRAF = requestAnimationFrame(routeTick);
+}
+// אור שעובר לאט לאורך כל המסע – רק במסך הפתיחה
+let cometRAF = null;
+function cometTick(now){
+  const L = fullRoute.length, period = 26000, tail = 46, i = Math.floor(((now % period) / period) * (L + tail));
+  const seg = fullRoute.slice(Math.max(0, i - tail), Math.min(L, i));
+  map.getSource('comet').setData(seg.length > 1 ? lineF(seg) : empty);
+  cometRAF = requestAnimationFrame(cometTick);
+}
+
+// ===== סמנים =====
+function buildMarkers(){
+  locations.forEach((loc, i) => {
+    const v = loc.v, off = v.off || loc.offset || [0,0];
+    const el = document.createElement('div'); el.className = 'mk-anchor';
+    el.innerHTML = `<div class="mk ${v.k?'k':''} ${v.kf?'kf':''} ${v.dup?'dup':''}" style="--c:${loc.color}" role="button" tabindex="0" aria-label="תחנה ${i+1}: ${loc.name} – ${loc.summary}" title="${loc.name} – ${loc.summary}"><span class="mk-halo"></span><span class="mk-halo h2"></span><span class="mk-ring"><span class="mk-num">${i+1}</span></span><span class="mk-label ${v.side||'top'}">${loc.nameShort}</span></div>`;
+    const mk = el.firstElementChild;
+    mk.addEventListener('click', e => { e.stopPropagation(); openStory(loc.id); });
+    mk.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openStory(loc.id); } });
+    markers.push(new maplibregl.Marker({ element:el, anchor:'center', offset:off }).setLngLat(ll(i)).addTo(map));
+    markerEls.push(mk);
+  });
+  [['הים השחור',34.6,43.3],['הים התיכון',19.5,34.6],['הים האדריאטי',15.9,42.9],['הים האגאי',25.0,38.6]].forEach(([n,lo,la]) => {
+    const el = document.createElement('div'); el.className = 'sea-label'; el.textContent = n; el.setAttribute('aria-hidden','true');
+    new maplibregl.Marker({ element:el, anchor:'center' }).setLngLat([lo,la]).addTo(map);
+  });
+}
+function updateMarkers(id){
+  markerEls.forEach((el, i) => {
+    el.classList.toggle('active', i === id); el.classList.toggle('visited', id !== null && i < id);
+    el.parentElement.style.zIndex = i === id ? 10 : 1;
+  });
+}
+function zoomClass(){
+  const z = map.getZoom(), c = map.getContainer();
+  c.classList.toggle('z-far', z <= 4.6); c.classList.toggle('z-mid', z > 4.6 && z < 7.6); c.classList.toggle('z-near', z >= 7.6);
+}
+
+// ===== מצלמה =====
+function timelineH(){ return $('timeline').getBoundingClientRect().height; }
+function padding(withPanel){
+  const tl = timelineH(), hh = isMobile() ? 56 : 64, p = $('story-panel');
+  if (isMobile()) return { top:hh + 50, bottom:(withPanel ? p.offsetHeight : 0) + tl + 20, left:24, right:24 };
+  return { top:hh + 70, bottom:tl + 30, left:70, right:withPanel ? p.offsetWidth + 50 : 70 };
+}
+function allBounds(){ const b = new maplibregl.LngLatBounds(); locations.forEach(l => b.extend([l.lng, l.lat])); return b; }
+function showOverview(duration = 2600){
+  if (noGL) return;
+  const cv = map.getCanvas(), mid = map.unproject([cv.clientWidth / 2, cv.clientHeight / 2]);
+  map.jumpTo({ center:mid, padding:{ top:0, bottom:0, left:0, right:0 } });   // מאפס ריפוד בלי קפיצה חזותית
+  const cam = map.cameraForBounds(allBounds(), { padding:padding(false) }) || { center:[24,42], zoom:isMobile() ? 3 : 4 };
+  const opts = { center:cam.center, zoom:cam.zoom - (isMobile() ? .35 : .1), pitch:isMobile() ? 18 : 28, bearing:0, padding:{top:0,bottom:0,left:0,right:0} };
+  reduceMotion ? map.jumpTo(opts) : map.flyTo({ ...opts, duration, curve:1.2, essential:true, easing:easeInOut });
+}
+// מרחק אמיתי בק"מ בין שתי נקודות
+function kmBetween(a, b){ const R = 6371, r = Math.PI / 180, dLa = (b[1]-a[1])*r, dLo = (b[0]-a[0])*r;
+  const h = Math.sin(dLa/2)**2 + Math.cos(a[1]*r) * Math.cos(b[1]*r) * Math.sin(dLo/2)**2; return 2 * R * Math.asin(Math.sqrt(h)); }
+const easeSoft = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;   // easeInOutCubic
+let lastFly = 2400;
+function flyToLoc(loc){
+  if (noGL) return;
+  const target = [loc.lng, loc.lat], opts = { center:target, zoom:loc.v.zoom || 8, pitch:isMobile() ? 38 : 50, bearing:-10, padding:padding(true) };
+  if (reduceMotion){ lastFly = 0; return map.jumpTo(opts); }
+  // אם המצלמה עדיין בתנועה – מודדים מהיעד הקודם, כדי שמעבר מהיר בין תחנות סמוכות יישאר רך
+  const moving = map.isMoving() && flyToLoc.last, c = map.getCenter();
+  const from = moving ? flyToLoc.last.c : [c.lng, c.lat], fromZ = moving ? flyToLoc.last.z : map.getZoom();
+  const km = kmBetween(from, target), dz = Math.abs(fromZ - opts.zoom);
+  flyToLoc.last = { c:target, z:opts.zoom };
+  map.stop();
+  if (km < 160 && dz < 2.2){
+    // תחנות קרובות: גלישה רציפה בלי "זום-אאוט וזום-אין"
+    lastFly = Math.round(Math.min(2600, 1300 + km * 8 + dz * 250));
+    map.easeTo({ ...opts, duration:lastFly, easing:easeSoft, essential:true });
+  } else {
+    // מרחק גדול: מעוף שמשכו גדל לוגריתמית עם המרחק, בקשת מתונה
+    lastFly = Math.round(Math.min(5200, 1900 + 820 * Math.log2(1 + km / 60)));
+    map.flyTo({ ...opts, duration:lastFly, curve:km < 600 ? 1.05 : 1.25, easing:easeSoft, essential:true });
+  }
+}
+let driftRAF = null;
+function introCamera(){
+  const c = isMobile() ? { center:[26.5, 44.5], zoom:3.6 } : { center:[24.5, 43.8], zoom:4.25 };
+  map.jumpTo({ ...c, pitch:52, bearing:-18 });
+  if (reduceMotion) return;
+  const t0 = performance.now();
+  (function drift(now){ const t = (now - t0) / 1000;
+    map.jumpTo({ bearing:-18 + Math.sin(t / 22) * 9, pitch:52 + Math.sin(t / 31) * 3 });
+    driftRAF = requestAnimationFrame(drift); })(t0);
+}
+
+// ===== ציר זמן =====
+function buildTimeline(){
+  const sc = $('tl-scroll');
+  chapters.forEach(ch => {
+    const sts = locations.filter(l => l.type === ch.key);
+    const g = document.createElement('div'); g.className = 'tl-ch'; g.style.setProperty('--cc', ch.color); g.dataset.ch = ch.key;
+    g.innerHTML = `<div class="tl-ch-head"><span class="n" aria-label="פרק ${ch.n}">${ch.n}</span><span class="t">${ch.title}</span><span class="y">${ch.years}</span></div>
+      <div class="tl-sts">${sts.map(l => `<button class="tl-st" id="tl-${l.id}" data-id="${l.id}" aria-label="תחנה ${l.id+1}: ${l.name}">${l.nameShort}</button>`).join('')}</div>
+      <div class="tl-bar"><i></i></div>`;
+    sc.appendChild(g);
+  });
+  sc.addEventListener('click', e => { const b = e.target.closest('.tl-st'); if (b) openStory(+b.dataset.id); });
+  $('legend').innerHTML = chapters.map(c => `<span style="--cc:${c.color}"><i></i>${c.title}</span>`).join('');
+}
+function updateTimeline(id){
+  document.querySelectorAll('.tl-st').forEach(b => { const i = +b.dataset.id;
+    b.classList.toggle('active', i === id); b.classList.toggle('passed', id !== null && i < id); b.setAttribute('aria-current', i === id ? 'step' : 'false'); });
+  document.querySelectorAll('.tl-ch').forEach(g => { const sts = locations.filter(l => l.type === g.dataset.ch);
+    g.querySelector('.tl-bar i').style.width = ((id === null ? 0 : sts.filter(l => l.id <= id).length) / sts.length * 100) + '%'; });
+  const el = $('tl-' + id);
+  if (el){ const sc = $('tl-scroll'), r = el.getBoundingClientRect(), s = sc.getBoundingClientRect();
+    sc.scrollBy({ left:(r.left + r.width/2) - (s.left + s.width/2), behavior:reduceMotion ? 'auto' : 'smooth' }); }
+}
+
+// ===== כרטיס פרק =====
+let ccTimer = null;
+function showChapterCard(ch){
+  if (reduceMotion) return;
+  const card = $('chapter-card'), inner = $('cc-inner');
+  inner.style.setProperty('--cc', ch.color);
+  inner.innerHTML = `<div class="cc-n">פרק ${ch.n}</div><div class="cc-line"></div><div class="cc-t">${ch.title}</div><div class="cc-y">${ch.years}</div>`;
+  card.classList.remove('show'); void card.offsetWidth; card.classList.add('show');
+  document.body.classList.add('cine');
+  clearTimeout(ccTimer); ccTimer = setTimeout(() => { card.classList.remove('show'); document.body.classList.remove('cine'); }, 2900);
+}
+
+
+// ===== תמונות "אז / היום" ורקע היסטורי =====
+// כל התמונות מוויקישיתוף – עם מקור, צלם, תאריך ורישיון; נטענות רק כשצריך
+const MEDIA = {"0": [{"kind": "then", "src": "images/s00-then-0.webp", "srcm": "images/s00-then-0-m.webp", "w": 1600, "h": 1523, "cap": "רחוב רוסקה (Russische Gasse) בצ'רנוביץ, 1934. בקצה הרחוב – כנסיית עליית מרים היוונית-קתולית", "date": "1934", "author": "Fortepan / Lajtai László", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Orosz_utca,_szemben_a_Boldogságos_Szűz_Mária_Mennybemenetele_görög_katolikus_székesegyház,_jobbra_a_Lomonoszov_utca_torkolata._Fortepan_62601.jpg", "title": "Orosz utca, szemben a Boldogságos Szűz Mária Mennybemenetele görög katolikus székesegyház, jobbra a Lomonoszov utca torkolata. Fortepan 62601.jpg"}, {"kind": "now", "src": "images/s00-now-1.webp", "srcm": "images/s00-now-1-m.webp", "w": 1067, "h": 1600, "cap": "רחוב רוסקה והכנסייה היוונית-קתולית בצ'רנוביץ, 2014", "date": "2014", "author": "Wadco2", "license": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0/", "page": "https://commons.wikimedia.org/wiki/File:73-101-0292_Ruska_28.jpg", "title": "73-101-0292 Ruska 28.jpg"}, {"kind": "then", "src": "images/s00-then-2.webp", "srcm": "images/s00-then-2-m.webp", "w": 926, "h": 650, "cap": "גירוש יהודי צ'רנוביץ, אוקטובר–נובמבר 1941", "date": "1941", "author": "צלם לא ידוע", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:Expulsion_of_Jews_from_Cernauti_1941.jpg", "title": "Expulsion of Jews from Cernauti 1941.jpg"}], "2": [{"kind": "then", "src": "images/s02-then-0.webp", "srcm": "images/s02-then-0-m.webp", "w": 1600, "h": 1533, "cap": "עמק בהרי הקרפטים סמוך לקמפולונג מולדובנסק, 1922. צילום הגאוגרף עמנואל דה מרטון", "date": "1922", "author": "Emmanuel de Martonne (MédiHAL)", "license": "Licence Ouverte", "licurl": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/", "page": "https://commons.wikimedia.org/wiki/File:Europe_-_Roumanie_-_Moldavie_et_Bas-Danube_-_Région_de_Moldavie_-_Judet_de_Suceava_-_Karen_-_Prise_de_vue_1-4_-_Vallée_près_de_Câmpulung_Moldovenesc_(MédiHAL_2132518).jpg", "title": "Europe - Roumanie - Moldavie et Bas-Danube - Région de Moldavie - Judet de Suceava - Karen - Prise de vue 1-4 - Vallée près de Câmpulung Moldovenesc (MédiHAL 2132518).jpg"}, {"kind": "then", "src": "images/s02-then-1.webp", "srcm": "images/s02-then-1-m.webp", "w": 800, "h": 518, "cap": "\"ברכות מקימפולונג\" – גלויה עם מלון העירייה (Hotel Comunal), לפני 1919", "date": "לפני 1919", "author": "צלם לא ידוע", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:Hotel_Comunal_(Chernivtsi).jpeg", "title": "Hotel Comunal (Chernivtsi).jpeg"}, {"kind": "now", "src": "images/s02-now-2.webp", "srcm": "images/s02-now-2-m.webp", "w": 1600, "h": 1200, "cap": "מרכז העיר קמפולונג מולדובנסק, 2012", "date": "2012", "author": "Bogdan29roman", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Centro_Câmpulung_Moldovenesc.jpg", "title": "Centro Câmpulung Moldovenesc.jpg"}], "3": [{"kind": "then", "src": "images/s03-then-0.webp", "srcm": "images/s03-then-0-m.webp", "w": 1200, "h": 899, "cap": "הקזינו של עיר המרפא ואטרה דורניי – גלויה, 1937", "date": "1937", "author": "צלם לא ידוע", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:Interbellum_Casino_of_Vatra_Dornei_(1937).png", "title": "Interbellum Casino of Vatra Dornei (1937).png"}, {"kind": "now", "src": "images/s03-now-1.webp", "srcm": "images/s03-now-1-m.webp", "w": 1600, "h": 1200, "cap": "הקזינו של ואטרה דורניי, 2011", "date": "2011", "author": "Cezar Suceveanu", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Cazinoul_din_Vatra_Dornei.jpg", "title": "Cazinoul din Vatra Dornei.jpg"}, {"kind": "then", "src": "images/s03-then-2.webp", "srcm": "images/s03-then-2-m.webp", "w": 1600, "h": 1016, "cap": "בית הכנסת הגדול (\"הטמפל\") של ואטרה דורניי – גלויה, 1936", "date": "1936", "author": "צלם לא ידוע", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:Vatra-Dornei._Templul_evresc.jpg", "title": "Vatra-Dornei. Templul evresc.jpg"}], "4": [{"kind": "now", "src": "images/s04-now-0.webp", "srcm": "images/s04-now-0-m.webp", "w": 1600, "h": 1200, "cap": "תחנת הרכבת של מרקולשט, 2013", "date": "2013", "author": "Avereanu", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Gara_Mărculești_01.JPG", "title": "Gara Mărculești 01.JPG"}, {"kind": "now", "src": "images/s04-now-1.webp", "srcm": "images/s04-now-1-m.webp", "w": 1600, "h": 1067, "cap": "בית הקברות היהודי של מרקולשט, 2023", "date": "2023", "author": "Gganebnyi", "license": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Cimitir_Evriesc_Marculesti.jpg", "title": "Cimitir Evriesc Marculesti.jpg"}], "5": [{"kind": "now", "src": "images/s05-now-0.webp", "srcm": "images/s05-now-0-m.webp", "w": 1600, "h": 1200, "cap": "נהר הדנייסטר ליד הכפר קוסאוץ, 2012", "date": "2012", "author": "Visem", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Cosăuţi03.JPG", "title": "Cosăuţi03.JPG"}], "6": [{"kind": "now", "src": "images/s06-now-0.webp", "srcm": "images/s06-now-0-m.webp", "w": 1600, "h": 899, "cap": "הדנייסטר בין קוסאוץ ליאמפול, צילום מהמעבורת, 2016", "date": "2016", "author": "Visem", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Dniester_between_Yampil_and_Cosăuţi_1.jpg", "title": "Dniester between Yampil and Cosăuţi 1.jpg"}, {"kind": "now", "src": "images/s06-now-1.webp", "srcm": "images/s06-now-1-m.webp", "w": 1600, "h": 1200, "cap": "הדנייסטר בין העיר יאמפול לכפר קוסאוץ, 2012", "date": "2012", "author": "Visem", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Dniester_Yampil-Cosăuţi.JPG", "title": "Dniester Yampil-Cosăuţi.JPG"}], "7": [{"kind": "now", "src": "images/s07-now-0.webp", "srcm": "images/s07-now-0-m.webp", "w": 1600, "h": 1028, "cap": "תחנת הרכבת של קריז'ופול, 2015", "date": "2015", "author": "Dmytro Petishkin", "license": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Kryzhopil_railway_station_1.jpg", "title": "Kryzhopil railway station 1.jpg"}], "8": [{"kind": "now", "src": "images/s08-now-0.webp", "srcm": "images/s08-now-0-m.webp", "w": 1600, "h": 1067, "cap": "בניין בית הכנסת לשעבר בעובדובקה, 2021", "date": "2021", "author": "Luda.slominska", "license": "CC0 (נחלת הכלל)", "licurl": "https://creativecommons.org/publicdomain/zero/1.0/", "page": "https://commons.wikimedia.org/wiki/File:Ободівка_04.jpg", "title": "Ободівка 04.jpg"}], "9": [{"kind": "then", "src": "images/s09-then-0.webp", "srcm": "images/s09-then-0-m.webp", "w": 593, "h": 800, "cap": "בית כנסת בברשד, 1924. צילום ארקדי זרמבסקי", "date": "1924", "author": "Arkady Zarembsky", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:006_29788658_Fotootpechatok-_S.max-1920x900.format-webp.webp", "title": "006 29788658 Fotootpechatok- S.max-1920x900.format-webp.webp"}, {"kind": "now", "src": "images/s09-now-1.webp", "srcm": "images/s09-now-1-m.webp", "w": 1600, "h": 1038, "cap": "בית הכנסת של ברשד, 2015 – בית הכנסת ששרד את המלחמה", "date": "2015", "author": "Dmytro Petishkin", "license": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Synagogue_in_Bershad_01.jpg", "title": "Synagogue in Bershad 01.jpg"}, {"kind": "now", "src": "images/s09-now-2.webp", "srcm": "images/s09-now-2-m.webp", "w": 800, "h": 600, "cap": "בית מגורים יהודי ישן בברשד, 2014", "date": "2014", "author": "Andriy Bondarenko", "license": "CC BY 3.0", "licurl": "https://creativecommons.org/licenses/by/3.0/", "page": "https://commons.wikimedia.org/wiki/File:1866284_original_Bershad.jpg", "title": "1866284 original Bershad.jpg"}], "10": [{"kind": "then", "src": "images/s10-then-0.webp", "srcm": "images/s10-then-0-m.webp", "w": 792, "h": 490, "cap": "נהר הבוג, אוגוסט 1941 (מקום מדויק לא צוין במקור)", "date": "9.8.1941", "author": "Bundesarchiv, B 145 Bild-F016203-04", "license": "CC BY-SA 3.0 de", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Bundesarchiv_B_145_Bild-F016203-04,_Ukraine,_Rinder_am_Bug.jpg", "title": "Bundesarchiv B 145 Bild-F016203-04, Ukraine, Rinder am Bug.jpg"}, {"kind": "now", "src": "images/s10-now-1.webp", "srcm": "images/s10-now-1-m.webp", "w": 1200, "h": 800, "cap": "גשר הרכבת הצרה על נהר הבוג הדרומי ליד גאיבורון, 2006", "date": "2006", "author": "Serguei Trouchelle", "license": "CC BY-SA 2.5", "licurl": "https://creativecommons.org/licenses/by-sa/2.5/", "page": "https://commons.wikimedia.org/wiki/File:AX_ZIM_Railcar_SBug_Bridge_20061105.jpg", "title": "AX ZIM Railcar SBug Bridge 20061105.jpg"}], "11": [{"kind": "then", "src": "images/s11-then-0.webp", "srcm": "images/s11-then-0-m.webp", "w": 867, "h": 644, "cap": "ניקולאייב, 1942: המספנה הדרומית, מבט מהממגורה", "date": "1942", "author": "Willy Pragher / Landesarchiv Baden-Württemberg", "license": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Nikolajew_(Ukraine)-_Südwerft_vom_Silo_aus_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._017257.jpeg", "title": "Nikolajew (Ukraine)- Südwerft vom Silo aus - LABW - Staatsarchiv Freiburg W 134 Nr. 017257.jpeg"}, {"kind": "now", "src": "images/s11-now-1.webp", "srcm": "images/s11-now-1-m.webp", "w": 1600, "h": 832, "cap": "ניקולאייב, 2011: מבט לעבר גשר הפונטונים", "date": "2011", "author": "Matvey Andreyev", "license": "CC BY 3.0", "licurl": "https://creativecommons.org/licenses/by/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Pontone_bridge_view_in_Nikolaev_-_Вид_на_понтонный_мост_в_Николаеве_-_panoramio.jpg", "title": "Pontone bridge view in Nikolaev - Вид на понтонный мост в Николаеве - panoramio.jpg"}], "12": [{"kind": "then", "src": "images/s12-then-0.webp", "srcm": "images/s12-then-0-m.webp", "w": 486, "h": 794, "cap": "קתדרלת עליית מרים בבלטה, אוגוסט 1941", "date": "1941", "author": "Bundesarchiv, B 145 Bild-F016209-0003", "license": "CC BY-SA 3.0 de", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en", "page": "https://commons.wikimedia.org/wiki/File:Bundesarchiv_B_145_Bild-F016209-0003,_Russisch-orthodoxe_Kirche.jpg", "title": "Bundesarchiv B 145 Bild-F016209-0003, Russisch-orthodoxe Kirche.jpg"}, {"kind": "now", "src": "images/s12-now-1.webp", "srcm": "images/s12-now-1-m.webp", "w": 1600, "h": 1190, "cap": "קתדרלת עליית מרים בבלטה, 2018", "date": "2018", "author": "V1snyk", "license": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Balta_sobor_1.jpg", "title": "Balta sobor 1.jpg"}, {"kind": "now", "src": "images/s12-now-2.webp", "srcm": "images/s12-now-2-m.webp", "w": 1600, "h": 960, "cap": "תחנת הרכבת של בלטה, הרחק ממרכז העיר, 2008", "date": "2008", "author": "marktristan", "license": "CC BY-SA 2.0", "licurl": "https://creativecommons.org/licenses/by-sa/2.0/", "page": "https://commons.wikimedia.org/wiki/File:Balta_station,_Ukraine_(3676116515).jpg", "title": "Balta station, Ukraine (3676116515).jpg"}], "14": [{"kind": "then", "src": "images/s14-then-0.webp", "srcm": "images/s14-then-0-m.webp", "w": 1025, "h": 684, "cap": "ה\"טמפל\", בית הכנסת הגדול של צ'רנוביץ, אחרי השרפה – 24 ביולי 1941", "date": "24.7.1941", "author": "Willy Pragher / Landesarchiv Baden-Württemberg", "license": "CC BY 3.0", "licurl": "https://creativecommons.org/licenses/by/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Czernowitz._Ausgebrannte_Synagoge_-01.jpg", "title": "Czernowitz. Ausgebrannte Synagoge -01.jpg"}, {"kind": "now", "src": "images/s14-now-1.webp", "srcm": "images/s14-now-1-m.webp", "w": 1600, "h": 1142, "cap": "בניין ה\"טמפל\" היום, אחרי שהוסב לבית קולנוע, 2024", "date": "2024", "author": "Сарапулов", "license": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0/", "page": "https://commons.wikimedia.org/wiki/File:99-731-0101_IMG20240418142214_stitch.jpg", "title": "99-731-0101 IMG20240418142214 stitch.jpg"}], "15": [{"kind": "then", "src": "images/s15-then-0.webp", "srcm": "images/s15-then-0-m.webp", "w": 1360, "h": 838, "cap": "חברי תנועת הנוער הציונית \"דרור-הבונים\" בעצרת האחד במאי בבקאו, 1945", "date": "1.5.1945", "author": "צלם לא ידוע", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:Labor_Day_rally_by_Dror-Habonim,_Mișcarea_Tineretului_Sionist-Socialist_(within_Blocul_Palestinei_Muncitoare),_Bacău,_Romania,_1945-05-01.png", "title": "Labor Day rally by Dror-Habonim, Mișcarea Tineretului Sionist-Socialist (within Blocul Palestinei Muncitoare), Bacău, Romania, 1945-05-01.png"}, {"kind": "now", "src": "images/s15-now-1.webp", "srcm": "images/s15-now-1-m.webp", "w": 1600, "h": 900, "cap": "בית הכנסת \"צֶרֶאַליסטילור\" בבקאו, 2017", "date": "2017", "author": "Rakoon", "license": "CC0 (נחלת הכלל)", "licurl": "https://creativecommons.org/publicdomain/zero/1.0/", "page": "https://commons.wikimedia.org/wiki/File:20171004_Sinagoga_Cerealistilor_bacau_october_2017.jpg", "title": "20171004 Sinagoga Cerealistilor bacau october 2017.jpg"}], "16": [{"kind": "then", "src": "images/s16-then-0.webp", "srcm": "images/s16-then-0-m.webp", "w": 1043, "h": 1600, "cap": "שדרת קאלֶה ויקטוריי ו\"ארמון הטלפונים\" בבוקרשט, פברואר 1941", "date": "1941", "author": "Willy Pragher / Landesarchiv Baden-Württemberg", "license": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Bukarest-_Calea_Victoriei_mit_Telefonhaus_vom_Schlossplatz_-_LABW_-_Staatsarchiv_Freiburg_W_134_Nr._030232.jpeg", "title": "Bukarest- Calea Victoriei mit Telefonhaus vom Schlossplatz - LABW - Staatsarchiv Freiburg W 134 Nr. 030232.jpeg"}, {"kind": "now", "src": "images/s16-now-1.webp", "srcm": "images/s16-now-1-m.webp", "w": 1200, "h": 1600, "cap": "קאלה ויקטוריי וארמון הטלפונים, 2016", "date": "2016", "author": "Nețoi Iuliana", "license": "CC BY-SA 4.0", "licurl": "https://creativecommons.org/licenses/by-sa/4.0/", "page": "https://commons.wikimedia.org/wiki/File:București,_Calea_Victoriei_-_Palatul_Telefoanelor_și_Grand_Hotel_Continental_în_februarie_2016.jpg", "title": "București, Calea Victoriei - Palatul Telefoanelor și Grand Hotel Continental în februarie 2016.jpg"}], "17": [{"kind": "then", "src": "images/s17-then-0.webp", "srcm": "images/s17-then-0-m.webp", "w": 985, "h": 729, "cap": "זלצבורג: העיר העתיקה, המבצר והגשר על נהר הזלצאך, לפני 1944", "date": "לפני 1944", "author": "Bulgarian Archives State Agency", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:BASA-237K-1-351-101-Salzburg.jpg", "title": "BASA-237K-1-351-101-Salzburg.jpg"}, {"kind": "now", "src": "images/s17-now-1.webp", "srcm": "images/s17-now-1-m.webp", "w": 1600, "h": 1068, "cap": "גשר שטאטסבריקה והעיר העתיקה של זלצבורג, 2023", "date": "2023", "author": "Leonhard Lenz", "license": "CC0 (נחלת הכלל)", "licurl": "https://creativecommons.org/publicdomain/zero/1.0/", "page": "https://commons.wikimedia.org/wiki/File:Staatsbrücke_Salzburg_2023-09-27_01.jpg", "title": "Staatsbrücke Salzburg 2023-09-27 01.jpg"}], "18": [{"kind": "then", "src": "images/s18-then-0.webp", "srcm": "images/s18-then-0-m.webp", "w": 1181, "h": 588, "cap": "נאפולי והנמל, ברקע הר הווזוב, 1948", "date": "1948", "author": "U.S. Navy", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:View_of_the_Naples,_Italy,_in_1948.jpg", "title": "View of the Naples, Italy, in 1948.jpg"}, {"kind": "now", "src": "images/s18-now-1.webp", "srcm": "images/s18-now-1-m.webp", "w": 1600, "h": 1200, "cap": "נמל נאפולי והווזוב, מבט מקסטל נואובו, 2009", "date": "2009", "author": "Adam91", "license": "CC BY-SA 3.0", "licurl": "https://creativecommons.org/licenses/by-sa/3.0/", "page": "https://commons.wikimedia.org/wiki/File:Castel_Nuovo-Napoli_(4).JPG", "title": "Castel Nuovo-Napoli (4).JPG"}], "19": [{"kind": "then", "src": "images/s19-then-0.webp", "srcm": "images/s19-then-0-m.webp", "w": 1145, "h": 1600, "cap": "אולם שוק תלפיות בהדר הכרמל, חיפה, 1946. צילום זולטן קלוגר", "date": "1946", "author": "Zoltan Kluger / ארכיון המדינה", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:חיפה_-_הדר_הכרמל_-_אולם_השוק,_שוק_תלפיות-ZKlugerPhotos-00132pz-907170685138267.jpg", "title": "חיפה - הדר הכרמל - אולם השוק, שוק תלפיות-ZKlugerPhotos-00132pz-907170685138267.jpg"}, {"kind": "now", "src": "images/s19-now-1.webp", "srcm": "images/s19-now-1-m.webp", "w": 1600, "h": 1200, "cap": "שוק תלפיות בחיפה, 2024", "date": "2024", "author": "Dor Shabashewitz", "license": "CC BY 4.0", "licurl": "https://creativecommons.org/licenses/by/4.0/", "page": "https://commons.wikimedia.org/wiki/File:Talpiot_Market_in_Haifa.jpg", "title": "Talpiot Market in Haifa.jpg"}, {"kind": "then", "src": "images/s19-then-2.webp", "srcm": "images/s19-then-2-m.webp", "w": 1600, "h": 1222, "cap": "אוניית העולים \"שיבת ציון\" בנמל חיפה עם עולים מאירופה, 1948. צילום הנס פין", "date": "1948", "author": "Hans Pinn", "license": "נחלת הכלל", "licurl": null, "page": "https://commons.wikimedia.org/wiki/File:114446_haifa_port_PikiWiki_Israel.jpg", "title": "114446 haifa port PikiWiki Israel.jpg"}]};
+const CTX = {"0": {"text": "בשנת 1930 היו היהודים כ-44.5% מתושבי צ'רנוביץ, ולכן כונתה העיר \"ירושלים שעל הפרוט\". בסתיו 1941 רוכזו יהודי העיר בגטו, ומשם גורשו רובם לטרנסניסטריה. ראש העיר טראיאן פופוביץ' השיג פטור מגירוש לכ-20,000 יהודים, ויד ושם הכירה בו כחסיד אומות העולם.", "src": [{"label": "ויקיפדיה: Chernivtsi", "url": "https://en.wikipedia.org/wiki/Chernivtsi"}, {"label": "ויקיפדיה: History of the Jews in Bukovina", "url": "https://en.wikipedia.org/wiki/History_of_the_Jews_in_Bukovina"}]}, "1": {"text": "לוקוויץ שוכנת בבוקובינה, חבל ארץ שסופח לאימפריה ההבסבורגית ב-1775 והועבר לרומניה בסוף מלחמת העולם הראשונה.", "src": [{"label": "ויקיפדיה: History of the Jews in Bukovina", "url": "https://en.wikipedia.org/wiki/History_of_the_Jews_in_Bukovina"}]}, "2": {"text": "קמפולונג מולדובנסק הייתה בירת מחוז קמפולונג שבבוקובינה. בסתיו 1941 גורשו לטרנסניסטריה 6,118 יהודים, כמעט כל יהודי המחוז, על פי צו מ-10 באוקטובר 1941.", "src": [{"label": "ויקיפדיה: Câmpulung Moldovenesc", "url": "https://en.wikipedia.org/wiki/C%C3%A2mpulung_Moldovenesc"}, {"label": "ויקיפדיה: קמפולונג מולדובנסק", "url": "https://he.wikipedia.org/wiki/%D7%A7%D7%9E%D7%A4%D7%95%D7%9C%D7%95%D7%A0%D7%92_%D7%9E%D7%95%D7%9C%D7%93%D7%95%D7%91%D7%A0%D7%A1%D7%A7"}]}, "3": {"text": "ואטרה דורניי הייתה עיר מרפא ונופש בבוקובינה. לפני הגירוש לטרנסניסטריה באוקטובר 1941 חיו בה כ-2,000 יהודים.", "src": [{"label": "ויקיפדיה: ואטרה דורניי", "url": "https://he.wikipedia.org/wiki/%D7%95%D7%90%D7%98%D7%A8%D7%94_%D7%93%D7%95%D7%A8%D7%A0%D7%99%D7%99"}]}, "4": {"text": "בקיץ 1941 נרצחו יהודי הכפר מרקולשט בידי הצבא הרומני, ובמקום הוקם מחנה מעבר. בספטמבר 1941 נשלחו אליו כ-9,000 יהודים מבסרביה, ומשם הם הועברו בשיירות אל מעברות הדנייסטר. על פי הערכות אחרות שהו בו בשיא כ-11,000 בני אדם.", "src": [{"label": "ויקיפדיה: Mărculești", "url": "https://en.wikipedia.org/wiki/M%C4%83rcule%C8%99ti"}, {"label": "יד ושם: The Story of Bălţi", "url": "https://www.yadvashem.org/yv/en/exhibitions/communities/balti/romanian_rule.asp"}, {"label": "INSHR-EW: רישום שמות הקורבנות", "url": "https://www.victime.inshr-ew.ro/en"}]}, "5": {"text": "ביער שליד הכפר קוסאוץ החזיקו את המגורשים במחנה מעבר זמני, בלי שום מחסה, לפני חציית הדנייסטר ליאמפול.", "src": [{"label": "USHMM Encyclopedia of Camps and Ghettos: Cosăuţi", "url": "https://doi.org/10.1353/document.4075"}]}, "6": {"text": "מעבר קוסאוץ–יאמפול היה אחת מחמש נקודות שבהן הועברו יהודי בסרביה ובוקובינה אל מעבר לדנייסטר. יאמפול עצמה הייתה תחת שלטון רומני מ-1 בספטמבר 1941 והפכה לנקודת מעבר מרכזית. מעבר לנהר השתרע חבל \"טרנסניסטריה\", אזור הכיבוש הרומני שבין הדנייסטר לבוג.", "src": [{"label": "INSHR-EW", "url": "https://www.victime.inshr-ew.ro/en"}, {"label": "USHMM: Transnistria Governorate", "url": "https://encyclopedia.ushmm.org/content/en/article/transnistria-governorate"}, {"label": "ויקיפדיה: Yampil", "url": "https://en.wikipedia.org/wiki/Yampil,_Vinnytsia_Oblast"}]}, "7": {"text": "ב-1926 חיו בקריז'ופול 1,538 יהודים, כמחצית מתושביה. בזמן הכיבוש הרומני הוקם בה גטו, והעיירה שימשה תחנת מעבר לאלפי מגורשים. העיירה שוחררה ב-17 במרץ 1944.", "src": [{"label": "ויקיפדיה: קריז'ופיל", "url": "https://he.wikipedia.org/wiki/%D7%A7%D7%A8%D7%99%D7%96%27%D7%95%D7%A4%D7%99%D7%9C"}]}, "8": {"text": "בנובמבר 1941 גורשו לעובדובקה כ-10,000 יהודים מבוקובינה ומבסרביה, ורוכזו בגטו סגור. בחורף 1941–1942 מתו אלפים מרעב, מקור וממגפות. עד מרץ 1943 נותרו בגטו 1,460 יהודים בלבד.", "src": [{"label": "ויקיפדיה: אובודיבקה", "url": "https://he.wikipedia.org/wiki/%D7%90%D7%95%D7%91%D7%95%D7%93%D7%99%D7%91%D7%A7%D7%94"}]}, "9": {"text": "גטו ברשד היה מהגדולים בטרנסניסטריה. היו כלואים בו כ-20,000 יהודים, רובם מגורשים מבוקובינה ומבסרביה, ובחורף 1941–1942 מתו בו אלפים מטיפוס, מרעב ומקור. הגטו שוחרר בידי הצבא האדום ב-14 במרץ 1944.", "src": [{"label": "ויקיפדיה: גטו ברשד", "url": "https://he.wikipedia.org/wiki/%D7%92%D7%98%D7%95_%D7%91%D7%A8%D7%A9%D7%93"}, {"label": "ויקיפדיה: Bershad", "url": "https://en.wikipedia.org/wiki/Bershad"}]}, "10": {"text": "נהר הבוג הדרומי היה הגבול המזרחי של טרנסניסטריה. מעבר לנהר שלטו הגרמנים. יהודים רבים נרצחו בידי יחידות רומניות וגרמניות, בטרנסניסטריה עצמה או אחרי שהוברחו אל מעבר לבוג.", "src": [{"label": "USHMM: Romania", "url": "https://encyclopedia.ushmm.org/content/en/article/romania"}, {"label": "USHMM: Transnistria Governorate", "url": "https://encyclopedia.ushmm.org/content/en/article/transnistria-governorate"}]}, "11": {"text": "ניקולאייב, ממזרח לבוג, הייתה תחת כיבוש גרמני מ-16 באוגוסט 1941. באוגוסט 1943 נשלחו 1,203 בני אדם מגטו ברשד לעבודות כפייה בצד הגרמני של הבוג, ורובם לא שרדו.", "src": [{"label": "ויקיפדיה: Mykolaiv", "url": "https://en.wikipedia.org/wiki/Mykolaiv"}, {"label": "ויקיפדיה: גטו ברשד", "url": "https://he.wikipedia.org/wiki/%D7%92%D7%98%D7%95_%D7%91%D7%A8%D7%A9%D7%93"}]}, "12": {"text": "בסוף המאה ה-19 היו היהודים רוב תושבי בלטה. באוקטובר 1941 הוקם בעיר גטו מוקף גדר תיל, שרוכזו בו כ-4,000 יהודים, מקומיים ומגורשים. העיר שוחררה בידי הצבא האדום ב-29 במרץ 1944.", "src": [{"label": "ויקיפדיה: Balta", "url": "https://en.wikipedia.org/wiki/Balta,_Ukraine"}, {"label": "ויקיפדיה: באלטה", "url": "https://he.wikipedia.org/wiki/%D7%91%D7%90%D7%9C%D7%98%D7%94"}]}, "13": {"text": "מסוף 1942 הגיעו לגטו ברשד משלוחי בגדים, תרופות ומזון מהוועד המרכזי של יהודי בוקרשט. הוועד הקים בגטו מרפאה, בית חולים, בית תמחוי ובית יתומים, והעזרה הצילה רבים, בעיקר ילדים ויתומים.", "src": [{"label": "ויקיפדיה: גטו ברשד", "url": "https://he.wikipedia.org/wiki/%D7%92%D7%98%D7%95_%D7%91%D7%A8%D7%A9%D7%93"}]}, "14": {"text": "ה\"טמפל\", בית הכנסת הגדול של צ'רנוביץ, נבנה ב-1877 ונפגע קשה בשרפה ב-1941. בתקופה הסובייטית שימשו קירותיו לבניית בית הקולנוע \"צ'רנוביץ\".", "src": [{"label": "ויקיפדיה: Chernivtsi", "url": "https://en.wikipedia.org/wiki/Chernivtsi"}]}, "15": {"text": "ב-1930 חיו בבקאו 9,593 יהודים, כ-30.8% מתושבי העיר, והיא הייתה מרכז של התנועה הציונית. אחרי המלחמה הגיעה הקהילה לכ-18,000 נפש, ורובה עלתה לישראל.", "src": [{"label": "ויקיפדיה: Bacău", "url": "https://en.wikipedia.org/wiki/Bac%C4%83u"}]}, "16": {"text": "בוקרשט הייתה מרכז הקהילה היהודית ברומניה. מסוף 1942 שלחו מנהיגי הקהילה סיוע למגורשים בטרנסניסטריה, ובדצמבר 1943 החלו השלטונות להתיר את שובם של חלק מהמגורשים.", "src": [{"label": "USHMM: Transnistria Governorate", "url": "https://encyclopedia.ushmm.org/content/en/article/transnistria-governorate"}, {"label": "ויקיפדיה: גטו ברשד", "url": "https://he.wikipedia.org/wiki/%D7%92%D7%98%D7%95_%D7%91%D7%A8%D7%A9%D7%93"}]}, "17": {"text": "אחרי המלחמה העבירה \"הבריחה\" כ-250,000 ניצולים לאוסטריה, לגרמניה ולאיטליה. רבים מהפליטים שעברו באוסטריה עברו בזלצבורג. ב-1947 חצו אלפים מהם ברגל את מעבר קרימל באלפים לאיטליה, ומשם הפליגו לארץ ישראל. אין זה אומר שמידי עצמה עברה בדרך זו.", "src": [{"label": "ויקיפדיה: Alpine Peace Crossing", "url": "https://en.wikipedia.org/wiki/Alpine_Peace_Crossing"}, {"label": "ויקיפדיה: Bricha", "url": "https://en.wikipedia.org/wiki/Bricha"}]}, "18": {"text": "בשנים 1945–1948 הפליגו מחופי איטליה אוניות רבות של \"העפלה\" עם ניצולי שואה בדרכם לארץ ישראל.", "src": [{"label": "ויקיפדיה: Aliyah Bet", "url": "https://en.wikipedia.org/wiki/Aliyah_Bet"}]}, "19": {"text": "נמל חיפה היה שער הכניסה לאלפי עולים אחרי מלחמת העולם השנייה. שוק תלפיות בהדר הכרמל, מבנה בסגנון הבין-לאומי שתכנן האדריכל משה גרשטל, נחנך ב-9 באפריל 1940.", "src": [{"label": "ויקיפדיה: Port of Haifa", "url": "https://en.wikipedia.org/wiki/Port_of_Haifa"}, {"label": "ויקיפדיה: שוק תלפיות", "url": "https://he.wikipedia.org/wiki/%D7%A9%D7%95%D7%A7_%D7%AA%D7%9C%D7%A4%D7%99%D7%95%D7%AA"}]}};
+const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function orderedMedia(id){ const m = MEDIA[id] || []; return [...m.filter(x => x.kind === 'then'), ...m.filter(x => x.kind === 'now')]; }
+const kindHe = k => k === 'then' ? 'אז' : 'היום';
+function credLine(m){
+  const lic = m.licurl ? `<a href="${m.licurl}" target="_blank" rel="noopener">${esc(m.license)}</a>` : esc(m.license);
+  return `צילום: ${esc(m.author)} · ${lic} · <a href="${m.page}" target="_blank" rel="noopener">ויקישיתוף</a>`;
+}
+function mediaHTML(id){
+  const ms = orderedMedia(id);
+  if (!ms.length) return id === 13 ? `<div class="sm-none">לא מצאנו תצלום מתועד ומאומת של הגשר בכניסה לברשד, ולכן אין כאן תמונה. תמונות של ברשד מופיעות בתחנה 10.</div>` : '';
+  return `<div class="st-media">
+    <button class="sm-stage" id="sm-stage" aria-label="הגדלת התמונה">
+      ${ms.map((m, i) => `<div class="sm-slide${i ? '' : ' on'}" data-i="${i}"><div class="bg" data-bg="${m.srcm}"></div>
+        <img ${i ? 'data-src' : 'src'}="${m.srcm}" ${i ? '' : `srcset="${m.srcm} 800w, ${m.src} 1600w" sizes="(max-width:820px) 92vw, 520px"`} width="${m.w}" height="${m.h}" alt="${esc(m.cap)}" loading="lazy" decoding="async"></div>`).join('')}
+      <span class="sm-badge ${ms[0].kind}" id="sm-badge">${kindHe(ms[0].kind)} · ${esc(ms[0].date)}</span>
+      <span class="sm-zoom" aria-hidden="true">⤢</span>
+    </button>
+    ${ms.length > 1 ? `<div class="sm-tabs" role="group" aria-label="בחירת תמונה – אז או היום">${ms.map((m, i) =>
+      `<button class="sm-tab ${m.kind}" data-i="${i}" aria-pressed="${i ? 'false' : 'true'}"><i></i>${kindHe(m.kind)} <span class="d">${esc(m.date)}</span></button>`).join('')}</div>` : ''}
+    <p class="sm-cap" id="sm-cap" aria-live="polite"></p>
+  </div>`;
+}
+let smIdx = 0;
+function smShow(id, i){
+  const ms = orderedMedia(id), m = ms[i]; if (!m) return; smIdx = i;
+  document.querySelectorAll('#st-media .sm-slide').forEach(sl => {
+    const on = +sl.dataset.i === i; sl.classList.toggle('on', on);
+    if (on){ const img = sl.querySelector('img');
+      if (img.dataset.src){ img.srcset = `${m.srcm} 800w, ${m.src} 1600w`; img.sizes = '(max-width:820px) 92vw, 520px'; img.src = img.dataset.src; img.removeAttribute('data-src'); }
+      const bg = sl.querySelector('.bg'); if (bg.dataset.bg){ bg.style.backgroundImage = `url(${bg.dataset.bg})`; bg.removeAttribute('data-bg'); } }
+  });
+  document.querySelectorAll('#st-media .sm-tab').forEach(b => b.setAttribute('aria-pressed', +b.dataset.i === i ? 'true' : 'false'));
+  const bd = $('sm-badge'); if (bd){ bd.textContent = `${kindHe(m.kind)} · ${m.date}`; bd.className = 'sm-badge ' + m.kind; }
+  const cp = $('sm-cap'); if (cp) cp.innerHTML = `${esc(m.cap)}<span class="cr">${credLine(m)}</span>`;
+}
+function bindMedia(id){
+  const wrap = $('st-media'); if (!orderedMedia(id).length) return;
+  wrap.querySelectorAll('img').forEach(img => { const done = () => img.classList.add('ld'); img.complete && img.naturalWidth ? done() : img.addEventListener('load', done, { once:true }); });
+  wrap.querySelectorAll('.sm-tab').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); smShow(id, +b.dataset.i); }));
+  $('sm-stage').addEventListener('click', () => openLightbox(id, smIdx));
+  smShow(id, 0);
+}
+function ctxHTML(id){
+  const c = CTX[id]; if (!c) return '';
+  return `<div class="ctx" role="note"><h3>רקע היסטורי</h3><p>${esc(c.text)}</p>
+    <div class="src">מקור: ${c.src.map(s => `<a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · ')}</div></div>`;
+}
+// טעינה מוקדמת של תמונות התחנה הבאה – כדי שהמעבר יהיה חלק
+const preloaded = new Set();
+function preloadStation(id){
+  orderedMedia(id).slice(0, 2).forEach(m => { if (preloaded.has(m.srcm)) return; preloaded.add(m.srcm); const im = new Image(); im.decoding = 'async'; im.src = m.srcm; });
+}
+// תיבת אור
+let lb = { id:null, i:0, last:null };
+function lbRender(){
+  const ms = orderedMedia(lb.id), m = ms[lb.i], img = $('lb-img');
+  img.src = m.src; img.alt = m.cap;
+  $('lb-cap').innerHTML = `<b>${kindHe(m.kind)} · ${esc(m.date)}</b> – ${esc(m.cap)}<span class="cr">${credLine(m)}</span>`;
+  document.querySelectorAll('#lightbox .lb-nav').forEach(b => b.style.display = ms.length > 1 ? '' : 'none');
+}
+function openLightbox(id, i){ lb = { id, i, last:document.activeElement }; lbRender(); const L = $('lightbox'); L.classList.add('on'); L.setAttribute('aria-hidden','false'); L.querySelector('.icon-btn').focus(); }
+function closeLightbox(){ const L = $('lightbox'); L.classList.remove('on'); L.setAttribute('aria-hidden','true'); lb.last && lb.last.focus && lb.last.focus(); }
+function lbStep(d){ const n = orderedMedia(lb.id).length; lb.i = (lb.i + d + n) % n; lbRender(); smShow(lb.id, lb.i); }
+$('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') closeLightbox(); });
+function openCredits(){
+  const rows = locations.map(l => { const ms = orderedMedia(l.id), c = CTX[l.id];
+    if (!ms.length && !c) return '';
+    return `<h3>${l.id+1}. ${esc(l.name)}</h3><ul>${ms.map(m => `<li>${kindHe(m.kind)} (${esc(m.date)}): ${esc(m.cap)} – ${credLine(m)}</li>`).join('')}
+      ${c ? `<li>רקע היסטורי: ${c.src.map(s => `<a href="${s.url}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · ')}</li>` : ''}</ul>`; }).join('');
+  $('cred-body').innerHTML = `<button class="icon-btn" onclick="closeCredits()" aria-label="סגירה">✕</button><h2 id="cred-title">מקורות וקרדיטים</h2>
+    <p>כל התמונות נלקחו מוויקישיתוף (Wikimedia Commons), ולכל אחת מצוינים הצלם, התאריך והרישיון. התמונות הוקטנו לצורך הצגה ולא שונו מעבר לכך. "רקע היסטורי" הוא מידע כללי ממקורות פומביים, והוא נפרד מהעדות: הוא אינו חלק מדבריה של מידי ואינו מתקן אותם. לא מצאנו תמונות מאומתות של לוקוויץ ושל הגשר בכניסה לברשד.</p>${rows}`;
+  const C = $('credits'); C.classList.add('on'); C.setAttribute('aria-hidden','false'); C.querySelector('.icon-btn').focus();
+}
+function closeCredits(){ const C = $('credits'); C.classList.remove('on'); C.setAttribute('aria-hidden','true'); }
+
+// ===== פאנל הסיפור =====
+const isoYears = s => s.replace(/\d{4}\s*[–-]\s*\d{4}/g, m => '\u2066' + m + '\u2069');   // טווח שנים מספרי נשאר בסדר הנכון בתוך RTL
+function readingMinutes(html){ return Math.max(1, Math.ceil(html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).length / 140)); }
+let quoteObs = null;
+function openStory(id){
+  const loc = locations[id]; if (!loc) return;
+  if (!onMap){ enterMap(false, () => openStory(id)); return; }
+  const panel = $('story-panel'), ch = loc.ch, newChapter = ch.key !== lastChapter;
+  currentId = id; lastChapter = ch.key;
+  if (newChapter) showChapterCard(ch);
+  const stagger = newChapter && !reduceMotion ? 1.9 : 0;
+  panel.style.setProperty('--c', ch.color);
+  $('chap-chip').innerHTML = `<i></i><span>פרק ${ch.n} · ${ch.title}</span><span class="cnt">תחנה ${id+1} מתוך ${locations.length}</span>`;
+  const mins = readingMinutes(loc.story);
+  const scroller = $('panel-scroll'), wasOpen = panel.classList.contains('open') && !newChapter && !reduceMotion;
+  clearTimeout(openStory.x);
+  const render = () => {
+  $('st-head').innerHTML = `
+    <div class="st-num" aria-hidden="true">${String(id+1).padStart(2,'0')}</div>
+    <div class="st-kicker">${ch.title} · ${ch.years}</div>
+    <h2 class="st-title" id="st-title">${loc.name}</h2>
+    <div class="st-meta"><span>${isoYears(loc.period)}</span><span class="dot"></span><span>${mins === 1 ? 'דקת קריאה' : mins + ' דקות קריאה'}</span><span class="st-type">${loc.typeLabel}</span></div>
+    <p class="st-summary">${loc.summary}</p>`;
+  [...$('st-head').children].forEach((c, i) => c.style.animationDelay = (stagger + .1 + i * .09) + 's');
+  const sm = $('st-media'); sm.innerHTML = mediaHTML(id); bindMedia(id);
+  const sme = sm.firstElementChild; if (sme) sme.style.animationDelay = (stagger + .35) + 's';
+  const body = $('st-body'); body.innerHTML = loc.story;
+  [...body.children].forEach((c, i) => c.style.animationDelay = (stagger + .45 + i * .08) + 's');
+  $('st-ctx').innerHTML = ctxHTML(id);
+  const cx = $('st-ctx').firstElementChild; if (cx) cx.style.animationDelay = (stagger + .6 + body.children.length * .08) + 's';
+  // ציטוטים: נחשפים מילה אחר מילה כשהם נכנסים לתצוגה
+  body.querySelectorAll('.quote').forEach(q => {
+    q.innerHTML = q.textContent.trim().split(/(\s+)/).map(w => /\s/.test(w) ? w : `<span class="qw">${w}</span>`).join('');
+    [...q.querySelectorAll('.qw')].forEach((w, i) => w.style.transitionDelay = (.25 + i * .045) + 's');
+  });
+  if (quoteObs) quoteObs.disconnect();
+  quoteObs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ const t = e.target; setTimeout(() => t.classList.add('in'), stagger * 1000 + 300); quoteObs.unobserve(t); } }),
+    { root:$('panel-scroll'), threshold:.3 });
+  body.querySelectorAll('.quote').forEach(q => reduceMotion ? q.classList.add('in') : quoteObs.observe(q));
+  const prev = locations[id-1], next = locations[id+1];
+  $('st-nav').innerHTML = `
+    <button class="nav-card prev" ${prev ? `onclick="openStory(${prev.id})"` : 'disabled'}><span class="k">→ התחנה הקודמת</span><span class="n">${prev ? prev.nameShort : 'תחילת המסע'}</span></button>
+    ${next ? `<button class="nav-card next" style="--nc:${next.color}" onclick="openStory(${next.id})"><span class="k">התחנה הבאה ←</span><span class="n">${next.nameShort}</span></button>`
+           : `<button class="nav-card next" style="--nc:#d9b66b" onclick="closePanel()"><span class="k">סוף המסע</span><span class="n">מבט על כל הדרך</span></button>`}`;
+  scroller.scrollTop = 0; updateReadProgress(); scroller.classList.remove('fading');
+  };
+  // החלפה רכה: התוכן הישן דועך, החדש עולה – במקום החלפה חדה
+  if (wasOpen){ scroller.classList.add('fading'); openStory.x = setTimeout(render, 260); } else render();
+  if (locations[id+1]) preloadStation(id + 1);
+  const reveal = () => { panel.classList.add('open'); panel.classList.remove('peek'); panel.setAttribute('aria-hidden','false'); };
+  clearTimeout(openStory.t);
+  if (newChapter && !reduceMotion){ panel.classList.remove('open'); openStory.t = setTimeout(reveal, 1700); } else reveal();   // כרטיס הפרק קודם – הפאנל נכנס כשהכרטיס דועך
+  document.body.classList.add('panel-open');
+  $('live').textContent = `תחנה ${id+1}: ${loc.name}`;
+  updateMarkers(id); updateTimeline(id);
+  clearTimeout(openStory.f);
+  const flyDelay = newChapter && !reduceMotion ? 500 : 0;
+  openStory.f = setTimeout(() => { flyToLoc(loc); updateRoute(id, Math.round(lastFly * .12), lastFly); }, flyDelay);
+  if (tour.on) scheduleTour();
+}
+function closePanel(){
+  stopTour();
+  clearTimeout(openStory.t); clearTimeout(openStory.f); clearTimeout(ccTimer);
+  $('chapter-card').classList.remove('show'); document.body.classList.remove('cine');
+  const panel = $('story-panel');
+  panel.classList.remove('open','peek'); panel.setAttribute('aria-hidden','true');
+  document.body.classList.remove('panel-open');
+  updateMarkers(null); document.querySelectorAll('.tl-st.active').forEach(b => b.classList.remove('active'));
+  currentId = null; lastChapter = null; setTimeout(() => showOverview(), 60);
+}
+function updateReadProgress(){
+  const sc = $('panel-scroll'), max = sc.scrollHeight - sc.clientHeight;
+  $('read-progress').style.width = (max > 0 ? sc.scrollTop / max * 100 : 100) + '%';
+  const num = document.querySelector('.st-num'); if (num && !reduceMotion) num.style.translate = `0 ${sc.scrollTop * .35}px`;
+}
+
+// ===== מסע מודרך =====
+const tour = { on:false, timer:null, dwell:13000 };
+function scheduleTour(){
+  clearTimeout(tour.timer);
+  const btn = $('play-btn'); btn.style.setProperty('--dwell', tour.dwell + 'ms');
+  btn.classList.remove('on'); void btn.offsetWidth; btn.classList.add('on');
+  tour.timer = setTimeout(() => { if (currentId < locations.length - 1) openStory(currentId + 1); else stopTour(); }, tour.dwell);
+}
+function startTour(){
+  tour.on = true; $('play-btn').setAttribute('aria-pressed','true'); $('play-lbl').textContent = 'עצירת המסע';
+  openStory(currentId === null || currentId >= locations.length - 1 ? 0 : currentId);
+}
+function stopTour(){
+  tour.on = false; clearTimeout(tour.timer); const b = $('play-btn');
+  b.classList.remove('on'); b.setAttribute('aria-pressed','false'); $('play-lbl').textContent = 'מסע מודרך';
+}
+function toggleTour(){ tour.on ? stopTour() : startTour(); }
+
+// ===== אתחול =====
+let mapLoaded = false, pendingEnter = null, noGL = false;
+function initMap(){
+  if (!window.maplibregl || (maplibregl.supported && !maplibregl.supported({ failIfMajorPerformanceCaveat:false }))) return mapFallback();
+  try {
+  map = new maplibregl.Map({
+    container:'map', style:buildStyle(), center:[24.5,43.8], zoom:4.2, pitch:52, bearing:-18, maxPitch:70, minZoom:2.5, maxZoom:11,
+    attributionControl:false, fadeDuration:300, renderWorldCopies:false
+  });
+  map.addControl(new maplibregl.AttributionControl({ compact:true, customAttribution:'Borders: historical-basemaps' }), 'bottom-left');
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch:true, showCompass:true }), 'top-left');
+  map.on('load', () => {
+    // תבליט תלת-ממדי אמיתי במחשב; בטלפון – הצללה ופרספקטיבה בלבד, לחיסכון בסוללה
+    if (!isMobile()) try { map.setTerrain({ source:'demT', exaggeration:1.25 }); } catch(e) {}
+    addBorders(); buildMarkers(); zoomClass(); map.on('zoom', zoomClass);
+    if (!reduceMotion && !onMap) cometRAF = requestAnimationFrame(cometTick);
+    const at = document.querySelector('.maplibregl-ctrl-attrib'); if (at){ at.classList.remove('maplibregl-compact-show'); at.removeAttribute('open'); }
+    mapLoaded = true; if (pendingEnter){ const f = pendingEnter; pendingEnter = null; f(); }
+  });
+  map.on('click', () => $('country-tip').classList.remove('on'));
+  map.on('error', e => { const m = e && e.error && String(e.error.message || ''); if (m && !/fetch|NetworkError|404|AJAXError/i.test(m)) console.warn('map:', m); });
+  introCamera();
+  } catch(err){ console.warn('map init failed:', err && err.message); mapFallback(); }
+}
+// אין WebGL: המפה לא נטענת, אבל כל התחנות נשארות נגישות דרך ציר הזמן והפאנל
+function mapFallback(){
+  noGL = true; map = null; mapLoaded = true; document.body.classList.add('no-gl');
+  const n = document.createElement('div'); n.id = 'nogl'; n.setAttribute('role','note');
+  n.textContent = 'הדפדפן הזה אינו תומך במפה התלת־ממדית (WebGL). אפשר לקרוא את כל התחנות דרך ציר הזמן שבתחתית המסך.';
+  document.body.appendChild(n);
+  if (pendingEnter){ const f = pendingEnter; pendingEnter = null; f(); }
+}
+function enterMap(withTour, then){
+  if (onMap){ then && then(); return; }
+  const go = () => {
+    if (onMap) return; onMap = true;
+    const intro = $('intro'); intro.classList.add('leaving');
+    setTimeout(() => intro.classList.add('hidden'), 350);
+    setTimeout(() => { intro.style.display = 'none'; }, 2000);
+    document.body.classList.add('on-map');
+    cancelAnimationFrame(driftRAF); cancelAnimationFrame(cometRAF); cancelAnimationFrame(embersRAF);
+    map && map.getSource('comet') && map.getSource('comet').setData(empty);
+    if (then) setTimeout(then, reduceMotion ? 0 : 700);
+    else if (withTour) setTimeout(startTour, reduceMotion ? 0 : 900);
+    else showOverview(3800);
+  };
+  mapLoaded ? go() : (pendingEnter = go);
+}
+
+// ===== גחלים בעומק (קנבס) ופרלקסה עדינה במסך הפתיחה =====
+let embersRAF = null;
+function initEmbers(){
+  const cv = $('embers'), ctx = cv.getContext('2d'); let W, H, dpr;
+  const resize = () => { dpr = Math.min(2, devicePixelRatio || 1); W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr; };
+  resize(); addEventListener('resize', resize);
+  const N = isMobile() ? 42 : 80, P = [];
+  const spawn = (p, init) => { p.z = .15 + Math.random() * .85; p.x = Math.random() * W; p.y = init ? Math.random() * H : H + 20; p.v = (.12 + Math.random() * .3) * p.z * dpr; p.ph = Math.random() * 6.28; p.r = (.5 + p.z * 1.8) * dpr; p.a = .2 + p.z * .5; return p; };
+  for (let i = 0; i < N; i++) P.push(spawn({}, true));
+  let mx = 0, my = 0, tx = 0, ty = 0;
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth - .5; ty = e.clientY / innerHeight - .5; });
+  const content = $('intro-content');
+  const frame = t => {
+    mx += (tx - mx) * .04; my += (ty - my) * .04;
+    if (!onMap) content.style.translate = `${mx * -10}px ${my * -8}px`;
+    ctx.clearRect(0, 0, W, H);
+    for (const p of P){
+      p.y -= p.v; p.x += Math.sin(t / 1400 + p.ph) * .25 * p.z * dpr;
+      if (p.y < -20) spawn(p, false);
+      const x = p.x + mx * 60 * p.z * dpr, y = p.y + my * 40 * p.z * dpr, fl = .75 + .25 * Math.sin(t / 300 + p.ph * 3), R = p.r * 4;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, R);
+      g.addColorStop(0, `rgba(255,${200 + 40 * p.z | 0},150,${p.a * fl})`); g.addColorStop(.3, `rgba(255,170,80,${p.a * .3 * fl})`); g.addColorStop(1, 'rgba(255,140,60,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 6.283); ctx.fill();
+    }
+    embersRAF = requestAnimationFrame(frame);
+  };
+  if (reduceMotion) { frame(0); cancelAnimationFrame(embersRAF); } else embersRAF = requestAnimationFrame(frame);
+}
+function buildIntro(){
+  $('chapters-preview').innerHTML = chapters.map((c, i) =>
+    `<li style="--cc:${c.color};--i:${i};--d:2.3s"><span class="n">פרק ${c.n}</span><span class="t">${c.title}</span><span class="y">${c.years}</span></li>`).join('');
+  initEmbers();
+}
+
+document.addEventListener('keydown', e => {
+  if ($('lightbox').classList.contains('on')){ if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') lbStep(1); if (e.key === 'ArrowRight') lbStep(-1); e.stopPropagation(); return; }
+  if ($('credits').classList.contains('on')){ if (e.key === 'Escape') closeCredits(); return; }
+  if (!onMap){ if (e.key === 'Enter' && document.activeElement === document.body) enterMap(); return; }
+  if (currentId === null) return;
+  if (e.key === 'Escape') closePanel();
+  if (e.target.closest && e.target.closest('.mk')) return;
+  if (e.key === 'ArrowLeft' && currentId < locations.length - 1) openStory(currentId + 1);
+  if (e.key === 'ArrowRight' && currentId > 0) openStory(currentId - 1);
+});
+$('panel-scroll').addEventListener('scroll', updateReadProgress, { passive:true });
+$('sheet-handle').addEventListener('click', () => $('story-panel').classList.toggle('peek'));
+function syncTlVar(){ document.documentElement.style.setProperty('--tl-h', timelineH() + 'px'); }
+addEventListener('resize', syncTlVar);
+
+buildIntro(); buildTimeline(); syncTlVar();
+initSeg('seg-year', v => map && setBorderYear(v));
+initSeg('seg-style', v => map && applyLook(v));
+initMap();
+</script>
+</body>
+</html>
