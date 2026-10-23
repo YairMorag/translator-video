@@ -1110,7 +1110,6 @@ function buildStyle(){
     sources:{
       base:{ type:'raster', tiles:[ESRI], tileSize:256, maxzoom:9, attribution:'Tiles © Esri — USGS, NOAA' },
       dem:{ type:'raster-dem', tiles:[DEM], tileSize:256, encoding:'terrarium', maxzoom:10, attribution:'Elevation: Mapzen / AWS Terrain Tiles' },
-      demT:{ type:'raster-dem', tiles:[DEM], tileSize:256, encoding:'terrarium', maxzoom:9 },
       world:{ type:'geojson', data:{ type:'Feature', properties:{}, geometry:{ type:'Polygon', coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]]] } } },
       routeBase:{ type:'geojson', data:{ type:'FeatureCollection', features:[...routeLegs.map(l => lineF(legCoords(l))), ...spurs.map(([a,b]) => lineF([ll(a), ll(b)], {spur:1}))] } },
       routeLit:{ type:'geojson', data:empty },
@@ -1543,7 +1542,10 @@ function toggleTour(){ tour.on ? stopTour() : startTour(); }
 // ===== אתחול =====
 let mapLoaded = false, pendingEnter = null, noGL = false, terrainOn = false;
 // תבליט תלת-ממדי רק במחשב, ורק כשנמצאים במפה – במסך הפתיחה (זום רחוק, מאחורי שכבה כהה) הוא כמעט לא נראה אבל עולה הכי הרבה
+// תבליט תלת־ממדי כבוי: נשארת הצללת תבליט דו־ממדית, בשביל תנועה חלקה
+const TERRAIN_3D = false;
 function setTerrainOn(on){
+  if (!TERRAIN_3D) return;
   if (!map || noGL || isMobile() || !map.getSource('demT') || on === terrainOn) return;
   try { map.setTerrain(on ? { source:'demT', exaggeration:1.2 } : null); terrainOn = on; } catch(e) {}
 }
