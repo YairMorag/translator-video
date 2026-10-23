@@ -168,7 +168,7 @@
 
 ## 13. בלטה
 - **אז (1941)** – קתדרלת עליית מרים בבלטה, אוגוסט 1941  
-  תיאור: קתדרלה רבת כיפות בקצה שדה פתוח, באוגוסט 1941. זה המבנה הבולט ביותר בבלטה. אין לו קשר ידוע לבית היתומים שבו שהו מידי ואחותה.  
+  תיאור: קתדרלה רבת כיפות בקצה שדה פתוח, באוגוסט 1941, זמן קצר אחרי כיבוש בלטה. אין לו קשר ידוע לבית היתומים שבו שהו מידי ואחותה.  
   צלם/מקור: Bundesarchiv, B 145 Bild-F016209-0003 · רישיון: CC BY-SA 3.0 de (https://creativecommons.org/licenses/by-sa/3.0/de/deed.en)  
   https://commons.wikimedia.org/wiki/File:Bundesarchiv_B_145_Bild-F016209-0003,_Russisch-orthodoxe_Kirche.jpg  
   קובץ: `images/s12-then-0.webp`, `images/s12-then-0-m.webp`
@@ -211,7 +211,7 @@
   https://commons.wikimedia.org/wiki/File:Labor_Day_rally_by_Dror-Habonim,_Mișcarea_Tineretului_Sionist-Socialist_(within_Blocul_Palestinei_Muncitoare),_Bacău,_Romania,_1945-05-01.png  
   קובץ: `images/s15-then-0.webp`, `images/s15-then-0-m.webp`
 - **היום (2017)** – בית הכנסת "צֶרֶאַליסטילור" בבקאו, 2017  
-  תיאור: בניין ירוק-לבן ישן מאחורי גדר פח חלודה – בית הכנסת "צֶרֶאַליסטילור" בבקאו, מבתי הכנסת הבודדים שנותרו בעיר. כאן, בבקאו, למדה מידי ונישאה ב-1947.  
+  תיאור: בניין ירוק-לבן ישן מאחורי גדר פח חלודה – בית הכנסת "צֶרֶאַליסטילור" בבקאו. כאן, בבקאו, למדה מידי ונישאה ב-1947.  
   צלם/מקור: Rakoon · רישיון: CC0 (נחלת הכלל) (https://creativecommons.org/publicdomain/zero/1.0/)  
   https://commons.wikimedia.org/wiki/File:20171004_Sinagoga_Cerealistilor_bacau_october_2017.jpg  
   קובץ: `images/s15-now-1.webp`, `images/s15-now-1-m.webp`
