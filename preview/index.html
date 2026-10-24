@@ -1544,11 +1544,19 @@ function closeCredits(){ const C = $('credits'); C.classList.remove('on'); C.set
 
 // ===== קול של מדי =====
 let audioUnlocked = false, audioMuted = localStorage.getItem('medi-audio-mute') === '1';
+let audioGen = 0;   // דור השמעה – מונע קריאות ישנות שתוקעות את הנגן במעבר תחנה
 function audioEl(){ return $('station-audio'); }
+function clearAudioHandlers(a){
+  if (!a) return;
+  a.onended = a.onpause = a.onplay = a.onerror = a.onloadedmetadata = null;
+}
 function stopStationAudio(){
   const a = audioEl(); if (!a) return;
-  try { a.pause(); a.removeAttribute('src'); delete a.dataset.file; a.load(); } catch(e) {}
-  const box = $('st-audio'); if (box){ const btn = $('au-play'); if (btn) setPlayIcon(false); }
+  audioGen++;
+  clearAudioHandlers(a);
+  try { a.pause(); a.currentTime = 0; } catch(e) {}
+  try { a.removeAttribute('src'); delete a.dataset.file; a.load(); } catch(e) {}
+  setPlayIcon(false);
 }
 function setPlayIcon(playing){
   const b = $('au-play'); if (!b) return;
@@ -1569,24 +1577,51 @@ function renderAudioUI(loc){
   $('au-play').onclick = () => toggleStationAudio(loc);
   $('au-mute').onclick = () => {
     audioMuted = !audioMuted;
-    if (audioMuted){ localStorage.setItem('medi-audio-mute','1'); stopStationAudio(); }
+    if (audioMuted){ localStorage.setItem('medi-audio-mute','1'); stopStationAudio(); if (tour.on) scheduleTour(); }
     else localStorage.removeItem('medi-audio-mute');
     renderAudioUI(loc);
+    if (!audioMuted && tour.on) playStationAudio(loc);
   };
   const a = audioEl();
   setPlayIcon(a && a.dataset.file === loc.audio && !a.paused);
 }
+function bindAudioLifecycle(a, gen, loc){
+  clearAudioHandlers(a);
+  a.onplay = () => {
+    if (gen !== audioGen) return;
+    audioUnlocked = true; setPlayIcon(true);
+    if (tour.on && currentId === loc.id) scheduleTour(false);   // מעדכן את טבעת הנר לפי אורך הקול
+  };
+  a.onpause = () => { if (gen !== audioGen) return; if (!a.ended) setPlayIcon(false); };
+  a.onended = () => {
+    if (gen !== audioGen) return;
+    setPlayIcon(false);
+    if (tour.on && currentId === loc.id) scheduleTour(true);
+  };
+  a.onloadedmetadata = () => {
+    if (gen !== audioGen) return;
+    if (tour.on && currentId === loc.id && !a.paused) scheduleTour(false);
+  };
+  a.onerror = () => { if (gen !== audioGen) return; setPlayIcon(false); if (tour.on) scheduleTour(true); };
+}
 function playStationAudio(loc){
   renderAudioUI(loc);
   const a = audioEl();
-  if (!a || !loc || !loc.audio || audioMuted || reduceMotion){ stopStationAudio(); renderAudioUI(loc); return; }
+  if (!a || !loc || !loc.audio || audioMuted || reduceMotion){
+    stopStationAudio();
+    renderAudioUI(loc);
+    return;
+  }
+  const gen = ++audioGen;
+  clearAudioHandlers(a);
   try { a.pause(); } catch(e) {}
-  if (a.dataset.file !== loc.audio){ a.src = loc.audio; a.dataset.file = loc.audio; }
-  a.onended = () => setPlayIcon(false);
-  a.onpause = () => setPlayIcon(!a.ended && false);
-  a.onplay = () => { audioUnlocked = true; setPlayIcon(true); };
+  const needLoad = a.dataset.file !== loc.audio;
+  if (needLoad){ a.src = loc.audio; a.dataset.file = loc.audio; }
+  try { a.currentTime = 0; } catch(e) {}
+  bindAudioLifecycle(a, gen, loc);
   if (audioUnlocked){
-    const p = a.play(); if (p && p.catch) p.catch(() => setPlayIcon(false));
+    const p = a.play();
+    if (p && p.catch) p.catch(() => { if (gen === audioGen) setPlayIcon(false); });
   } else setPlayIcon(false);
 }
 function toggleStationAudio(loc){
@@ -1594,12 +1629,7 @@ function toggleStationAudio(loc){
   if (audioMuted){ audioMuted = false; localStorage.removeItem('medi-audio-mute'); renderAudioUI(loc); }
   if (a.dataset.file === loc.audio && !a.paused){ a.pause(); setPlayIcon(false); return; }
   audioUnlocked = true;
-  if (a.dataset.file !== loc.audio){ a.src = loc.audio; a.dataset.file = loc.audio; }
-  a.onended = () => setPlayIcon(false);
-  a.onplay = () => setPlayIcon(true);
-  a.onpause = () => setPlayIcon(false);
-  const p = a.play(); if (p && p.catch) p.catch(() => setPlayIcon(false));
-  setPlayIcon(true);
+  playStationAudio(loc);
 }
 
 // ===== פאנל הסיפור =====
@@ -1682,16 +1712,47 @@ function readProgressNow(){
 }
 
 // ===== מסע מודרך =====
-const tour = { on:false, timer:null, dwell:13000 };
-function scheduleTour(){
+const tour = { on:false, timer:null, dwell:13000, afterAudio:1800, maxWait:45000 };
+function nextTourStation(from){
+  let n = (from == null ? -1 : from) + 1;
+  while (n < locations.length && locations[n].spur) n++;
+  return n < locations.length ? n : null;
+}
+function advanceTour(){
+  if (!tour.on) return;
+  stopStationAudio();   // עוצרים לפני המעבר – מונע קול תקוע מהתחנה הקודמת
+  const n = nextTourStation(currentId);
+  if (n != null) openStory(n); else stopTour();
+}
+// afterAudioEnd: true = הקול הסתיים עכשיו, חכה רק רגע קצר ואז עבור
+function scheduleTour(afterAudioEnd){
   clearTimeout(tour.timer);
-  const btn = $('play-btn'); btn.style.setProperty('--dwell', tour.dwell + 'ms');
+  if (!tour.on) return;
+  const btn = $('play-btn');
+  const loc = currentId != null ? locations[currentId] : null;
+  const a = audioEl();
+  const hasAudio = !!(loc && loc.audio && !audioMuted && !reduceMotion);
+  const playing = hasAudio && a && a.dataset.file === loc.audio && !a.paused && !a.ended;
+
+  let wait;
+  if (afterAudioEnd){
+    wait = tour.afterAudio;
+  } else if (playing || (hasAudio && audioUnlocked)){
+    // מחכים לסיום הקול (onended יקרא scheduleTour(true)); גיבוי אם אין אירוע
+    const remainMs = (a && a.duration && isFinite(a.duration))
+      ? Math.max(0, (a.duration - (a.currentTime || 0)) * 1000) + tour.afterAudio
+      : tour.maxWait;
+    wait = Math.min(tour.maxWait, Math.max(tour.dwell, remainMs));
+  } else if (hasAudio && !audioUnlocked){
+    // עדיין לא לחצו play – שוהים כמו תחנה בלי קול
+    wait = tour.dwell;
+  } else {
+    wait = tour.dwell;
+  }
+
+  btn.style.setProperty('--dwell', wait + 'ms');
   btn.classList.remove('on'); void btn.offsetWidth; btn.classList.add('on');
-  tour.timer = setTimeout(() => {
-    let n = currentId + 1;
-    while (n < locations.length && locations[n].spur) n++;
-    if (n < locations.length) openStory(n); else stopTour();
-  }, tour.dwell);
+  tour.timer = setTimeout(advanceTour, wait);
 }
 function startTour(){
   tour.on = true; $('play-btn').setAttribute('aria-pressed','true'); $('play-lbl').textContent = 'עצירת המסע';
