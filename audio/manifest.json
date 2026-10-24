@@ -1,0 +1,20 @@
+{
+  "clips": [
+    {"id":"clip-01-agala","file":"audio/clip-01-agala.mp3","label":"העגלה","transcript":"אני זוכרת אותה בעגלה, ילדה קטנה, בת שנתיים בערך. זו התמונה הראשונה שאני זוכרת.","stationId":0,"source":"film"},
+    {"id":"clip-02-seara","file":"audio/clip-02-seara.mp3","label":"השיער כמו של בובה","transcript":"את לא יכולה לתאר לך. השיער שלה היה כמו של בובה.","stationId":null,"source":"film","note":"unused – childhood already covered by agala"},
+    {"id":"clip-03-umbrella","file":"audio/clip-03-umbrella.mp3","label":"המטרייה האדומה","transcript":"זה היה הסיפור של המטרייה האדומה. הוא הביא לי מטרייה אדומה, ואמר לי סליחה.","stationId":19,"source":"film"},
+    {"id":"clip-04-mamaliga","file":"audio/clip-04-mamaliga.mp3","label":"הממליגה","transcript":"נתנו לנו חתיכות ממליגה, מלאות עובש. אני לא יכולתי לבלוע את זה, ונתתי את החתיכה שלי למליטה.","stationId":9,"source":"film"},
+    {"id":"clip-05-shoulders","file":"audio/clip-05-shoulders.mp3","label":"מליטה על הכתפיים","transcript":"לקחתי את מליטה על הכתפיים… והלכתי שלושים קילומטר.","stationId":13,"source":"film"},
+    {"id":"clip-06-bread","file":"audio/clip-06-bread.mp3","label":"חתיכות לחם","transcript":"יצאו יהודים עם חתיכות לחם, ונתנו לנו.","stationId":12,"source":"film"},
+    {"id":"clip-07-laughing","file":"audio/clip-07-laughing.mp3","label":"הגברת צוחקת","transcript":"הגברת יושבת ואוכלת וצוחקת לי בפנים. אני בכיתי.","stationId":null,"source":"film","note":"unused – placement unclear vs stations"},
+    {"id":"clip-08-capitalists","file":"audio/clip-08-capitalists.mp3","label":"קפיטליסטים","transcript":"ואני סיפרתי לה: זו החנות של זה… \"מה, אתם קפיטליסטים כאן?\"","stationId":null,"source":"film","note":"unused – station 0 already has agala"},
+    {"id":"clip-09-marculesti","file":"audio/clip-09-marculesti.mp3","label":"מרקולשט","transcript":"הגענו למקום שקראו לו מרקולש… הרגו את כולם. ואנחנו ראינו אותם.","stationId":4,"source":"2026-medi1"},
+    {"id":"clip-10-house-ruins","file":"audio/clip-10-house-ruins.mp3","label":"הבית הרוס","transcript":"אתם לא יכולים להיכנס לבית שלכם, הוא הרוס.","stationId":14,"source":"2009-p7"},
+    {"id":"clip-11-studied","file":"audio/clip-11-studied.mp3","label":"ימים ולילות","transcript":"כדי להיכנס לליציאום… אני ישבתי ימים ולילות ולמדתי.","stationId":15,"source":"2009-p7"},
+    {"id":"clip-12-married","file":"audio/clip-12-married.mp3","label":"התחתנתי עם משה","transcript":"התחתנתי עם בחור נהדר… משה.","stationId":16,"source":"2009-p8"},
+    {"id":"clip-13-salzburg","file":"audio/clip-13-salzburg.mp3","label":"שנה בזלצבורג","transcript":"אני חייתי שנה באוסטריה, בזלצבורג.","stationId":17,"source":"2009-p8"},
+    {"id":"clip-14-ship","file":"audio/clip-14-ship.mp3","label":"האונייה","transcript":"זאת הייתה אונייה איומה. אלפיים איש עלו… הגענו אלפיים ואחד – נולד ילד בדרך.","stationId":18,"source":"2009-p8"}
+  ],
+  "silentMainRoute":[5,6,7,8],
+  "silentReason":"No clean Medi-only clip matching that station in available film cuts / 2026 interviews / 2009 parts 7–8 (earlier 2009 audio not available)."
+}
