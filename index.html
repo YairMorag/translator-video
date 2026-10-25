@@ -59,7 +59,7 @@ body.cine .letterbox{height:7vh}
 .intro-content{position:relative;z-index:2;text-align:center;max-width:780px;padding:40px 28px;margin:auto}
 /* מסכים נמוכים: התוכן נגלל במקום להיחתך למעלה ולמטה */
 #intro{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-@media (max-height:760px) and (max-width:900px){.candle{transform:scale(.8);margin-bottom:6px}.intro-lede{margin-bottom:20px}.chapters-preview{margin-bottom:22px}.intro-names{margin:12px auto 18px}}
+@media (max-height:760px) and (max-width:900px){.candle{transform:scale(.8);margin-bottom:6px}.intro-lede{margin-bottom:14px}.intro-film{margin-bottom:14px}.chapters-preview{margin-bottom:18px}.intro-names{margin:12px auto 18px}}
 .rv{opacity:0;transform:translateY(16px);animation:rise 1.8s var(--ease) forwards;animation-delay:var(--d,0s)}
 @keyframes rise{to{opacity:1;transform:none}}
 
@@ -89,6 +89,14 @@ body.cine .letterbox{height:7vh}
 .rule.rv{animation:rule 2s var(--ease) forwards;animation-delay:var(--d)}
 @keyframes rule{from{opacity:0;transform:scaleX(0)}to{opacity:1;transform:scaleX(1)}}
 .intro-lede{font-family:var(--serif);font-size:1.1rem;line-height:2;color:var(--ink-2);font-weight:300;max-width:640px;margin:0 auto 30px}
+.intro-film{margin:0 auto 28px;max-width:680px;text-align:center}
+.intro-film-label{display:block;font-family:var(--serif);font-size:.95rem;letter-spacing:.18em;color:var(--gold);font-weight:500;margin-bottom:12px}
+.intro-film-frame{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(217,182,107,.38);
+  background:rgba(8,7,12,.85);box-shadow:0 18px 50px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.04)}
+.intro-film video{display:block;width:100%;height:auto;aspect-ratio:16/9;max-height:min(38vh,380px);object-fit:contain;background:#0a090e;vertical-align:middle}
+.intro-film-cap{margin-top:10px;font-size:.82rem;color:var(--ink-3);line-height:1.5}
+@media (max-height:760px){.intro-film{margin-bottom:18px}.intro-film video{max-height:min(28vh,260px)}.intro-film-label{margin-bottom:8px;font-size:.85rem}}
+@media (max-height:500px){.intro-film video{max-height:22vh}.intro-film-cap{display:none}.intro-film{margin-bottom:10px}}
 .chapters-preview{display:flex;justify-content:center;margin:0 auto 34px;max-width:700px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .chapters-preview li{list-style:none;flex:1;padding:14px 6px 12px;position:relative;text-align:center;transition:background .4s}
 .chapters-preview li:hover{background:rgba(255,255,255,.025)}
@@ -544,12 +552,27 @@ body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
       מילדות אידילית בבית משפחתי חם, דרך הגירוש לטרנסניסטריה,
       חיי הגטו בברשד, השחרור והדרך הארוכה חזרה – ועד לבניית חיים חדשים בארץ.
     </p>
-    <ol class="chapters-preview rv" id="chapters-preview" style="--d:2.1s" aria-label="פרקי המסע"></ol>
-    <div class="intro-actions rv" style="--d:2.4s">
+    <figure class="intro-film rv" style="--d:2.0s" aria-label="סרט הפתיחה">
+      <figcaption class="intro-film-label">המטרייה האדומה</figcaption>
+      <div class="intro-film-frame">
+        <video id="intro-film"
+          controls
+          playsinline
+          preload="metadata"
+          poster="video/ha-mitriya-haaduma-poster.jpg"
+          controlslist="nodownload"
+          aria-label="המטרייה האדומה – סרט פתיחה">
+          <source src="video/ha-mitriya-haaduma.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p class="intro-film-cap">סרט קצר כפתיחה להצגה – ואחריו המסע על המפה</p>
+    </figure>
+    <ol class="chapters-preview rv" id="chapters-preview" style="--d:2.25s" aria-label="פרקי המסע"></ol>
+    <div class="intro-actions rv" style="--d:2.55s">
       <button class="btn btn-primary" id="enter-btn" onclick="enterMap()">כניסה למפה</button>
       <button class="btn btn-ghost" id="tour-btn" onclick="enterMap(true)"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M10 1 L10 11 L2 6 Z" fill="currentColor"/></svg> מסע מודרך</button>
     </div>
-    <p class="intro-hint rv" style="--d:2.7s">לחצו על הנקודות במפה או על התחנות בציר הזמן כדי לגלות את הסיפור שמאחורי כל מקום · <a href="#" onclick="openCredits();return false" style="color:inherit">מקורות וקרדיטים</a></p>
+    <p class="intro-hint rv" style="--d:2.85s">לחצו על הנקודות במפה או על התחנות בציר הזמן כדי לגלות את הסיפור שמאחורי כל מקום · <a href="#" onclick="openCredits();return false" style="color:inherit">מקורות וקרדיטים</a></p>
   </div>
 </section>
 
@@ -1800,10 +1823,17 @@ function mapFallback(){
   document.body.appendChild(n);
   if (pendingEnter){ const f = pendingEnter; pendingEnter = null; f(); }
 }
+function pauseIntroFilm(){
+  const v = $('intro-film');
+  if (!v) return;
+  try { v.pause(); } catch(e) {}
+}
 function enterMap(withTour, then){
   if (onMap){ then && then(); return; }
+  pauseIntroFilm();
   const go = () => {
     if (onMap) return; onMap = true;
+    pauseIntroFilm();
     const intro = $('intro'); intro.classList.add('leaving');
     setTimeout(() => { if (onMap) intro.classList.add('hidden'); }, 350);
     setTimeout(() => { if (onMap) intro.style.display = 'none'; }, 2000);
