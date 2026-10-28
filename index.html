@@ -528,6 +528,36 @@ body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
   .cred{padding:24px 18px}.lb-nav{top:auto;bottom:18px;transform:none}
 }
 @media (prefers-reduced-motion:reduce){.st-media,.ctx{opacity:1!important;transform:none!important}.sm-slide,.sm-slide img{transition:none}}
+
+/* ===== כיתוב חי – חלום פלסטינה (תחנה אחרונה) ===== */
+#hope-captions{position:fixed;inset:0;z-index:2700;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:max(24px, env(safe-area-inset-top)) 28px max(28px, env(safe-area-inset-bottom));
+  background:radial-gradient(ellipse 80% 70% at 50% 42%, rgba(48,36,18,.55) 0%, rgba(8,8,12,.88) 55%, rgba(5,5,8,.96) 100%);
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s var(--ease),visibility .7s}
+#hope-captions.on{opacity:1;visibility:visible;pointer-events:auto}
+#hope-captions.leaving{opacity:0;visibility:hidden;pointer-events:none}
+.hope-glow{position:absolute;inset:18% 10% 22%;border-radius:50%;background:radial-gradient(circle,rgba(242,193,92,.14),transparent 68%);pointer-events:none;filter:blur(8px)}
+.hope-kicker{position:relative;z-index:1;font-size:clamp(.72rem,2.2vw,.88rem);letter-spacing:.34em;color:var(--gold);font-weight:600;margin-bottom:18px;opacity:.9}
+.hope-line{position:relative;z-index:1;font-family:var(--serif);font-weight:300;font-size:clamp(1.55rem,5.6vw,3.35rem);line-height:1.55;
+  color:rgba(242,225,180,.28);text-align:center;max-width:min(920px,96vw);min-height:1.55em;direction:rtl}
+.hope-line + .hope-line{margin-top:.35em}
+.hope-w{display:inline;transition:color .18s ease, opacity .25s ease, text-shadow .25s ease;opacity:0;color:rgba(242,225,180,.22)}
+.hope-w.seen{opacity:1;color:rgba(242,225,180,.72)}
+.hope-w.now{opacity:1;color:#fff6dc;text-shadow:0 0 28px rgba(242,193,92,.55),0 0 2px rgba(255,250,230,.4)}
+.hope-rule{width:min(160px,40vw);height:1px;margin:22px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.7}
+.hope-skip{position:absolute;top:max(14px,env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));z-index:2;
+  border:1px solid var(--gold-line);background:rgba(14,13,20,.55);color:var(--gold-2);border-radius:999px;padding:8px 14px;
+  font:inherit;font-size:.82rem;cursor:pointer;backdrop-filter:blur(10px)}
+.hope-skip:hover{border-color:var(--gold);background:rgba(217,182,107,.12)}
+@media (max-width:700px){
+  .hope-line{font-size:clamp(1.25rem,6.5vw,1.85rem);line-height:1.6}
+  .hope-kicker{letter-spacing:.22em;margin-bottom:12px}
+}
+@media (prefers-reduced-motion: reduce){
+  .hope-w{opacity:1;color:rgba(242,225,180,.85);transition:none}
+  .hope-w.now{text-shadow:none}
+}
+
 </style>
 </head>
 <body>
@@ -606,6 +636,17 @@ body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
 
 <div id="chapter-card" aria-hidden="true"><div class="cc-inner" id="cc-inner"></div></div>
 <div class="sr-only" id="live" aria-live="polite"></div>
+
+
+<!-- ===== כיתוב חי – חלום פלסטינה ===== -->
+<div id="hope-captions" role="dialog" aria-modal="true" aria-label="כיתוב חי: חלמנו על פלסטינה" hidden>
+  <button type="button" class="hope-skip" id="hope-skip" aria-label="סגירת הכיתוב">סגור</button>
+  <div class="hope-glow" aria-hidden="true"></div>
+  <div class="hope-kicker">חלום · תקווה · עלייה</div>
+  <div class="hope-line" id="hope-line-a" aria-live="polite"></div>
+  <div class="hope-line" id="hope-line-b" aria-live="polite"></div>
+  <div class="hope-rule" aria-hidden="true"></div>
+</div>
 
 <audio id="station-audio" preload="none"></audio>
 <aside id="story-panel" aria-hidden="true" aria-labelledby="st-title">
@@ -1572,6 +1613,7 @@ function stopStationAudio(){
   try { a.pause(); a.currentTime = 0; } catch(e) {}
   try { a.removeAttribute('src'); delete a.dataset.file; a.load(); } catch(e) {}
   setPlayIcon(false);
+  hideHopeCaptions(false);
 }
 function setPlayIcon(playing){
   const b = $('au-play'); if (!b) return;
@@ -1606,11 +1648,17 @@ function bindAudioLifecycle(a, gen, loc){
     if (gen !== audioGen) return;
     audioUnlocked = true; setPlayIcon(true);
     if (tour.on && currentId === loc.id) scheduleTour(false);   // מעדכן את טבעת הנר לפי אורך הקול
+    if (loc && loc.id === HOPE_CAPTION.stationId) maybeStartHopeCaptions(loc);
   };
-  a.onpause = () => { if (gen !== audioGen) return; if (!a.ended) setPlayIcon(false); };
+  a.onpause = () => {
+    if (gen !== audioGen) return;
+    if (!a.ended) setPlayIcon(false);
+    if (hopeRAF){ cancelAnimationFrame(hopeRAF); hopeRAF = 0; }
+  };
   a.onended = () => {
     if (gen !== audioGen) return;
     setPlayIcon(false);
+    hideHopeCaptions(true);
     if (tour.on && currentId === loc.id) scheduleTour(true);
   };
   a.onloadedmetadata = () => {
@@ -1619,6 +1667,120 @@ function bindAudioLifecycle(a, gen, loc){
   };
   a.onerror = () => { if (gen !== audioGen) return; setPlayIcon(false); if (tour.on) scheduleTour(true); };
 }
+
+/* ===== כיתוב חי – חלום פלסטינה (תחנה 19) =====
+   תזמונים מ־Whisper על תחילת clip-15; נוסח מתוקן לפי התמליל המדויק של מדי. */
+const HOPE_CAPTION = {
+  stationId: 19,
+  endAt: 44.2,
+  lines: [
+    { words: [
+      {t:'אני', s:1.52, e:3.16}, {t:'הרגשתי', s:3.16, e:3.90}, {t:'פלסטינה.', s:3.90, e:5.80},
+      {t:'אנחנו', s:6.04, e:7.28}, {t:'גם,', s:7.28, e:7.90}, {t:'תראי,', s:7.90, e:9.08},
+      {t:'כל', s:9.08, e:9.84}, {t:'הזמן', s:9.84, e:10.54}, {t:'חלמנו', s:10.54, e:11.46},
+      {t:'על', s:11.46, e:12.16}, {t:'פלסטינה.', s:12.16, e:12.96}
+    ]},
+    { words: [
+      {t:'נעשה', s:12.96, e:14.00}, {t:'קודם', s:14.00, e:14.50}, {t:'קליפות', s:14.50, e:15.40},
+      {t:'תפוחי', s:15.40, e:16.00}, {t:'אדמה…', s:16.00, e:17.40},
+      {t:'מה', s:19.90, e:20.50}, {t:'אנחנו', s:20.50, e:21.20}, {t:'נעשה.', s:21.20, e:21.86}
+    ]},
+    { words: [
+      {t:'אנחנו', s:22.42, e:23.12}, {t:'דיברנו', s:23.12, e:23.80}, {t:'על', s:23.80, e:23.95},
+      {t:'פלסטינה,', s:23.95, e:24.58}, {t:'חלמנו', s:24.58, e:25.76}, {t:'על', s:25.76, e:25.95},
+      {t:'פלסטינה.', s:25.95, e:26.70}
+    ]},
+    { words: [
+      {t:'ודאי,', s:28.94, e:29.70}, {t:'ודאי.', s:29.70, e:30.50}, {t:'תקווה.', s:30.50, e:31.90}
+    ]},
+    { words: [
+      {t:'יש', s:40.42, e:40.98}, {t:'לנו', s:40.98, e:41.30}, {t:'סבלנות,', s:41.30, e:42.10},
+      {t:'אנחנו', s:42.34, e:42.70}, {t:'נגיע', s:42.70, e:43.30}, {t:'לפלסטינה.', s:43.30, e:43.92}
+    ]}
+  ]
+};
+let hopeRAF = 0, hopeDismissed = false, hopeActive = false;
+
+function hopeRoot(){ return $('hope-captions'); }
+function hopeWordSpans(line){
+  return line.words.map((w,i) =>
+    `<span class="hope-w" data-s="${w.s}" data-e="${w.e}">${esc(w.t)}</span>${i < line.words.length-1 ? ' ' : ''}`
+  ).join('');
+}
+function paintHopeLine(el, line, t, revealAll){
+  if (!el || !line){ if (el) el.innerHTML = ''; return; }
+  if (!el.dataset.ready || el.dataset.key !== String(line.words[0].s)){
+    el.innerHTML = hopeWordSpans(line);
+    el.dataset.ready = '1';
+    el.dataset.key = String(line.words[0].s);
+  }
+  el.querySelectorAll('.hope-w').forEach(span => {
+    const s = +span.dataset.s, e = +span.dataset.e;
+    span.classList.toggle('seen', revealAll || t >= s);
+    span.classList.toggle('now', !revealAll && t >= s && t < e + 0.05);
+  });
+}
+function activeHopeLines(t){
+  const lines = HOPE_CAPTION.lines;
+  let i = 0;
+  for (let k = 0; k < lines.length; k++){
+    const last = lines[k].words[lines[k].words.length - 1];
+    if (t + 0.05 >= lines[k].words[0].s) i = k;
+    if (t < last.e) { i = k; break; }
+  }
+  const cur = lines[i];
+  const prev = i > 0 ? lines[i - 1] : null;
+  // show previous (dimming via seen) + current
+  return { a: prev, b: cur };
+}
+function syncHopeCaptions(t){
+  const root = hopeRoot(); if (!root || !hopeActive) return;
+  if (t >= HOPE_CAPTION.endAt){ hideHopeCaptions(true); return; }
+  const { a, b } = activeHopeLines(t);
+  const revealAll = reduceMotion;
+  paintHopeLine($('hope-line-a'), a, t, revealAll);
+  paintHopeLine($('hope-line-b'), b, t, revealAll);
+}
+function hopeTick(){
+  hopeRAF = 0;
+  const a = audioEl();
+  if (!hopeActive || !a || a.paused || a.ended) return;
+  syncHopeCaptions(a.currentTime || 0);
+  hopeRAF = requestAnimationFrame(hopeTick);
+}
+function showHopeCaptions(){
+  const root = hopeRoot(); if (!root || hopeDismissed) return;
+  hopeActive = true;
+  root.hidden = false;
+  root.classList.remove('leaving');
+  root.classList.add('on');
+  ['hope-line-a','hope-line-b'].forEach(id => { const el=$(id); if (el){ el.innerHTML=''; delete el.dataset.ready; delete el.dataset.key; } });
+  const a = audioEl();
+  syncHopeCaptions(a ? a.currentTime || 0 : 0);
+  if (!hopeRAF) hopeRAF = requestAnimationFrame(hopeTick);
+}
+function hideHopeCaptions(fade){
+  hopeActive = false;
+  if (hopeRAF){ cancelAnimationFrame(hopeRAF); hopeRAF = 0; }
+  const root = hopeRoot(); if (!root) return;
+  if (fade){
+    root.classList.add('leaving');
+    root.classList.remove('on');
+    setTimeout(() => { if (!hopeActive){ root.hidden = true; root.classList.remove('leaving'); } }, 750);
+  } else {
+    root.classList.remove('on','leaving');
+    root.hidden = true;
+  }
+}
+function maybeStartHopeCaptions(loc){
+  if (!loc || loc.id !== HOPE_CAPTION.stationId || hopeDismissed) return;
+  showHopeCaptions();
+}
+function dismissHopeCaptions(){
+  hopeDismissed = true;
+  hideHopeCaptions(true);
+}
+
 function playStationAudio(loc){
   renderAudioUI(loc);
   const a = audioEl();
@@ -1642,7 +1804,7 @@ function playStationAudio(loc){
 function toggleStationAudio(loc){
   const a = audioEl(); if (!a || !loc || !loc.audio) return;
   if (audioMuted){ audioMuted = false; localStorage.removeItem('medi-audio-mute'); renderAudioUI(loc); }
-  if (a.dataset.file === loc.audio && !a.paused){ a.pause(); setPlayIcon(false); return; }
+  if (a.dataset.file === loc.audio && !a.paused){ a.pause(); setPlayIcon(false); hideHopeCaptions(true); return; }
   audioUnlocked = true;
   playStationAudio(loc);
 }
@@ -1656,6 +1818,7 @@ function openStory(id){
   if (!onMap){ enterMap(false, () => openStory(id)); return; }
   const panel = $('story-panel'), ch = loc.ch, newChapter = ch.key !== lastChapter;
   currentId = id; lastChapter = ch.key;
+  if (id !== HOPE_CAPTION.stationId){ hopeDismissed = false; hideHopeCaptions(false); } else { hopeDismissed = false; }
   if (newChapter) showChapterCard(ch);
   const stagger = newChapter && !reduceMotion ? 1.9 : 0;
   panel.style.setProperty('--c', ch.color);
@@ -1911,6 +2074,7 @@ function buildIntro(){
 document.addEventListener('keydown', e => {
   if ($('lightbox').classList.contains('on')){ if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowLeft') lbStep(1); if (e.key === 'ArrowRight') lbStep(-1); e.stopPropagation(); return; }
   if ($('credits').classList.contains('on')){ if (e.key === 'Escape') closeCredits(); return; }
+  if (e.key === 'Escape' && hopeActive){ dismissHopeCaptions(); return; }
   if (!onMap){ if (e.key === 'Enter' && document.activeElement === document.body) enterMap(); return; }
   if (currentId === null) return;
   if (e.key === 'Escape') closePanel();
@@ -1922,6 +2086,10 @@ $('panel-scroll').addEventListener('scroll', updateReadProgress, { passive:true 
 $('sheet-handle').addEventListener('click', () => $('story-panel').classList.toggle('peek'));
 function syncTlVar(){ document.documentElement.style.setProperty('--tl-h', timelineH() + 'px'); }
 addEventListener('resize', syncTlVar);
+
+const hopeSkipBtn = $('hope-skip');
+if (hopeSkipBtn) hopeSkipBtn.addEventListener('click', dismissHopeCaptions);
+addEventListener('keydown', e => { if (e.key === 'Escape' && hopeActive) dismissHopeCaptions(); });
 
 buildIntro(); buildTimeline(); syncTlVar();
 initSeg('seg-year', v => map && setBorderYear(v));
