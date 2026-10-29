@@ -908,7 +908,7 @@ const locations = [
 
             <div class="quote">הוא השיט את היד ואמר לגברת קורצברג – היינו צריכים למכור את המכנסיים הישנים ולהישאר בצ'רנוביץ.</div>
 
-            <p>העגלה עם הסוס האדום ("רויטע פערדל") הייתה סמל המוות – אוספת גופות. מדי ומליטה ראו איך זורקים את אבא על העגלה. למרות שסלי כיסתה את עיניה של מליטה שלא תראה דרך החלון.</p>
+            <p>העגלה עם הסוס האדום ("רויטע פערדל") הייתה סמל המוות – אוספת גופות. מדי ומליטה ראו איך זורקים את אבא על העגלה, למרות שסלי כיסתה את עיניה של מליטה שלא תראה דרך החלון.</p>
 
             <p>אחרי ההחלמה, אמא סלי קמה על רגליה. היא לא דיברה שנה שלמה – רק בכתה בלילות. אבל ביום – נתנה לילדות תקווה.</p>
 
@@ -977,7 +977,7 @@ const locations = [
         color: "#a374d5",
         summary: "בית היתומים, האש במחסן – והשחרור",
         story: `
-            <p>בסוף 1943, מליטה בת 7 ומדי בת 14, הגיעו לבית היתומים בבלטה מכיוון שאחרו את האנייה בדרך לפלשתינה, אליה יצאו עם רגינה ואניטה. מאז מות האב נחשבו השתיים יתומות, ובבלטה שהו ב"קינדרהיים".</p>
+            <p>בסוף 1943, מליטה בת 7 ומדי בת 14, הגיעו לבית היתומים בבלטה מכיוון שאיחרו את האנייה בדרך לפלשתינה, אליה יצאו עם רגינה ואניטה. מאז מות האב נחשבו השתיים יתומות, ובבלטה שהו ב"קינדרהיים".</p>
 
             <p>הדודה רגינה נסעה איתן עד בלטה עם בתה היחידה. כשראתה את המצב במקום, החזירה את הבת לברשד ורצתה לקחת גם את שתי האחיות. מדי סירבה:</p>
 
@@ -1774,6 +1774,7 @@ function hideHopeCaptions(fade){
 }
 function maybeStartHopeCaptions(loc){
   if (!loc || loc.id !== HOPE_CAPTION.stationId || hopeDismissed) return;
+  const a = audioEl(); if (a && (a.currentTime || 0) >= HOPE_CAPTION.endAt) return;
   showHopeCaptions();
 }
 function dismissHopeCaptions(){
@@ -1781,10 +1782,10 @@ function dismissHopeCaptions(){
   hideHopeCaptions(true);
 }
 
-function playStationAudio(loc){
+function playStationAudio(loc, explicit){
   renderAudioUI(loc);
   const a = audioEl();
-  if (!a || !loc || !loc.audio || audioMuted || reduceMotion){
+  if (!a || !loc || !loc.audio || audioMuted || (reduceMotion && !explicit)){
     stopStationAudio();
     renderAudioUI(loc);
     return;
@@ -1806,7 +1807,13 @@ function toggleStationAudio(loc){
   if (audioMuted){ audioMuted = false; localStorage.removeItem('medi-audio-mute'); renderAudioUI(loc); }
   if (a.dataset.file === loc.audio && !a.paused){ a.pause(); setPlayIcon(false); hideHopeCaptions(true); return; }
   audioUnlocked = true;
-  playStationAudio(loc);
+  // המשך מאותה נקודה אחרי השהיה (במקום להתחיל מההתחלה)
+  if (a.dataset.file === loc.audio && a.paused && !a.ended && a.currentTime > 0.2 && a.onplay){
+    const p = a.play(); if (p && p.catch) p.catch(() => setPlayIcon(false));
+    return;
+  }
+  if (loc.id === HOPE_CAPTION.stationId) hopeDismissed = false;   // השמעה מחדש מההתחלה – הכיתוב החי חוזר
+  playStationAudio(loc, true);
 }
 
 // ===== פאנל הסיפור =====
@@ -1835,7 +1842,7 @@ function openStory(id){
     <p class="st-summary">${loc.summary}</p>`;
   [...$('st-head').children].forEach((c, i) => c.style.animationDelay = (stagger + .1 + i * .09) + 's');
   renderAudioUI(loc);
-  const sm = $('st-media'); sm.innerHTML = mediaHTML(id); bindMedia(id);
+  const sm = $('st-media'); sm.innerHTML = mediaHTML(id); sm.hidden = !sm.innerHTML.trim(); bindMedia(id);
   const sme = sm.firstElementChild; if (sme) sme.style.animationDelay = (stagger + .35) + 's';
   const body = $('st-body'); body.innerHTML = loc.story;
   [...body.children].forEach((c, i) => c.style.animationDelay = (stagger + .45 + i * .08) + 's');
