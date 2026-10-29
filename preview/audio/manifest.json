@@ -121,9 +121,18 @@
       "file": "audio/clip-15-haifa-aliyah.mp3",
       "label": "חלום פלסטינה, עלייה וכוח",
       "transcript": "אני הרגשתי פלסטינה. כל הזמן חלמו על פלסטינה… נעשה קודם קליפות תפוחי אדמה… דיברנו על פלסטינה, חלמו על פלסטינה. ודאי, ודאי. תקווה… יש לנו סבלנות, אנחנו נגיע לפלסטינה. ו-48 עלינו ארצה. והגענו לחיפה… רציתי חיפה שהייתה לי דודה… יש לי בת נהדרת. אני רואה אותם, הם ברעננה, אני בחיפה… וזה טוב לי, טוב לי מאוד. יש כוח בתוך אדם… מה שעברתי שם, עברתי.",
+      "stationId": null,
+      "source": "2009-p7+p8+p4",
+      "note": "Composite: part7 dream/Palestine + part8 aliyah/Haifa/family + part4 כוח ending (8304358_4 02:30.5–02:51). Standalone cut also saved as clip-16-koach.mp3. | superseded at station 19 by clip-15-haifa-aliyah-v2 (preview)"
+    },
+    {
+      "id": "clip-15-haifa-aliyah-v2",
+      "file": "audio/clip-15-haifa-aliyah-v2.mp3",
+      "label": "חלום פלסטינה, עלייה וכוח",
+      "transcript": "לי – לא. אני הרגשתי – פלסטינה, זה… אנחנו גם, תראי, כל הזמן חלמנו על פלסטינה. נעשה קודם קליפה של… של תפוחי אדמה, אחר כך, זה נכנס… זה נכנס לחיים – מה אנחנו נעשה. אנחנו דיברנו על פלסטינה, חלמנו על פלסטינה. ודאי, ודאי. תקווה… תקווה. אני אמרתי: לא. יש לנו סבלנות, אנחנו נגיע לפלסטינה. ב־48 עלינו ארצה. […המשך זהה ל־clip-15…] יש כוח בתוך האדם, ואני אספר לך אחר כך על בלטה, ושם הייתי בלי אמא ובלי אבא, רק עם אחותי הקטנה. מה שעברתי שם – עברתי.",
       "stationId": 19,
       "source": "2009-p7+p8+p4",
-      "note": "Composite: part7 dream/Palestine + part8 aliyah/Haifa/family + part4 כוח ending (8304358_4 02:30.5–02:51). Standalone cut also saved as clip-16-koach.mp3."
+      "note": "Re-cut of the first 45.6s of clip-15 from the part-7/part-8 masters so no word is clipped at a splice (restores 'נעשה קודם קליפה', 'אנחנו נגיע לפלסטינה', 'ב־48'), drops the dangling 'וככה ש…' fragment and the two quiet interviewer questions. From 42.256s on it is the same audio as clip-15 from 45.6s (re-encoded, 96 kbps). Pieces (src s): p7 1136.25–1148.60 | p7 1157.25–1167.42 | p7 1174.90–1179.35 + 1181.05–1184.95 + 1185.45–1186.55 | p7 1215.25–1220.45 | p8 321.55–324.836 | clip-15 45.6–end."
     },
     {
       "id": "clip-16-koach",
