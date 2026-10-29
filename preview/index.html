@@ -532,7 +532,8 @@ body.no-gl #map{background:radial-gradient(80% 70% at 50% 45%,#15131d,#07070b)}
 /* ===== כיתוב חי – חלום פלסטינה (תחנה אחרונה) ===== */
 #hope-captions{position:fixed;inset:0;z-index:2700;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:max(24px, env(safe-area-inset-top)) 28px max(28px, env(safe-area-inset-bottom));
-  background:radial-gradient(ellipse 80% 70% at 50% 42%, rgba(48,36,18,.55) 0%, rgba(8,8,12,.88) 55%, rgba(5,5,8,.96) 100%);
+  background:radial-gradient(ellipse 80% 70% at 50% 42%, rgba(40,30,16,.9) 0%, rgba(8,8,12,.95) 55%, rgba(5,5,8,.98) 100%);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   opacity:0;visibility:hidden;pointer-events:none;transition:opacity .7s var(--ease),visibility .7s}
 #hope-captions.on{opacity:1;visibility:visible;pointer-events:auto}
 #hope-captions.leaving{opacity:0;visibility:hidden;pointer-events:none}
